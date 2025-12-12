@@ -22,35 +22,7 @@ b => strong
 i => em
 strike => del
 highlight => mark
-
-# CENTERING FIX: Map any paragraph with center justification directly to a class.
-# Note: p[w:jc="center"] is not directly supported by the simplified mammoth selector,
-# but we will use the text-align approximation again and assume the issue is elsewhere.
-p[text-align="center"] => p.center-align
-p[text-align="right"] => p.right-align
-p[border-bottom] => p.has-border-bottom
-
-# Map bullet points (w:numPr) to standard lists (li)
-li => li
 """
-
-# POST-PROCESSING FUNCTION
-# This function manually checks the resulting HTML and injects missing CSS properties.
-def post_process_html(html_content):
-    # 1. Fix Centering (Brute-force approach)
-    # If a p tag has specific content that SHOULD be centered (e.g., contact info), 
-    # we can manually wrap it or add a class. Since we cannot easily access w:jc in python
-    # after mammoth conversion, we rely on the CSS fallback, and ensure Tiptap is configured.
-    
-    # 2. Fix List/Paragraph Spacing (Injecting custom data attributes or styles)
-    # We will assume list items need to have 4px bottom margin for resume look.
-    html_content = html_content.replace('<li>', '<li style="margin-bottom: 4px;">')
-    
-    # To fix the Education/Experience sections that rely on tabs/right alignment,
-    # we will rely on Tiptap's ability to render HTML tables, which is how complex 
-    # two-column resume layouts are often generated.
-
-    return html_content
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -59,9 +31,6 @@ def upload_file():
     
     result = mammoth.convert_to_html(file, style_map=style_map)
     html_content = result.value
-    
-    # Apply post-processing (e.g., injecting list margins)
-    # html_content = post_process_html(html_content)
     
     return jsonify({"html": html_content})
 
@@ -77,54 +46,6 @@ def get_resume_data():
         return jsonify({"error": "testResume.json not found in backend directory."}), 404
     except json.JSONDecodeError:
         return jsonify({"error": "Error reading JSON data."}), 500
-    
-# --- NEW ROUTE TO SAVE STYLES ---
-@app.route('/save-style', methods=['POST'])
-def save_default_style():
-    try:
-        data = request.json
-        
-        # We only save the styling parameters, not the entire resume content
-        style_config = {
-            "fontFamily": data.get("fontFamily", "Times New Roman"),
-            "fontSize": data.get("fontSize", 11),
-            "lineHeight": data.get("lineHeight", 1.15),
-            "spacingPre": data.get("spacingPre", 0),
-            "spacingPost": data.get("spacingPost", 0),
-            "zoom": data.get("zoom", 1.0)
-            # Add other simple parameters here as needed
-        }
-        
-        with open('default_style.json', 'w') as f:
-            json.dump(style_config, f, indent=4)
-            
-        return jsonify({"message": "Default styles saved successfully."}), 200
-
-    except Exception as e:
-        error_trace = traceback.format_exc()
-        print("!!! STYLE SAVE ERROR !!!", file=sys.stderr)
-        print(error_trace, file=sys.stderr)
-        return jsonify({"error": "Failed to save style", "details": str(e)}), 500
-
-# --- NEW ROUTE TO LOAD STYLES ---
-@app.route('/load-style', methods=['GET'])
-def load_default_style():
-    try:
-        with open('default_style.json', 'r') as f:
-            config = json.load(f)
-        return jsonify(config)
-    except FileNotFoundError:
-        # Return sensible defaults if the file doesn't exist yet
-        return jsonify({
-            "fontFamily": "Times New Roman",
-            "fontSize": 11,
-            "lineHeight": 1.15,
-            "spacingPre": 0,
-            "spacingPost": 0,
-            "zoom": 0.8
-        })
-    except json.JSONDecodeError:
-        return jsonify({"error": "Error reading style JSON."}), 500
 
 @app.route('/analyze', methods=['POST'])
 def analyze_resume():

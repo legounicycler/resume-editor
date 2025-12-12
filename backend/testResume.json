@@ -10,10 +10,11 @@
       "title": "Education",
       "entries": [
         {
-          "company": "Georgia Institute of Technology - Atlanta, GA",
+          "company": "Georgia Institute of Technology",
+          "location": "Atlanta, GA",
           "dates": "Aug 2017 - May 2022",
-          "description": "Bachelors of Science: Aerospace Engineering - Highest Honors | GPA: 3.90 / 4.00",
-          "bullets": []
+          "description": null,
+          "bullets": ["Bachelors of Science: Aerospace Engineering - Highest Honors | GPA: 3.90 / 4.00"]
         }
       ]
     },
@@ -21,7 +22,8 @@
       "title": "Work Experience",
       "entries": [
         {
-          "company": "Georgia Tech Christian Campus Fellowship - Associate Campus Minister - Atlanta, GA",
+          "company": "Georgia Tech Christian Campus Fellowship - Associate Campus Minister",
+          "location":"Atlanta, GA",
           "dates": "Aug 2022 - May 2025",
           "description": null,
           "bullets": [
@@ -32,7 +34,8 @@
           ]
         },
         {
-          "company": "NASA Jet Propulsion Laboratory - Software Computing System Intern - Pasadena, CA",
+          "company": "NASA Jet Propulsion Laboratory - Software Computing System Intern",
+          "location": "Pasadena, CA",
           "dates": "May 2022 - Jul 2022",
           "description": null,
           "bullets": [
@@ -40,7 +43,8 @@
           ]
         },
         {
-            "company": "NASA Goddard Space Flight Center - In-Space Assembly Intern - Greenbelt, MD",
+            "company": "NASA Goddard Space Flight Center - In-Space Assembly Intern",
+            "location": "Greenbelt, MD",
             "dates": "Jun 2021 - Aug 2021",
             "description": null,
             "bullets": [
@@ -49,7 +53,8 @@
             ]
         },
         {
-          "company": "Georgia Tech Research Institute (GTRI) - Mech Engineering Student Co-op - Atlanta, GA",
+          "company": "Georgia Tech Research Institute (GTRI) - Mech Engineering Student Co-op",
+          "location": "Atlanta, GA",
           "dates": "Aug 2019 - Jun 2021",
           "description": null,
           "bullets": [
@@ -58,7 +63,7 @@
             "Generated part/assembly drawings and analyzed tolerance stackups with GD&T principles as per ASME Y14.5",
             "Performed structural analysis (FEA) on servo body in SolidWorks to evaluate performance under operational loads",
             "Managed design files using SolidWorks PDM to maintain configuration integrity",
-            "Presented BOM’s, assembly drawings, and test procedures/results at project stage-gate meetings (PDR, CDR)",
+            "Presented BOM's, assembly drawings, and test procedures/results at project stage-gate meetings (PDR, CDR)",
             "Collaborated with machinists and senior engineers to integrate design for manufacturing principles into designs"
           ]
         }
@@ -68,7 +73,8 @@
       "title": "Research",
       "entries": [
         {
-          "company": "Space Systems Design Lab (SSDL) - Georgia Tech, Atlanta, GA",
+          "company": "Space Systems Design Lab (SSDL)",
+          "location": "Georgia Tech - Atlanta, GA",
           "dates": "Jan 2020 - May 2022",
           "description": null,
           "bullets": [
@@ -85,7 +91,7 @@
       "title": "Skills",
       "entries": [
         {
-          "description": "GD&T , CAD , SolidWorks , SolidWorks PDM, OnShape, MATLAB, Simulink, Python, Embedded C/C++, Git, Java, Linux, Arduino, Scripting, Microsoft Office, Blender, Design For Manufacturing, 3D Printing, Mill, Lathe, Water Jet, Welding",
+          "description": "GD&T, CAD, SolidWorks, SolidWorks PDM, OnShape, MATLAB, Simulink, Python, Embedded C/C++, Git, Java, Linux, Arduino, Scripting, Microsoft Office, Blender, Design For Manufacturing, 3D Printing, Mill, Lathe, Water Jet, Welding",
           "bullets": []
         }
       ]

@@ -11,9 +11,9 @@ const Toast = ({ message, type, stack, onClose }) => {
     <div className={`toast-container ${type}`}>
       <div className="toast-content">
         <span>{message}</span>
-        {stack && <button className="text-link" style={{background:'none', border:'none', color:'white', textDecoration:'underline', marginLeft:'10px', cursor:'pointer'}} onClick={() => setShowStack(!showStack)}>Details</button>}
+        {stack && <button className="text-link" style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'underline', marginLeft: '10px', cursor: 'pointer' }} onClick={() => setShowStack(!showStack)}>Details</button>}
       </div>
-      <button onClick={onClose} style={{background:'none', border:'none', color:'white', fontWeight:'bold', cursor:'pointer'}}>✕</button>
+      <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'white', fontWeight: 'bold', cursor: 'pointer' }}>✕</button>
       {showStack && stack && <pre className="stack-trace">{stack}</pre>}
     </div>
   );
@@ -25,13 +25,9 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [mappings, setMappings] = useState([]);
   const [toast, setToast] = useState({ message: '', type: '', stack: '' });
-  
-  // Layout State
-  const [leftWidth, setLeftWidth] = useState(60); 
+  const [leftWidth, setLeftWidth] = useState(60);
   const [resumeZoom, setResumeZoom] = useState(0.8);
-  const [jdZoom, setJdZoom] = useState(1.0); 
-
-  // Dragging Logic
+  const [jdZoom, setJdZoom] = useState(1.0);
   const isDragging = useRef(false);
   const handleDragStart = () => { isDragging.current = true; };
   const handleDrag = (e) => {
@@ -40,9 +36,6 @@ function App() {
     if (newLeftWidth > 20 && newLeftWidth < 80) setLeftWidth(newLeftWidth);
   };
   const handleDragEnd = () => { isDragging.current = false; };
-
-  // NEW State for persistent styles (will hold values fetched from /load-style)
-  const [currentStyle, setCurrentStyle] = useState({});
 
   useEffect(() => {
     window.addEventListener('mousemove', handleDrag);
@@ -53,77 +46,93 @@ function App() {
     };
   }, []);
 
-
   const generateResumeHtml = (data) => {
-    // This is where we inject the *exact* CSS properties to match your document.
+    // Defined Base Styles
+    const BASE_FONT = "font-family: Arial, sans-serif;"
+    const BASE_FONT_SIZE = "font-size: 10pt;"
+    const BASE_LINE_HEIGHT = "line-height: 1.0;"
+    const BASE_MARGIN = "margin: 0;"
+    const BASE_EVERYTHING = `${BASE_FONT} ${BASE_FONT_SIZE} ${BASE_LINE_HEIGHT} ${BASE_MARGIN}`;
+
     let html = '';
 
-    // A. NAME/CONTACT HEADER (Centered and Spaced)
-    // NOTE: Using a single large p tag for the contact info line will prevent easy editing/re-centering of individual links.
-    html += `<p style="text-align: center; font-size: 16pt; font-weight: bold; margin-bottom: 2pt;">${data.personal.name}</p>`;
-    html += `<p style="text-align: center; font-size: 11pt; margin-bottom: 8pt;">${data.personal.summary}</p>`;
-    html += `<p style="text-align: center; font-size: 10pt; margin-bottom: 12pt;">${data.personal.contact_info}</p>`;
-    
+    // A. NAME/CONTACT HEADER
+    html += `<h1 style="${BASE_FONT} ${BASE_LINE_HEIGHT} font-size: 14pt; text-align: center; text-decoration: underline; margin-bottom: 2pt;">${data.personal.name}</h1>`;
+    html += `<p style="${BASE_FONT} ${BASE_FONT_SIZE} ${BASE_LINE_HEIGHT} text-align: center; margin-bottom: 2pt;">${data.personal.summary}</p>`;
+    html += `<p style="${BASE_FONT} ${BASE_LINE_HEIGHT} font-size: 8pt; text-align: center; margin-bottom: 10pt;">${data.personal.contact_info}</p>`;
+
     // B. SECTIONS
     data.sections.forEach(section => {
-        // Section Title (Bordered Look)
-        html += `<h2 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid black; padding-bottom: 2px; margin-top: 10pt; margin-bottom: 5pt; text-align: center;">${section.title}</h2>`;
+      html += `<h2 style="${BASE_FONT} font-weight: bold; text-align: center; border-bottom: 1px solid black; margin-top: 10pt; margin-bottom: 4pt;">${section.title}</h2>`;
 
-        section.entries.forEach(entry => {
-            // Two-Column Simulation (using flexbox for clean right-alignment)
-            // Inject a style to set the font size for the entire entry
-            html += `
-                <div style="font-size: 10pt;">
-                    <p style="display: flex; justify-content: space-between; margin-bottom: 0pt; margin-top: 5pt;">
+      section.entries.forEach(entry => {
+        // OPEN wrapper for the whole entry (fix: was missing — previously only had a closing </div>)
+        html += `<div style="${BASE_FONT} margin-bottom:4pt;">`;
+
+        if (entry.company && entry.dates && entry.location) {
+          html += `
+            <table style="width: 100%; border-collapse: collapse; margin: 0; padding: 0; table-layout: fixed;">
+              <tbody>
+                <tr>
+                  <td style="vertical-align: middle; box-sizing: border-box;" data-col-width="80%">
+                    <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE} line-height: 1.15;">
+                      <u style="text-decoration: underline;">
                         <span style="font-weight: bold;">${entry.company}</span>
-                        <span style="font-style: italic;">${entry.dates}</span>
+                        <span style="font-style: italic;"> - ${entry.location}</span>
+                      </u>
                     </p>
-            `;
-            
-            if (entry.description) {
-                // Description (like the GPA line)
-                html += `<p style="margin-top: 0; margin-bottom: 2pt;">${entry.description}</p>`;
-            }
+                  </td>
+                  <td style="vertical-align: middle; white-space: nowrap; box-sizing: border-box;" data-col-width="20%">
+                    <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE} line-height: 1.15; text-align: right;">
+                      <span style="font-weight: bold; display: inline-block;">${entry.dates}</span>
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          `;
+        }
 
-            // Bullet Points
-            if (entry.bullets && entry.bullets.length > 0) {
-                // Lists must be wrapped in a div to properly inherit spacing properties from Tiptap
-                html += `<ul style="margin-top: 0; margin-bottom: 5pt; padding-left: 18pt;">`;
-                entry.bullets.forEach(bullet => {
-                    html += `<li style="margin-bottom: 1pt;">${bullet}</li>`;
-                });
-                html += `</ul>`;
-            }
-            
-            // Close the entry div
-            html += `</div>`;
-        });
+        // Description
+        if (entry.description) {
+           html += `<p style="${BASE_EVERYTHING}">${entry.description}</p>`;
+        }
+        // Bullets
+        if (entry.bullets && entry.bullets.length > 0) {
+          html += `<ul style="margin: 0; padding-left: 1.5rem; list-style-type: disc;">`;
+          entry.bullets.forEach(bullet => {
+            html += `<li style="${BASE_EVERYTHING}">${bullet}</li>`;
+          });
+          html += `</ul>`;
+        }
+
+        // CLOSE wrapper for the entry (matches the opening DIV above)
+        html += `</div>`;
+      });
     });
 
     return html;
-};
+  };
 
-  // 2. NEW Asynchronous function to load data from the backend
   const handleLoadStructuredData = async () => {
     try {
-        const response = await axios.get('http://localhost:5000/get-data');
-        const structuredData = response.data;
-        
-        const structuredHtml = generateResumeHtml(structuredData);
-        setResumeHtml(structuredHtml);
-        setToast({ message: 'Data loaded from testResume.json!', type: 'success' });
+      const response = await axios.get('http://localhost:5000/get-data');
+      const structuredData = response.data;
+      const structuredHtml = generateResumeHtml(structuredData);
+      setResumeHtml(structuredHtml);
+      setToast({ message: 'Data loaded and styled!', type: 'success' });
     } catch (err) {
-        const serverMsg = err.response?.data?.error || err.message;
-        setToast({ message: `Load Error: ${serverMsg}. Check your Flask server.`, type: 'error', stack: err.stack });
+      const serverMsg = err.response?.data?.error || err.message;
+      setToast({ message: `Load Error: ${serverMsg}. Check your Flask server/JSON file.`, type: 'error', stack: err.stack });
     }
   };
 
   const handleGenerate = async () => {
-    if (!jobDesc.trim()) return setToast({message:'Paste a JD first', type:'error'});
+    if (!jobDesc.trim()) return setToast({ message: 'Paste a JD first', type: 'error' });
     setIsLoading(true);
     try {
-      const res = await axios.post('http://localhost:5000/analyze', { 
-        resumeHtml, 
+      const res = await axios.post('http://localhost:5000/analyze', {
+        resumeHtml,
         jobDescription: jobDesc
       });
       setResumeHtml(res.data.html);
@@ -150,43 +159,37 @@ function App() {
       </header>
 
       <div className="main-split">
-        
-        {/* LEFT PANEL */}
         <div className="panel-container" style={{ width: `${leftWidth}%` }}>
-          <ResumeEditor 
-            content={resumeHtml} 
-            zoom={resumeZoom} 
-            onLoadData={handleLoadStructuredData} // Pass the new async handler
-            setZoom={setResumeZoom} 
+          <ResumeEditor
+            content={resumeHtml}
+            zoom={resumeZoom}
+            onLoadData={() => handleLoadStructuredData()}
+            setZoom={setResumeZoom}
           />
         </div>
 
-        {/* DRAG HANDLE */}
         <div className="resize-handle" onMouseDown={handleDragStart}>||</div>
 
-        {/* RIGHT PANEL */}
         <div className="panel-container" style={{ width: `${100 - leftWidth}%` }}>
           <div className="panel-toolbar">
-            <span style={{fontSize:'0.85rem', fontWeight:'bold'}}>Job Description</span>
+            <span style={{ fontSize: '0.85rem', fontWeight: 'bold' }}>Job Description</span>
             <div className="separator"></div>
             <button className="icon-btn" onClick={() => setJdZoom(z => Math.max(0.5, z - 0.1))}>A−</button>
-            <span style={{fontSize:'0.85rem'}}>{Math.round(jdZoom * 100)}%</span>
+            <span style={{ fontSize: '0.85rem' }}>{Math.round(jdZoom * 100)}%</span>
             <button className="icon-btn" onClick={() => setJdZoom(z => Math.min(2.0, z + 0.1))}>A+</button>
           </div>
 
           <div className="right-panel-content">
-            <div 
+            <div
               className="jd-input-rich"
               contentEditable
-              // Change to innerHTML
-              onInput={(e) => setJobDesc(e.currentTarget.innerHTML)} 
+              onInput={(e) => setJobDesc(e.currentTarget.innerHTML)}
               style={{ fontSize: `${jdZoom}rem` }}
               placeholder="Paste Job Description here..."
             />
             <JobDescription mappings={mappings} />
           </div>
         </div>
-
       </div>
     </div>
   );

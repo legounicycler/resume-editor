@@ -1,10 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Highlight from '@tiptap/extension-highlight';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { TextStyle } from '@tiptap/extension-text-style';
-import { FontFamily } from '@tiptap/extension-font-family';
+import { Table } from '@tiptap/extension-table';
+import { TableRow } from '@tiptap/extension-table-row';
+import { TableHeader } from '@tiptap/extension-table-header';
+import { CustomTableCell } from './extensions/CustomTableCell';
 import { LineHeight } from './extensions/LineHeight';
 import { FontSize } from './extensions/FontSize';
 import { ParagraphSpacing } from './extensions/ParagraphSpacing';
@@ -23,17 +26,21 @@ const AiHighlight = Highlight.extend({
   },
 });
 
-const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, onSaveStyles }) => {
+const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => {
+  const [currentLineHeight, setCurrentLineHeight] = useState('1.0');
   const editor = useEditor({
     extensions: [
       StarterKit,
       TextStyle,
-      FontFamily,
+      TextAlign.configure({ types: ['heading', 'paragraph'] }),
+      AiHighlight.configure({ multipart: true }),
+      Table.configure({ resizable: true }),
+      TableRow,
+      TableHeader,
+      CustomTableCell,
       LineHeight,
       FontSize,
       ParagraphSpacing,
-      TextAlign.configure({ types: ['heading', 'paragraph'] }),
-      AiHighlight.configure({ multipart: true }),
     ],
     content: content,
     onUpdate: ({ editor }) => attachTooltips(),
@@ -50,18 +57,39 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, onSa
 
   useEffect(() => {
     if (editor && content && content !== editor.getHTML()) {
-      editor.commands.setContent(content);
+      // Normalize pasted/generated tables that use "min-width" (commonly from Word)
+      // into explicit "width" styles so the browser/tiptap honors column sizing.
+      const normalized = content.replace(/min-width\s*:\s*([^;"]+)(;)?/gi, 'width:$1');
+      editor.commands.setContent(normalized);
       setTimeout(attachTooltips, 100);
     }
   }, [content, editor]);
+
+  useEffect(() => {
+    if (!editor) return;
+    
+    const updateLineHeight = () => {
+      const { $from } = editor.state.selection;
+      const nodeType = $from.node().type.name;
+      const attrs = editor.getAttributes(nodeType);
+      setCurrentLineHeight(attrs.lineHeight || '1.0');
+    };
+    
+    updateLineHeight();
+    editor.on('selectionUpdate', updateLineHeight);
+    editor.on('update', updateLineHeight);
+    
+    return () => {
+      editor.off('selectionUpdate', updateLineHeight);
+      editor.off('update', updateLineHeight);
+    };
+  }, [editor]);
 
   // Handle Search Highlighting
   useEffect(() => {
     if (!editor || !hoveredMapping) return;
     editor.commands.unsetHighlight();
     const text = hoveredMapping.resume_phrase;
-    // Simple text search implementation
-    // (You can enhance this with exact node matching later)
   }, [hoveredMapping, editor]);
 
   if (!editor) return null;
@@ -71,55 +99,16 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, onSa
       
       {/* --- TOOLBAR --- */}
       <div className="panel-toolbar">
-        {/* 1. Load Data Button */}
         <button className="upload-label" onClick={onLoadData}>
           <span>📋 Load Resume Data</span>
         </button>
-        
-        {/* 2. SAVE STYLES BUTTON (NEW) */}
-        <button 
-          className="upload-label" /* Reusing the upload-label style for consistency */
-          style={{backgroundColor: '#10b981', color: 'white'}}
-          onClick={() => onSaveStyles(editor)}
-          disabled={!editor}
-        >
-          💾 Save Style
-        </button>
 
         <div className="separator"></div>
         
-        {/* Zoom Controls (Integrated here) */}
+        {/* Zoom */}
         <button className="icon-btn" onClick={() => setZoom(z => Math.max(0.3, z - 0.1))}>−</button>
         <span style={{fontSize:'0.8rem', minWidth:'40px', textAlign:'center'}}>{Math.round(zoom * 100)}%</span>
         <button className="icon-btn" onClick={() => setZoom(z => Math.min(1.5, z + 0.1))}>+</button>
-
-        <div className="separator"></div>
-
-        {/* Font Family */}
-        <div className="control-group">
-          <select 
-            className="format-select"
-            style={{width: '100px'}}
-            onChange={(e) => editor.chain().focus().setFontFamily(e.target.value).run()}
-            value={editor.getAttributes('textStyle').fontFamily || 'Times New Roman'}
-          >
-            <option value="Times New Roman">Times New Roman</option>
-            <option value="Arial">Arial</option>
-            <option value="Calibri">Calibri</option>
-            <option value="Inter">Inter</option>
-          </select>
-        </div>
-
-        {/* Font Size */}
-        <div className="control-group">
-          <span className="control-label">Size</span>
-          <input 
-            type="number" 
-            className="format-input" 
-            placeholder="11"
-            onChange={(e) => editor.chain().focus().setFontSize(e.target.value + 'pt').run()}
-          />
-        </div>
 
         <div className="separator"></div>
 
@@ -133,38 +122,30 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, onSa
 
         <div className="separator"></div>
 
-        {/* Spacing Controls */}
+        {/* Bold & Underline */}
         <div className="control-group">
-          <span className="control-label">Line</span>
-          <select className="format-select" onChange={(e) => editor.chain().focus().setLineHeight(e.target.value).run()}>
-            <option value="1.0">1.0</option>
-            <option value="1.15">1.15</option>
-            <option value="1.5">1.5</option>
-          </select>
+          <button className={`icon-btn ${editor.isActive('bold') ? 'active' : ''}`} onClick={() => editor.chain().focus().toggleBold().run()}>B</button>
+          <button className={`icon-btn ${editor.isActive('underline') ? 'active' : ''}`} onClick={() => editor.chain().focus().toggleUnderline().run()}>U</button>
         </div>
 
-        <div className="control-group">
-          <span className="control-label" title="Space Before Paragraph">Pre (pt)</span>
-          <input 
-            type="number" 
-            className="format-input" 
-            placeholder="0"
-            onChange={(e) => editor.chain().focus().setMarginTop(e.target.value + 'pt').run()}
-          />
-        </div>
+        <div className="separator"></div>
 
-        <div className="control-group">
-          <span className="control-label" title="Space After Paragraph">Post (pt)</span>
-          <input 
-            type="number" 
-            className="format-input" 
-            placeholder="0"
-            onChange={(e) => editor.chain().focus().setMarginBottom(e.target.value + 'pt').run()}
-          />
-        </div>
+        {/* Line Height */}
+        <select
+          value={currentLineHeight}
+          onChange={e => {
+            editor.chain().focus().setLineHeight(e.target.value).run();
+            setCurrentLineHeight(e.target.value);
+          }}
+        >
+          <option value="1.0">1.0</option>
+          <option value="1.15">1.15</option>
+          <option value="1.5">1.5</option>
+          <option value="2.0">2.0</option>
+        </select>
+
       </div>
 
-      {/* --- SCROLL AREA --- */}
       <div className="editor-scroll-area">
         <div 
           className="zoom-frame" 
