@@ -28,6 +28,7 @@ const AiHighlight = Highlight.extend({
 
 const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => {
   const [currentLineHeight, setCurrentLineHeight] = useState('1.0');
+  const [currentFontSize, setCurrentFontSize] = useState('10');
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -75,9 +76,21 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => 
       setCurrentLineHeight(attrs.lineHeight || '1.0');
     };
     
+    const updateFontSize = () => {
+      const attrs = editor.getAttributes('textStyle');
+      setCurrentFontSize(attrs.fontSize || '10');
+    };
+    
     updateLineHeight();
-    editor.on('selectionUpdate', updateLineHeight);
-    editor.on('update', updateLineHeight);
+    updateFontSize();
+    editor.on('selectionUpdate', () => {
+      updateLineHeight();
+      updateFontSize();
+    });
+    editor.on('update', () => {
+      updateLineHeight();
+      updateFontSize();
+    });
     
     return () => {
       editor.off('selectionUpdate', updateLineHeight);
@@ -143,6 +156,26 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => 
           <option value="1.5">1.5</option>
           <option value="2.0">2.0</option>
         </select>
+
+        <div className="separator"></div>
+
+        {/* Font Size */}
+        <div className="control-group">
+          <button className="icon-btn" onClick={() => editor.chain().focus().setFontSize(Math.max(8, parseInt(currentFontSize) - 1)).run()}>A−</button>
+          <input 
+            type="number" 
+            min="8" 
+            max="72" 
+            value={currentFontSize}
+            onChange={e => {
+              const size = e.target.value;
+              setCurrentFontSize(size);
+              if (size) editor.chain().focus().setFontSize(size).run();
+            }}
+            style={{width: '40px', padding: '2px', textAlign: 'center'}}
+          />
+          <button className="icon-btn" onClick={() => editor.chain().focus().setFontSize(Math.min(72, parseInt(currentFontSize) + 1)).run()}>A+</button>
+        </div>
 
       </div>
 

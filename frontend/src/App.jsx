@@ -57,9 +57,9 @@ function App() {
     let html = '';
 
     // A. NAME/CONTACT HEADER
-    html += `<h1 style="${BASE_FONT} ${BASE_LINE_HEIGHT} font-size: 14pt; text-align: center; text-decoration: underline; margin-bottom: 2pt;">${data.personal.name}</h1>`;
-    html += `<p style="${BASE_FONT} ${BASE_FONT_SIZE} ${BASE_LINE_HEIGHT} text-align: center; margin-bottom: 2pt;">${data.personal.summary}</p>`;
-    html += `<p style="${BASE_FONT} ${BASE_LINE_HEIGHT} font-size: 8pt; text-align: center; margin-bottom: 10pt;">${data.personal.contact_info}</p>`;
+    html += `<h1 style="${BASE_FONT} ${BASE_LINE_HEIGHT} font-size: 14pt; text-align: center; text-decoration: underline;">${data.personal.name}</h1>`;
+    html += `<p style="${BASE_FONT} ${BASE_FONT_SIZE} ${BASE_LINE_HEIGHT} text-align: center;">${data.personal.summary}</p>`;
+    html += `<p style="${BASE_FONT} ${BASE_LINE_HEIGHT} font-size: 8pt; text-align: center;">${data.personal.contact_info}</p>`;
 
     // B. SECTIONS
     data.sections.forEach(section => {

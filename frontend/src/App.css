@@ -98,12 +98,11 @@ body { margin: 0; overflow: hidden; background-color: #f3f4f6; font-family: 'Int
 .editor-content .ProseMirror h2 {
   display: block;
   width: 100%;
-  border-bottom: 2px solid black; /* Thicker, clear line */
+  border-bottom: 1px solid black; /* Thicker, clear line */
   padding-bottom: 2px;
   margin-top: 12pt; 
   margin-bottom: 4pt;
   text-align: center;
-  font-weight: bold;
   font-size: 10pt;
   line-height: 1.0;
 }
@@ -224,7 +223,7 @@ input.format-input { width: 40px; text-align: center; }
 }
 /* Bullets */
 .editor-content .ProseMirror ul {
-  padding-left: 1.5rem; margin-top: 0; margin-bottom: 0.5rem;
+  padding-left: 1.5rem; margin-top: 0; margin-bottom: 1em;
 }
 .editor-content .ProseMirror li { 
   margin-bottom: 2px;
