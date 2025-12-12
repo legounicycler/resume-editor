@@ -41,6 +41,9 @@ function App() {
   };
   const handleDragEnd = () => { isDragging.current = false; };
 
+  // NEW State for persistent styles (will hold values fetched from /load-style)
+  const [currentStyle, setCurrentStyle] = useState({});
+
   useEffect(() => {
     window.addEventListener('mousemove', handleDrag);
     window.addEventListener('mouseup', handleDragEnd);
@@ -50,16 +53,69 @@ function App() {
     };
   }, []);
 
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-    const formData = new FormData();
-    formData.append('file', file);
+
+  const generateResumeHtml = (data) => {
+    // This is where we inject the *exact* CSS properties to match your document.
+    let html = '';
+
+    // A. NAME/CONTACT HEADER (Centered and Spaced)
+    // NOTE: Using a single large p tag for the contact info line will prevent easy editing/re-centering of individual links.
+    html += `<p style="text-align: center; font-size: 16pt; font-weight: bold; margin-bottom: 2pt;">${data.personal.name}</p>`;
+    html += `<p style="text-align: center; font-size: 11pt; margin-bottom: 8pt;">${data.personal.summary}</p>`;
+    html += `<p style="text-align: center; font-size: 10pt; margin-bottom: 12pt;">${data.personal.contact_info}</p>`;
+    
+    // B. SECTIONS
+    data.sections.forEach(section => {
+        // Section Title (Bordered Look)
+        html += `<h2 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid black; padding-bottom: 2px; margin-top: 10pt; margin-bottom: 5pt; text-align: center;">${section.title}</h2>`;
+
+        section.entries.forEach(entry => {
+            // Two-Column Simulation (using flexbox for clean right-alignment)
+            // Inject a style to set the font size for the entire entry
+            html += `
+                <div style="font-size: 10pt;">
+                    <p style="display: flex; justify-content: space-between; margin-bottom: 0pt; margin-top: 5pt;">
+                        <span style="font-weight: bold;">${entry.company}</span>
+                        <span style="font-style: italic;">${entry.dates}</span>
+                    </p>
+            `;
+            
+            if (entry.description) {
+                // Description (like the GPA line)
+                html += `<p style="margin-top: 0; margin-bottom: 2pt;">${entry.description}</p>`;
+            }
+
+            // Bullet Points
+            if (entry.bullets && entry.bullets.length > 0) {
+                // Lists must be wrapped in a div to properly inherit spacing properties from Tiptap
+                html += `<ul style="margin-top: 0; margin-bottom: 5pt; padding-left: 18pt;">`;
+                entry.bullets.forEach(bullet => {
+                    html += `<li style="margin-bottom: 1pt;">${bullet}</li>`;
+                });
+                html += `</ul>`;
+            }
+            
+            // Close the entry div
+            html += `</div>`;
+        });
+    });
+
+    return html;
+};
+
+  // 2. NEW Asynchronous function to load data from the backend
+  const handleLoadStructuredData = async () => {
     try {
-      const res = await axios.post('http://localhost:5000/upload', formData);
-      setResumeHtml(res.data.html);
-      setToast({ message: 'Upload Successful', type: 'success' });
-    } catch (err) { setToast({ message: 'Upload Failed', type: 'error' }); }
+        const response = await axios.get('http://localhost:5000/get-data');
+        const structuredData = response.data;
+        
+        const structuredHtml = generateResumeHtml(structuredData);
+        setResumeHtml(structuredHtml);
+        setToast({ message: 'Data loaded from testResume.json!', type: 'success' });
+    } catch (err) {
+        const serverMsg = err.response?.data?.error || err.message;
+        setToast({ message: `Load Error: ${serverMsg}. Check your Flask server.`, type: 'error', stack: err.stack });
+    }
   };
 
   const handleGenerate = async () => {
@@ -100,8 +156,8 @@ function App() {
           <ResumeEditor 
             content={resumeHtml} 
             zoom={resumeZoom} 
-            onUpload={handleFileUpload}
-            setZoom={setResumeZoom} // Pass zoom setter down
+            onLoadData={handleLoadStructuredData} // Pass the new async handler
+            setZoom={setResumeZoom} 
           />
         </div>
 

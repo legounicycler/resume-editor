@@ -23,7 +23,7 @@ const AiHighlight = Highlight.extend({
   },
 });
 
-const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onUpload }) => {
+const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, onSaveStyles }) => {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -71,12 +71,21 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onUpload }) => {
       
       {/* --- TOOLBAR --- */}
       <div className="panel-toolbar">
-        {/* Upload Button */}
-        <label className="upload-label">
-          <span>📂 Open</span>
-          <input type="file" accept=".docx" onChange={onUpload} />
-        </label>
+        {/* 1. Load Data Button */}
+        <button className="upload-label" onClick={onLoadData}>
+          <span>📋 Load Resume Data</span>
+        </button>
         
+        {/* 2. SAVE STYLES BUTTON (NEW) */}
+        <button 
+          className="upload-label" /* Reusing the upload-label style for consistency */
+          style={{backgroundColor: '#10b981', color: 'white'}}
+          onClick={() => onSaveStyles(editor)}
+          disabled={!editor}
+        >
+          💾 Save Style
+        </button>
+
         <div className="separator"></div>
         
         {/* Zoom Controls (Integrated here) */}
@@ -108,7 +117,7 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onUpload }) => {
             type="number" 
             className="format-input" 
             placeholder="11"
-            onChange={(e) => editor.chain().focus().setFontSize(e.target.value).run()}
+            onChange={(e) => editor.chain().focus().setFontSize(e.target.value + 'pt').run()}
           />
         </div>
 
@@ -135,27 +144,27 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onUpload }) => {
         </div>
 
         <div className="control-group">
-          <span className="control-label" title="Space Before Paragraph">Pre</span>
+          <span className="control-label" title="Space Before Paragraph">Pre (pt)</span>
           <input 
             type="number" 
             className="format-input" 
             placeholder="0"
-            onChange={(e) => editor.chain().focus().setMarginTop(e.target.value).run()}
+            onChange={(e) => editor.chain().focus().setMarginTop(e.target.value + 'pt').run()}
           />
         </div>
 
         <div className="control-group">
-          <span className="control-label" title="Space After Paragraph">Post</span>
+          <span className="control-label" title="Space After Paragraph">Post (pt)</span>
           <input 
             type="number" 
             className="format-input" 
             placeholder="0"
-            onChange={(e) => editor.chain().focus().setMarginBottom(e.target.value).run()}
+            onChange={(e) => editor.chain().focus().setMarginBottom(e.target.value + 'pt').run()}
           />
         </div>
       </div>
 
-      {/* --- SCROLL AREA (Now properly filling space) --- */}
+      {/* --- SCROLL AREA --- */}
       <div className="editor-scroll-area">
         <div 
           className="zoom-frame" 

@@ -65,6 +65,67 @@ def upload_file():
     
     return jsonify({"html": html_content})
 
+# --- NEW ROUTE TO SERVE JSON DATA ---
+@app.route('/get-data', methods=['GET'])
+def get_resume_data():
+    try:
+        # Load the JSON file directly from the backend directory
+        with open('testResume.json', 'r') as f:
+            data = json.load(f)
+        return jsonify(data)
+    except FileNotFoundError:
+        return jsonify({"error": "testResume.json not found in backend directory."}), 404
+    except json.JSONDecodeError:
+        return jsonify({"error": "Error reading JSON data."}), 500
+    
+# --- NEW ROUTE TO SAVE STYLES ---
+@app.route('/save-style', methods=['POST'])
+def save_default_style():
+    try:
+        data = request.json
+        
+        # We only save the styling parameters, not the entire resume content
+        style_config = {
+            "fontFamily": data.get("fontFamily", "Times New Roman"),
+            "fontSize": data.get("fontSize", 11),
+            "lineHeight": data.get("lineHeight", 1.15),
+            "spacingPre": data.get("spacingPre", 0),
+            "spacingPost": data.get("spacingPost", 0),
+            "zoom": data.get("zoom", 1.0)
+            # Add other simple parameters here as needed
+        }
+        
+        with open('default_style.json', 'w') as f:
+            json.dump(style_config, f, indent=4)
+            
+        return jsonify({"message": "Default styles saved successfully."}), 200
+
+    except Exception as e:
+        error_trace = traceback.format_exc()
+        print("!!! STYLE SAVE ERROR !!!", file=sys.stderr)
+        print(error_trace, file=sys.stderr)
+        return jsonify({"error": "Failed to save style", "details": str(e)}), 500
+
+# --- NEW ROUTE TO LOAD STYLES ---
+@app.route('/load-style', methods=['GET'])
+def load_default_style():
+    try:
+        with open('default_style.json', 'r') as f:
+            config = json.load(f)
+        return jsonify(config)
+    except FileNotFoundError:
+        # Return sensible defaults if the file doesn't exist yet
+        return jsonify({
+            "fontFamily": "Times New Roman",
+            "fontSize": 11,
+            "lineHeight": 1.15,
+            "spacingPre": 0,
+            "spacingPost": 0,
+            "zoom": 0.8
+        })
+    except json.JSONDecodeError:
+        return jsonify({"error": "Error reading style JSON."}), 500
+
 @app.route('/analyze', methods=['POST'])
 def analyze_resume():
     try:
