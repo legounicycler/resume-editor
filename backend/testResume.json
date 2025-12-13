@@ -9,27 +9,29 @@
     "website": "https://anthony.limiero.com"
   },
   "sections": [
-    {
-      "title": "Education",
+    { "title": "Education",
       "entries": [
         {
-          "company": "Georgia Institute of Technology",
+          "school": "Georgia Institute of Technology",
           "location": "Atlanta, GA",
           "dates": "Aug 2017 - May 2022",
-          "GPA": "3.90 / 4.00",
-          "description": null,
-          "bullets": ["Bachelors of Science: Aerospace Engineering - Highest Honors | GPA: 3.90 / 4.00"]
+          "degrees": [
+            {
+              "gpa": "3.90 / 4.00",
+              "degree": "Bachelor's of Science",
+              "major": "Aerospace Engineering - Highest Honors",
+              "bullets":[]
+            }
+          ]
         }
       ]
     },
-    {
-      "title": "Work Experience",
+    { "title": "Work Experience",
       "entries": [
         {
           "company": "Georgia Tech Christian Campus Fellowship - Associate Campus Minister",
           "location":"Atlanta, GA",
           "dates": "Aug 2022 - May 2025",
-          "description": null,
           "bullets": [
             "Managed a team of 3 interns and oversaw the ministry for all incoming freshmen",
             "Demonstrated strong communication skills through public speaking and small group facilitation",
@@ -41,7 +43,6 @@
           "company": "NASA Jet Propulsion Laboratory - Software Computing System Intern",
           "location": "Pasadena, CA",
           "dates": "May 2022 - Jul 2022",
-          "description": null,
           "bullets": [
             "Created auto-coding tool to generate C++ command validation code for Mars Sample Return mission"
           ]
@@ -50,7 +51,6 @@
             "company": "NASA Goddard Space Flight Center - In-Space Assembly Intern",
             "location": "Greenbelt, MD",
             "dates": "Jun 2021 - Aug 2021",
-            "description": null,
             "bullets": [
                 "Developed concepts for robotically-assembled spacecraft harnessing by interviewing subject matter experts",
                 "Illustrated/animated assembly CONOPS in CAD and Blender and presented findings to senior engineers"
@@ -60,7 +60,6 @@
           "company": "Georgia Tech Research Institute (GTRI) - Mech Engineering Student Co-op",
           "location": "Atlanta, GA",
           "dates": "Aug 2019 - Jun 2021",
-          "description": null,
           "bullets": [
             "Re-engineered and qualified legacy avionics components for the US Air Force C-5 Galaxy cargo plane",
             "Designed and manufactured fixturing for verification of mechanical requirements, including vibration testing",
@@ -73,14 +72,12 @@
         }
       ]
     },
-    {
-      "title": "Research",
+    { "title": "Research",
       "entries": [
         {
           "company": "Space Systems Design Lab (SSDL)",
           "location": "Georgia Tech - Atlanta, GA",
           "dates": "Jan 2020 - May 2022",
-          "description": null,
           "bullets": [
             "Served as <strong>project lead</strong> and flight software team lead on cross-disciplinary team of engineers",
             "Managed schedule, conducted design reviews, created test procedures, and coordinated requirements with JAXA",
@@ -91,13 +88,98 @@
         }
       ]
     },
-    {
-      "title": "Skills",
+    { "title": "Projects",
       "entries": [
         {
-          "description": "GD&T, CAD, SolidWorks, SolidWorks PDM, OnShape, MATLAB, Simulink, Python, Embedded C/C++, Git, Java, Linux, Arduino, Scripting, Microsoft Office, Blender, Design For Manufacturing, 3D Printing, Mill, Lathe, Water Jet, Welding",
-          "bullets": []
+          "title": "Susbmersible ROV",
+          "description": "Created ROV to explore underwater caves with Raspberry Pi, custom PCB, & 3D printing",
+          "skills": [
+            "Python",
+            "Raspberry Pi",
+            "PCB Design",
+            "3D Printing"
+          ]
+        },
+        {
+          "title": "Space Life Detection Instrument",
+          "description": "Prototyped instrument for in-situ water measurements on icy moons",
+          "skills": []
+        },
+        {
+          "title": "Custom 3D Printer",
+          "description": "Designed a direct-drive 3D printer with custom manufactured parts",
+          "skills": []
+        },
+        {
+          "title": "Mars Mission Proposal",
+          "description": "Senior design project modeling lander/orbiter in SolidWorks for seismic research",
+          "skills": []
+        },
+        {
+          "title": "MATLAB Jet Engine Design Tool",
+          "description": "Modeled/simulated thermodynamic states of ramjets, turbofans, & turbojets",
+          "skills": []
+        },
+        {
+          "title": "Personal Finance Web App",
+          "description": "Full stack web app using Python and JavaScript hosted on Linux virtual machine",
+          "skills": []
+        },
+        {
+          "title": "Self-Published Novels",
+          "description": "Co-wrote 2 young adult time-travel fantasy novels in the Son of Time Chronicles",
+          "skills": []
         }
+      ]
+    },
+    { "title": "Leadership",
+      "entries": [
+        {
+          "title": "300 Mile Unicycle Ride Fundraiser",
+          "description": "Raised $3000 in 10 days for community leaders in impoverished south Asia"
+        },
+        {
+          "title": "La Amistad",
+          "description": "Organized GT students to help weekly tutor elementary kids from non-english speaking homes"
+        },
+        {
+          "title": "Appalachia Service Project",
+          "description": "Led two student trips to rural Appalachia to repair homes for families in poverty"
+        },
+        {
+          "title": "Casas Por Cristo",
+          "description": "Built three houses over three years for families in severe poverty in Juarez, Mexico"
+        },
+        {
+          "title": "Exchange Intern CMFI",
+          "description": "Volunteering/teaching English at a college community in Santiago, Chile for 5 months"
+        }
+      ]
+    },
+    { "title": "Skills",
+      "entries": [
+        "GD&T",
+        "CAD",
+        "SolidWorks",
+        "SolidWorks PDM",
+        "OnShape",
+        "MATLAB",
+        "Simulink",
+        "Python",
+        "Embedded C/C++",
+        "Git",
+        "Java",
+        "Linux",
+        "Arduino",
+        "Scripting",
+        "Microsoft Office",
+        "Blender",
+        "Design For Manufacturing",
+        "3D Printing",
+        "Mill",
+        "Lathe",
+        "Water Jet",
+        "Welding"
       ]
     }
   ]

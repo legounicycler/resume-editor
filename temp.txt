@@ -1,14 +1,14 @@
+TODO:
 
-Traceback (most recent call last):
-  File "C:\Users\norma\Documents\GitHub\resume-editor\backend\app.py", line 83, in analyze_resume
-    ai_data = json.loads(clean_text)
-  File "C:\Users\norma\AppData\Local\Programs\Python\Python313\Lib\json\__init__.py", line 346, in loads
-    return _default_decoder.decode(s)
-           ~~~~~~~~~~~~~~~~~~~~~~~^^^
-  File "C:\Users\norma\AppData\Local\Programs\Python\Python313\Lib\json\decoder.py", line 345, in decode
-    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
-               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\norma\AppData\Local\Programs\Python\Python313\Lib\json\decoder.py", line 361, in raw_decode
-    obj, end = self.scan_once(s, idx)
-               ~~~~~~~~~~~~~~^^^^^^^^
-json.decoder.JSONDecodeError: Invalid control character at: line 2 column 1750 (char 1751)
+RESUME FINAL FORMATTING
+1. Font size editor still isn't working. Only increments by one and doesn't update text box when it does increment.
+2. Use AI to add <strong> tags to the json file given the resume in google docs
+3. Generate JSON resumes for each base resume and ensure they all look fine
+
+
+DOCUMENT EDITOR FORMATTING
+1. Get rid of extra scroll space at end of document
+2. Ensure that when text overflows onto the next page it respects bottom margin and displays on a separate page
+3. Figure out how to export to PDF and ensure it still looks good
+
+AI Integration

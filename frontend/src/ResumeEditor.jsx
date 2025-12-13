@@ -51,7 +51,6 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => 
       LineHeight,
       FontSize,
       ParagraphSpacing,
-      // IconNode,
     ],
     content: content,
     onUpdate: ({ editor }) => attachTooltips(),

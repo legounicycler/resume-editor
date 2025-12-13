@@ -223,11 +223,12 @@ input.format-input { width: 40px; text-align: center; }
 }
 /* Bullets */
 .editor-content .ProseMirror ul {
-  padding-left: 1.5rem; margin-top: 0; margin-bottom: 1em;
+  padding-left: .85rem;
+  margin-top: 0;
+  margin-bottom: 1em;
+  text-indent: -0.25rem;
 }
-.editor-content .ProseMirror li { 
-  margin-bottom: 2px;
-}
+
 
 /* Headers */
 .editor-content .ProseMirror h1 {
@@ -282,6 +283,19 @@ input.format-input { width: 40px; text-align: center; }
 .myicon {
   width: 12px;
   height: 12px;
-  vertical-align: middle;
-  margin-right: 2px;
+  vertical-align: middle;;
+}
+
+/* Target the horizontal rule element for styling */
+.editor-content .ProseMirror hr {
+  /* Remove default border and add custom border */
+  border: none;
+  border-top: 1px solid black; 
+  
+  /* Remove default spacing and add custom margins */
+  margin-top: 2pt;
+  margin-bottom: 2pt;
+  
+  /* Ensure it spans the full width if needed */
+  width: 100%;
 }

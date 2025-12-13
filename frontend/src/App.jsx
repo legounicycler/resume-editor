@@ -74,20 +74,59 @@ function App() {
     const BASE_EVERYTHING = `${BASE_FONT} ${BASE_FONT_SIZE} ${BASE_LINE_HEIGHT} ${BASE_MARGIN}`;
     
     // Helper to generate the img tag for an icon
-    const getIcon = (type, size = "16px") => {
-      // We assume 'data.icons' is loaded with Base64 strings
+    const getIcon = (type) => {
       const base64Src = icons[type]; 
       if (!base64Src) return ''; 
-
-      // Use a standard IMG tag, which Tiptap's Image extension handles
       return `<img src="${base64Src}">`;
     };
+
+    // Construct entry header
+    function constructEntryHeader(title, location, dates) {
+      return `
+      <table style="width: 100%; border-collapse: collapse; margin: 0; padding: 0; table-layout: fixed;">
+        <tbody>
+          <tr>
+            <td style="vertical-align: middle; box-sizing: border-box;" data-col-width="80%">
+              <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE} line-height: 1.15;">
+                <u style="text-decoration: underline;">
+                  <span style="font-weight: bold;">${title}</span>
+                  <span style="font-style: italic;"> - ${location}</span>
+                </u>
+              </p>
+            </td>
+            <td style="vertical-align: middle; white-space: nowrap; box-sizing: border-box;" data-col-width="20%">
+              <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE} line-height: 1.15; text-align: right;">
+                <span style="font-weight: bold; display: inline-block;">${dates}</span>
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      `;
+    }
+
+    // Construct bulleted list
+    function constructBulletedList(bullets) {
+      let listHtml = `<ul style="padding-left: 1.5rem; list-style-type: disc;">`;
+      bullets.forEach(bullet => {
+        listHtml += `<li style="${BASE_EVERYTHING}">`;
+        listHtml += `
+          <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE} line-height: 1.0;">
+            ${bullet}
+          </p>
+        `
+        listHtml += `</li>`;
+      });
+      listHtml += `</ul>`;
+      return listHtml;
+    }
 
     let html = '';
 
     // A. NAME/CONTACT HEADER
     html += `<h1 style="${BASE_FONT} ${BASE_LINE_HEIGHT} text-align: center; text-decoration: underline;">${data.personal.name}</h1>`;
     html += `<p style="${BASE_FONT} ${BASE_FONT_SIZE} ${BASE_LINE_HEIGHT} margin-top: 3px; margin-bottom: 3px; text-align: left;"><strong><u>Summary:</u></strong> ${data.personal.summary}</p>`;
+    html += `<\hr>`
     html += `
     <p style="${BASE_FONT} line-height: 1.5; font-size: 9pt; margin-bottom: 3px; text-align: center;">
       ${getIcon('email')} <a href="mailto:${data.personal.email}" style="text-decoration: none; color: inherit;">${data.personal.email}</a> | 
@@ -100,49 +139,96 @@ function App() {
     data.sections.forEach(section => {
       html += `<h2 style="${BASE_FONT} text-align: center;">${section.title}</h2>`;
 
-      section.entries.forEach(entry => {
-        html += `<div style="${BASE_FONT}">`;
+      // --- Education section ---
+      if (section.title.toLowerCase().includes('education')) {
+        section.entries.forEach(entry => {
 
-        if (entry.company && entry.dates && entry.location) {
-          html += `
-            <table style="width: 100%; border-collapse: collapse; margin: 0; padding: 0; table-layout: fixed;">
-              <tbody>
-                <tr>
-                  <td style="vertical-align: middle; box-sizing: border-box;" data-col-width="80%">
-                    <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE} line-height: 1.15;">
-                      <u style="text-decoration: underline;">
-                        <span style="font-weight: bold;">${entry.company}</span>
-                        <span style="font-style: italic;"> - ${entry.location}</span>
-                      </u>
-                    </p>
-                  </td>
-                  <td style="vertical-align: middle; white-space: nowrap; box-sizing: border-box;" data-col-width="20%">
-                    <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE} line-height: 1.15; text-align: right;">
-                      <span style="font-weight: bold; display: inline-block;">${entry.dates}</span>
-                    </p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          `;
-        }
+          // 1. School title (i.e. company name + location + dates)
+          html += constructEntryHeader(entry.school, entry.location, entry.dates);
 
-        // Description
-        if (entry.description) {
-           html += `<p style="${BASE_EVERYTHING}">${entry.description}</p>`;
-        }
-        // Bullets
-        if (entry.bullets && entry.bullets.length > 0) {
+          // 2. Degree, Major, GPA
           html += `<ul style="padding-left: 1.5rem; list-style-type: disc;">`;
-          entry.bullets.forEach(bullet => {
-            html += `<li style="${BASE_EVERYTHING}">${bullet}</li>`;
+          entry.degrees.forEach(degreeEntry => {
+            html += `<li style="${BASE_EVERYTHING}">`;
+            html += `
+              <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE} line-height: 1.15;">
+                <strong>${degreeEntry.degree}:</strong> ${degreeEntry.major}&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong>GPA:</strong> <span display: inline-block;">${degreeEntry.gpa}</span>
+              </p>
+            `
+            html += `</li>`;
+            if (degreeEntry.bullets && degreeEntry.bullets.length > 0) {
+              // 3. Bullets
+              html += constructBulletedList(degreeEntry.bullets);
+            }
           });
           html += `</ul>`;
-        }
+        });
+      }
 
-        // CLOSE wrapper for the entry (matches the opening DIV above)
-        html += `</div>`;
-      });
+      // --- Work Experience section ---
+      if (section.title.toLowerCase().includes('work experience')) {
+        section.entries.forEach(entry => {
+          // 1. Section Title (i.e. company name + location + dates)
+          html += constructEntryHeader(entry.company, entry.location, entry.dates);
+
+          // 2. Bullets
+          html += constructBulletedList(entry.bullets);
+          // html += `<p><p/>`; // Extra space after section
+        });
+      }
+
+      // --- Research section ---
+      if (section.title.toLowerCase().includes('research')) {
+        section.entries.forEach(entry => {
+          // 1. Section Title (i.e. company name + location + dates)
+          html += constructEntryHeader(entry.company, entry.location, entry.dates);
+
+          // 2. Bullets
+          html += constructBulletedList(entry.bullets);
+        });
+      }
+
+      // --- Projects section ---
+      if (section.title.toLowerCase().includes('projects')) {
+        html += `<ul style="padding-left: 1.5rem;">`;
+        section.entries.forEach(entry => {
+          html += `<li style="${BASE_EVERYTHING}">`;
+          html += `
+            <p style="${BASE_EVERYTHING}">
+              <u><strong>${entry.title}</strong></u> - ${entry.description}
+            </p>
+          `
+          html += `</li>`;
+        });
+        html += `</ul>`;
+      }
+
+      // --- Leadership section ---
+      if (section.title.toLowerCase().includes('leadership')) {
+        html += `<ul style="padding-left: 1.5rem; list-style-type: disc;">`;
+        section.entries.forEach(entry => {
+          html += `<li style="${BASE_EVERYTHING}">`;
+          html += `
+            <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE}">
+              <u><strong>${entry.title}</strong></u> - ${entry.description})
+            </p>
+          `
+          html += `</li>`;
+        });
+        html += `</ul>`;
+      }
+
+      // --- Skills section ---
+      if (section.title.toLowerCase().includes('skills')) {
+        html += `<p style="${BASE_FONT} ${BASE_LINE_HEIGHT} ${BASE_MARGIN} font-size: 9pt; text-align: center;">`;
+        section.entries.forEach(entry => {
+          html += `${entry}, `;
+        });
+        html = html.slice(0, -2); // Remove trailing comma and space
+        html += `</p>`;
+        return; // Skip the rest of the loop for skills
+      }
+    
     });
 
     return html;
