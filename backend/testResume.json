@@ -3,7 +3,10 @@
     "name": "Anthony Limiero",
     "summary": "Aerospace engineer with 2 years experience as a mechanical engineer designing avionics hardware and test fixturing using SolidWorks, owning projects from requirements to design to manufacturing to assembly and testing.",
     "details": "U.S. citizen eligible for security clearance seeking full time employment starting January 2026.",
-    "contact_info": "anthony@limiero.com | 661-431-7218 | https://www.linkedin.com/in/anthony-limiero/ | https://anthony.limiero.com"
+    "email": "anthony@limiero.com",
+    "phone": "661-431-7218",
+    "linkedin": "https://www.linkedin.com/in/anthony-limiero",
+    "website": "https://anthony.limiero.com"
   },
   "sections": [
     {
@@ -13,6 +16,7 @@
           "company": "Georgia Institute of Technology",
           "location": "Atlanta, GA",
           "dates": "Aug 2017 - May 2022",
+          "GPA": "3.90 / 4.00",
           "description": null,
           "bullets": ["Bachelors of Science: Aerospace Engineering - Highest Honors | GPA: 3.90 / 4.00"]
         }
@@ -78,7 +82,7 @@
           "dates": "Jan 2020 - May 2022",
           "description": null,
           "bullets": [
-            "Served as project lead and flight software team lead on cross-disciplinary team of engineers",
+            "Served as <strong>project lead</strong> and flight software team lead on cross-disciplinary team of engineers",
             "Managed schedule, conducted design reviews, created test procedures, and coordinated requirements with JAXA",
             "Developed satellite hardware and software for two multidisciplinary 1U CubeSat missions with 1 year timelines",
             "Applied analysis and test methods including RF, vibration, and TVAC testing, plus clean room integration",

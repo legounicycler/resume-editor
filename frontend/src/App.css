@@ -278,3 +278,10 @@ input.format-input { width: 40px; text-align: center; }
   background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 4px;
   font-size: 0.75rem; white-space: pre-wrap; max-height: 200px; overflow-y: auto; margin-top: 0.5rem;
 }
+
+.myicon {
+  width: 12px;
+  height: 12px;
+  vertical-align: middle;
+  margin-right: 2px;
+}

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import ResumeEditor from './ResumeEditor';
 import JobDescription from './JobDescription';
@@ -28,6 +28,9 @@ function App() {
   const [leftWidth, setLeftWidth] = useState(60);
   const [resumeZoom, setResumeZoom] = useState(0.8);
   const [jdZoom, setJdZoom] = useState(1.0);
+  const [icons, setIcons] = useState({}); // Store loaded icons here
+
+
   const isDragging = useRef(false);
   const handleDragStart = () => { isDragging.current = true; };
   const handleDrag = (e) => {
@@ -46,6 +49,22 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    // Function to fetch icons
+    const fetchIcons = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/get-icons-png');
+        setIcons(res.data);
+        console.log('Icons loaded:', res.data);
+      } catch (err) {
+        setToast({ message: 'Failed to load icons from server.', type: 'error' });
+      }
+    };
+    
+    fetchIcons();
+    handleLoadStructuredData(); // Load data after fetching icons (or alongside)
+  }, []);
+
   const generateResumeHtml = (data) => {
     // Defined Base Styles
     const BASE_FONT = "font-family: Arial, sans-serif;"
@@ -53,21 +72,36 @@ function App() {
     const BASE_LINE_HEIGHT = "line-height: 1.0;"
     const BASE_MARGIN = "margin: 0;"
     const BASE_EVERYTHING = `${BASE_FONT} ${BASE_FONT_SIZE} ${BASE_LINE_HEIGHT} ${BASE_MARGIN}`;
+    
+    // Helper to generate the img tag for an icon
+    const getIcon = (type, size = "16px") => {
+      // We assume 'data.icons' is loaded with Base64 strings
+      const base64Src = icons[type]; 
+      if (!base64Src) return ''; 
+
+      // Use a standard IMG tag, which Tiptap's Image extension handles
+      return `<img src="${base64Src}">`;
+    };
 
     let html = '';
 
     // A. NAME/CONTACT HEADER
-    html += `<h1 style="${BASE_FONT} ${BASE_LINE_HEIGHT} font-size: 14pt; text-align: center; text-decoration: underline;">${data.personal.name}</h1>`;
-    html += `<p style="${BASE_FONT} ${BASE_FONT_SIZE} ${BASE_LINE_HEIGHT} text-align: center;">${data.personal.summary}</p>`;
-    html += `<p style="${BASE_FONT} ${BASE_LINE_HEIGHT} font-size: 8pt; text-align: center;">${data.personal.contact_info}</p>`;
+    html += `<h1 style="${BASE_FONT} ${BASE_LINE_HEIGHT} text-align: center; text-decoration: underline;">${data.personal.name}</h1>`;
+    html += `<p style="${BASE_FONT} ${BASE_FONT_SIZE} ${BASE_LINE_HEIGHT} margin-top: 3px; margin-bottom: 3px; text-align: left;"><strong><u>Summary:</u></strong> ${data.personal.summary}</p>`;
+    html += `
+    <p style="${BASE_FONT} line-height: 1.5; font-size: 9pt; margin-bottom: 3px; text-align: center;">
+      ${getIcon('email')} <a href="mailto:${data.personal.email}" style="text-decoration: none; color: inherit;">${data.personal.email}</a> | 
+      ${getIcon('phone')} <span>${data.personal.phone}</span> | 
+      ${getIcon('linkedin')} <a href="${data.personal.linkedin}" target="_blank" style="text-decoration: none; color: inherit;">${data.personal.linkedin}</a> | 
+      ${getIcon('website')} <a href="${data.personal.website}" target="_blank" style="text-decoration: none; color: inherit;">${data.personal.website}</a>
+    </p>`;
 
     // B. SECTIONS
     data.sections.forEach(section => {
-      html += `<h2 style="${BASE_FONT} font-weight: bold; text-align: center; border-bottom: 1px solid black; margin-top: 10pt; margin-bottom: 4pt;">${section.title}</h2>`;
+      html += `<h2 style="${BASE_FONT} text-align: center;">${section.title}</h2>`;
 
       section.entries.forEach(entry => {
-        // OPEN wrapper for the whole entry (fix: was missing — previously only had a closing </div>)
-        html += `<div style="${BASE_FONT} margin-bottom:4pt;">`;
+        html += `<div style="${BASE_FONT}">`;
 
         if (entry.company && entry.dates && entry.location) {
           html += `
@@ -99,7 +133,7 @@ function App() {
         }
         // Bullets
         if (entry.bullets && entry.bullets.length > 0) {
-          html += `<ul style="margin: 0; padding-left: 1.5rem; list-style-type: disc;">`;
+          html += `<ul style="padding-left: 1.5rem; list-style-type: disc;">`;
           entry.bullets.forEach(bullet => {
             html += `<li style="${BASE_EVERYTHING}">${bullet}</li>`;
           });

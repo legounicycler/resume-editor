@@ -1,16 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+
+// Tiptap Extensions
 import Highlight from '@tiptap/extension-highlight';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableHeader } from '@tiptap/extension-table-header';
+import { Image } from '@tiptap/extension-image';
+
+// Custom Extensions
 import { CustomTableCell } from './extensions/CustomTableCell';
 import { LineHeight } from './extensions/LineHeight';
 import { FontSize } from './extensions/FontSize';
 import { ParagraphSpacing } from './extensions/ParagraphSpacing';
+// import { IconNode } from './extensions/IconNode';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 
@@ -29,6 +35,8 @@ const AiHighlight = Highlight.extend({
 const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => {
   const [currentLineHeight, setCurrentLineHeight] = useState('1.0');
   const [currentFontSize, setCurrentFontSize] = useState('10');
+  const [currentMarginBottom, setCurrentMarginBottom] = useState('0'); // New state for margin bottom
+  const [currentMarginTop, setCurrentMarginTop] = useState('0');     // New state for margin top
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -36,12 +44,14 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => 
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       AiHighlight.configure({ multipart: true }),
       Table.configure({ resizable: true }),
+      Image.configure({ inline: true, allowBase64: true, HTMLAttributes: { class: 'myicon' } }),
       TableRow,
       TableHeader,
       CustomTableCell,
       LineHeight,
       FontSize,
       ParagraphSpacing,
+      // IconNode,
     ],
     content: content,
     onUpdate: ({ editor }) => attachTooltips(),
@@ -77,24 +87,69 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => 
     };
     
     const updateFontSize = () => {
-      const attrs = editor.getAttributes('textStyle');
-      setCurrentFontSize(attrs.fontSize || '10');
+      // 1. Check for inline style (Mark) - Highest priority
+      const markAttrs = editor.getAttributes('textStyle');
+      if (markAttrs.fontSize) {
+        setCurrentFontSize(markAttrs.fontSize.replace('pt', ''));
+        return;
+      }
+
+      // 2. Check for block level style (Node) - Fallback
+      // We check common block types that support fontSize
+      const blockTypes = ['paragraph', 'heading', 'listItem', 'tableCell', 'tableHeader'];
+      for (const type of blockTypes) {
+        if (editor.isActive(type)) {
+          const nodeAttrs = editor.getAttributes(type);
+          if (nodeAttrs.fontSize) {
+            setCurrentFontSize(nodeAttrs.fontSize.replace('pt', ''));
+            return;
+          }
+        }
+      }
+
+      // 3. Default fallback
+      setCurrentFontSize('10');
     };
     
+    const updateMarginSpacing = () => {
+      const { $from } = editor.state.selection;
+      // Get attributes for the current node or its parent if it's an inline node within a block
+      const node = $from.node();
+      const parent = $from.parent;
+      let attrs = {};
+      // If the selection is inside text (e.g., a word in a paragraph), get parent's attributes.
+      // Otherwise, get the attributes of the current node.
+      if (node.type.name === 'text' && parent) {
+        attrs = editor.getAttributes(parent.type.name);
+      } else {
+        attrs = editor.getAttributes(node.type.name);
+      }
+
+      setCurrentMarginBottom(attrs.marginBottom || '0');
+      setCurrentMarginTop(attrs.marginTop || '0');
+    };
+
     updateLineHeight();
     updateFontSize();
+    updateMarginSpacing(); // Initialize margin spacing
     editor.on('selectionUpdate', () => {
       updateLineHeight();
       updateFontSize();
+      updateMarginSpacing(); // Update margin spacing on selection change
     });
     editor.on('update', () => {
       updateLineHeight();
       updateFontSize();
+      updateMarginSpacing(); // Update margin spacing on editor content change
     });
     
     return () => {
       editor.off('selectionUpdate', updateLineHeight);
+      editor.off('selectionUpdate', updateFontSize);
+      editor.off('selectionUpdate', updateMarginSpacing); // Cleanup for margin spacing
       editor.off('update', updateLineHeight);
+      editor.off('update', updateFontSize);
+      editor.off('update', updateMarginSpacing); // Cleanup for margin spacing
     };
   }, [editor]);
 
@@ -135,27 +190,24 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => 
 
         <div className="separator"></div>
 
-        {/* Bold & Underline */}
-        <div className="control-group">
-          <button className={`icon-btn ${editor.isActive('bold') ? 'active' : ''}`} onClick={() => editor.chain().focus().toggleBold().run()}>B</button>
-          <button className={`icon-btn ${editor.isActive('underline') ? 'active' : ''}`} onClick={() => editor.chain().focus().toggleUnderline().run()}>U</button>
-        </div>
-
-        <div className="separator"></div>
-
         {/* Line Height */}
-        <select
-          value={currentLineHeight}
-          onChange={e => {
-            editor.chain().focus().setLineHeight(e.target.value).run();
-            setCurrentLineHeight(e.target.value);
-          }}
-        >
-          <option value="1.0">1.0</option>
-          <option value="1.15">1.15</option>
-          <option value="1.5">1.5</option>
-          <option value="2.0">2.0</option>
-        </select>
+        <div className="control-group"> {/* Added control-group for better alignment with label */}
+          <label htmlFor="line-height-select" style={{ fontSize: '0.8rem', marginRight: '5px' }}>Line Height:</label>
+          <select
+            id="line-height-select" // Added ID for label association
+            value={currentLineHeight}
+            onChange={e => {
+              editor.chain().focus().setLineHeight(e.target.value).run();
+              setCurrentLineHeight(e.target.value);
+            }}
+            style={{ background: 'white', color: 'black', border: '1px solid #ccc', padding: '2px 5px', borderRadius: '3px' }} // Light theme styles
+          >
+            <option value="1.0">1.0</option>
+            <option value="1.15">1.15</option>
+            <option value="1.5">1.5</option>
+            <option value="2.0">2.0</option>
+          </select>
+        </div>
 
         <div className="separator"></div>
 
@@ -172,12 +224,46 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => 
               setCurrentFontSize(size);
               if (size) editor.chain().focus().setFontSize(size).run();
             }}
-            style={{width: '40px', padding: '2px', textAlign: 'center'}}
+            style={{width: '40px', padding: '2px', textAlign: 'center', background: 'white', color: 'black', border: '1px solid #ccc', borderRadius: '3px'}} // Light theme styles
           />
           <button className="icon-btn" onClick={() => editor.chain().focus().setFontSize(Math.min(72, parseInt(currentFontSize) + 1)).run()}>A+</button>
         </div>
 
-      </div>
+        <div className="separator"></div>
+
+        {/* Paragraph Spacing */}
+        <div className="control-group">
+          <label htmlFor="margin-top" style={{fontSize: '0.8rem'}}>MT:</label>
+          <input
+            id="margin-top"
+            type="number"
+            min="0"
+            max="100"
+            value={currentMarginTop}
+            onChange={e => {
+              const size = e.target.value;
+              setCurrentMarginTop(size);
+              editor.chain().focus().setMarginTop(size).run();
+            }}
+            style={{width: '40px', padding: '2px', textAlign: 'center', background: 'white', color: 'black', border: '1px solid #ccc', borderRadius: '3px'}} // Light theme styles
+          />
+          <label htmlFor="margin-bottom" style={{fontSize: '0.8rem', marginLeft: '10px'}}>MB:</label>
+          <input
+            id="margin-bottom"
+            type="number"
+            min="0"
+            max="100"
+            value={currentMarginBottom}
+            onChange={e => {
+              const size = e.target.value;
+              setCurrentMarginBottom(size);
+              editor.chain().focus().setMarginBottom(size).run();
+            }}
+            style={{width: '40px', padding: '2px', textAlign: 'center', background: 'white', color: 'black', border: '1px solid #ccc', borderRadius: '3px'}} // Light theme styles
+          />
+        </div>
+
+      </div> {/* End of panel-toolbar */}
 
       <div className="editor-scroll-area">
         <div 

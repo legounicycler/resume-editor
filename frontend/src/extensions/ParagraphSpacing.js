@@ -4,7 +4,7 @@ export const ParagraphSpacing = Extension.create({
   name: 'paragraphSpacing',
   addOptions() {
     return {
-      types: ['paragraph', 'heading', 'listItem'],
+      types: ['paragraph', 'heading', 'listItem', 'table', 'tableRow', 'tableHeader', 'tableCell'], // Added table-related types
       defaultSpacing: '0',
     };
   },
