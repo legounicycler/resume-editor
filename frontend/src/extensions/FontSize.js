@@ -14,11 +14,11 @@ export const FontSize = Extension.create({
             default: null,
             parseHTML: element => {
               const size = element.style.fontSize;
-              return size ? size.replace('px', '') : null;
+              return size ? size.replace('pt', '') : null;
             },
             renderHTML: attributes => {
               if (!attributes.fontSize) return {};
-              return { style: `font-size: ${attributes.fontSize}px` };
+              return { style: `font-size: ${attributes.fontSize}pt` };
             },
           },
         },
