@@ -11,14 +11,29 @@ import { TableRow } from '@tiptap/extension-table-row';
 import { TableHeader } from '@tiptap/extension-table-header';
 import { Image } from '@tiptap/extension-image';
 
+// Other extensions?
+import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css';
+
 // Custom Extensions
 import { CustomTableCell } from './extensions/CustomTableCell';
 import { LineHeight } from './extensions/LineHeight';
 import { FontSize } from './extensions/FontSize';
 import { ParagraphSpacing } from './extensions/ParagraphSpacing';
-// import { IconNode } from './extensions/IconNode';
-import tippy from 'tippy.js';
-import 'tippy.js/dist/tippy.css';
+
+// Resume nodes
+import { 
+  ResumeDocument, 
+  PersonalSection, 
+  ResumeSection, 
+  WorkEntry, 
+  EducationEntry, 
+  ProjectEntry,
+  ResearchEntry,
+  LeadershipEntry,
+  SkillsEntry,
+  EducationDegree
+} from './extensions/ResumeNodes';
 
 const AiHighlight = Highlight.extend({
   addAttributes() {
@@ -37,9 +52,20 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => 
   const [currentFontSize, setCurrentFontSize] = useState('10');
   const [currentMarginBottom, setCurrentMarginBottom] = useState('0'); // New state for margin bottom
   const [currentMarginTop, setCurrentMarginTop] = useState('0');     // New state for margin top
+  
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({ document: false }), // DISABLE default Document to use ours
+      ResumeDocument, // Custom Root
+      PersonalSection, // Custom top level node
+      ResumeSection, // Custom top level node
+      WorkEntry, 
+      EducationEntry, 
+      ProjectEntry,
+      ResearchEntry,
+      LeadershipEntry,
+      SkillsEntry,
+      EducationDegree,
       TextStyle,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       AiHighlight.configure({ multipart: true }),
@@ -65,16 +91,17 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => 
     });
   };
 
-  useEffect(() => {
-    if (editor && content && content !== editor.getHTML()) {
-      // Normalize pasted/generated tables that use "min-width" (commonly from Word)
-      // into explicit "width" styles so the browser/tiptap honors column sizing.
-      const normalized = content.replace(/min-width\s*:\s*([^;"]+)(;)?/gi, 'width:$1');
-      editor.commands.setContent(normalized);
-      setTimeout(attachTooltips, 100);
-    }
-  }, [content, editor]);
+  // useEffect(() => {
+  //   if (editor && content && content !== editor.getHTML()) {
+  //     // Normalize pasted/generated tables that use "min-width" (commonly from Word)
+  //     // into explicit "width" styles so the browser/tiptap honors column sizing.
+  //     const normalized = content.replace(/min-width\s*:\s*([^;"]+)(;)?/gi, 'width:$1');
+  //     editor.commands.setContent(normalized);
+  //     setTimeout(attachTooltips, 100);
+  //   }
+  // }, [content, editor]);
 
+  // Handle line height edits
   useEffect(() => {
     if (!editor) return;
     
@@ -162,6 +189,17 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => 
     editor.commands.unsetHighlight();
     const text = hoveredMapping.resume_phrase;
   }, [hoveredMapping, editor]);
+
+  useEffect(() => {
+    if (editor && content) {
+      // Check if content is different to prevent loops
+      // (For JSON comparison, a simple check might be tricky, so we just set it for now 
+      // or compare if you want to be strict. Tiptap handles setContent smartly.)
+      
+      // This command replaces the entire document with your new JSON
+      editor.commands.setContent(content);
+    }
+  }, [content, editor]);
 
   if (!editor) return null;
 

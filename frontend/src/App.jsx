@@ -3,6 +3,7 @@ import axios from 'axios';
 import ResumeEditor from './ResumeEditor';
 import JobDescription from './JobDescription';
 import './App.css';
+import { transformJsonToTiptap, transformTiptapToJson } from './utils/resumeAdapter';
 
 const Toast = ({ message, type, stack, onClose }) => {
   const [showStack, setShowStack] = useState(false);
@@ -55,7 +56,6 @@ function App() {
       try {
         const res = await axios.get('http://localhost:5000/get-icons-png');
         setIcons(res.data);
-        console.log('Icons loaded:', res.data);
       } catch (err) {
         setToast({ message: 'Failed to load icons from server.', type: 'error' });
       }
@@ -65,189 +65,201 @@ function App() {
     handleLoadStructuredData(); // Load data after fetching icons (or alongside)
   }, []);
 
-  const generateResumeHtml = (data) => {
-    // Defined Base Styles
-    const BASE_FONT = "font-family: Arial, sans-serif;"
-    const BASE_FONT_SIZE = "font-size: 10pt;"
-    const BASE_LINE_HEIGHT = "line-height: 1.0;"
-    const BASE_MARGIN = "margin: 0;"
-    const BASE_EVERYTHING = `${BASE_FONT} ${BASE_FONT_SIZE} ${BASE_LINE_HEIGHT} ${BASE_MARGIN}`;
+  // const generateResumeHtml = (data) => {
+  //   // Defined Base Styles
+  //   const BASE_FONT = "font-family: Arial, sans-serif;"
+  //   const BASE_FONT_SIZE = "font-size: 10pt;"
+  //   const BASE_LINE_HEIGHT = "line-height: 1.0;"
+  //   const BASE_MARGIN = "margin: 0;"
+  //   const BASE_EVERYTHING = `${BASE_FONT} ${BASE_FONT_SIZE} ${BASE_LINE_HEIGHT} ${BASE_MARGIN}`;
     
-    // Helper to generate the img tag for an icon
-    const getIcon = (type) => {
-      const base64Src = icons[type]; 
-      if (!base64Src) return ''; 
-      return `<img src="${base64Src}">`;
-    };
+  //   // Helper to generate the img tag for an icon
+  //   const getIcon = (type) => {
+  //     const base64Src = icons[type]; 
+  //     if (!base64Src) return ''; 
+  //     return `<img src="${base64Src}">`;
+  //   };
 
-    // Construct entry header
-    function constructEntryHeader(title, location, dates) {
-      return `
-      <table style="width: 100%; border-collapse: collapse; margin: 0; padding: 0; table-layout: fixed;">
-        <tbody>
-          <tr>
-            <td style="vertical-align: middle; box-sizing: border-box;" data-col-width="80%">
-              <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE} line-height: 1.15;">
-                <u style="text-decoration: underline;">
-                  <span style="font-weight: bold;">${title}</span>
-                  <span style="font-style: italic;"> - ${location}</span>
-                </u>
-              </p>
-            </td>
-            <td style="vertical-align: middle; white-space: nowrap; box-sizing: border-box;" data-col-width="20%">
-              <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE} line-height: 1.15; text-align: right;">
-                <span style="font-weight: bold; display: inline-block;">${dates}</span>
-              </p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      `;
-    }
+  //   // Construct entry header
+  //   function constructEntryHeader(title, location, dates) {
+  //     return `
+  //     <table style="width: 100%; border-collapse: collapse; margin: 0; padding: 0; table-layout: fixed;">
+  //       <tbody>
+  //         <tr>
+  //           <td style="vertical-align: middle; box-sizing: border-box;" data-col-width="80%">
+  //             <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE} line-height: 1.15;">
+  //               <u style="text-decoration: underline;">
+  //                 <span style="font-weight: bold;">${title}</span>
+  //                 <span style="font-style: italic;"> - ${location}</span>
+  //               </u>
+  //             </p>
+  //           </td>
+  //           <td style="vertical-align: middle; white-space: nowrap; box-sizing: border-box;" data-col-width="20%">
+  //             <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE} line-height: 1.15; text-align: right;">
+  //               <span style="font-weight: bold; display: inline-block;">${dates}</span>
+  //             </p>
+  //           </td>
+  //         </tr>
+  //       </tbody>
+  //     </table>
+  //     `;
+  //   }
 
-    // Construct bulleted list
-    function constructBulletedList(bullets) {
-      let listHtml = `<ul style="padding-left: 1.5rem; list-style-type: disc;">`;
-      bullets.forEach(bullet => {
-        listHtml += `<li style="${BASE_EVERYTHING}">`;
-        listHtml += `
-          <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE} line-height: 1.0;">
-            ${bullet}
-          </p>
-        `
-        listHtml += `</li>`;
-      });
-      listHtml += `</ul>`;
-      return listHtml;
-    }
+  //   // Construct bulleted list
+  //   function constructBulletedList(bullets) {
+  //     let listHtml = `<ul style="padding-left: 1.5rem; list-style-type: disc;">`;
+  //     bullets.forEach(bullet => {
+  //       listHtml += `<li style="${BASE_EVERYTHING}">`;
+  //       listHtml += `
+  //         <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE} line-height: 1.0;">
+  //           ${bullet}
+  //         </p>
+  //       `
+  //       listHtml += `</li>`;
+  //     });
+  //     listHtml += `</ul>`;
+  //     return listHtml;
+  //   }
 
-    let html = '';
+  //   let html = '';
 
-    // A. NAME/CONTACT HEADER
-    html += `<h1 style="${BASE_FONT} ${BASE_LINE_HEIGHT} text-align: center; text-decoration: underline;">${data.personal.name}</h1>`;
-    html += `<p style="${BASE_FONT} ${BASE_FONT_SIZE} ${BASE_LINE_HEIGHT} margin-top: 3px; margin-bottom: 3px; text-align: left;"><strong><u>Summary:</u></strong> ${data.personal.summary}</p>`;
-    html += `<\hr>`
-    html += `
-    <p style="${BASE_FONT} line-height: 1.5; font-size: 9pt; margin-bottom: 3px; text-align: center;">
-      ${getIcon('email')} <a href="mailto:${data.personal.email}" style="text-decoration: none; color: inherit;">${data.personal.email}</a> | 
-      ${getIcon('phone')} <span>${data.personal.phone}</span> | 
-      ${getIcon('linkedin')} <a href="${data.personal.linkedin}" target="_blank" style="text-decoration: none; color: inherit;">${data.personal.linkedin}</a> | 
-      ${getIcon('website')} <a href="${data.personal.website}" target="_blank" style="text-decoration: none; color: inherit;">${data.personal.website}</a>
-    </p>`;
+  //   // A. NAME/CONTACT HEADER
+  //   html += `<h1 style="${BASE_FONT} ${BASE_LINE_HEIGHT} text-align: center; text-decoration: underline;">${data.personal.name}</h1>`;
+  //   html += `<p style="${BASE_FONT} ${BASE_FONT_SIZE} ${BASE_LINE_HEIGHT} margin-top: 3px; margin-bottom: 3px; text-align: left;"><strong><u>Summary:</u></strong> ${data.personal.summary}</p>`;
+  //   html += `<\hr>`
+  //   html += `
+  //   <p style="${BASE_FONT} line-height: 1.5; font-size: 9pt; margin-bottom: 3px; text-align: center;">
+  //     ${getIcon('email')} <a href="mailto:${data.personal.email}" style="text-decoration: none; color: inherit;">${data.personal.email}</a> | 
+  //     ${getIcon('phone')} <span>${data.personal.phone}</span> | 
+  //     ${getIcon('linkedin')} <a href="${data.personal.linkedin}" target="_blank" style="text-decoration: none; color: inherit;">${data.personal.linkedin}</a> | 
+  //     ${getIcon('website')} <a href="${data.personal.website}" target="_blank" style="text-decoration: none; color: inherit;">${data.personal.website}</a>
+  //   </p>`;
 
-    // B. SECTIONS
-    data.sections.forEach(section => {
-      html += `<h2 style="${BASE_FONT} text-align: center;">${section.title}</h2>`;
+  //   // B. SECTIONS
+  //   data.sections.forEach(section => {
+  //     html += `<h2 style="${BASE_FONT} text-align: center;">${section.title}</h2>`;
 
-      // --- Education section ---
-      if (section.title.toLowerCase().includes('education')) {
-        section.entries.forEach(entry => {
+  //     // --- Education section ---
+  //     if (section.title.toLowerCase().includes('education')) {
+  //       section.entries.forEach(entry => {
 
-          // 1. School title (i.e. company name + location + dates)
-          html += constructEntryHeader(entry.school, entry.location, entry.dates);
+  //         // 1. School title (i.e. company name + location + dates)
+  //         html += constructEntryHeader(entry.school, entry.location, entry.dates);
 
-          // 2. Degree, Major, GPA
-          html += `<ul style="padding-left: 1.5rem; list-style-type: disc;">`;
-          entry.degrees.forEach(degreeEntry => {
-            html += `<li style="${BASE_EVERYTHING}">`;
-            html += `
-              <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE} line-height: 1.15;">
-                <strong>${degreeEntry.degree}:</strong> ${degreeEntry.major}&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong>GPA:</strong> <span display: inline-block;">${degreeEntry.gpa}</span>
-              </p>
-            `
-            html += `</li>`;
-            if (degreeEntry.bullets && degreeEntry.bullets.length > 0) {
-              // 3. Bullets
-              html += constructBulletedList(degreeEntry.bullets);
-            }
-          });
-          html += `</ul>`;
-        });
-      }
+  //         // 2. Degree, Major, GPA
+  //         html += `<ul style="padding-left: 1.5rem; list-style-type: disc;">`;
+  //         entry.degrees.forEach(degreeEntry => {
+  //           html += `<li style="${BASE_EVERYTHING}">`;
+  //           html += `
+  //             <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE} line-height: 1.15;">
+  //               <strong>${degreeEntry.degree}:</strong> ${degreeEntry.major}&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong>GPA:</strong> <span display: inline-block;">${degreeEntry.gpa}</span>
+  //             </p>
+  //           `
+  //           html += `</li>`;
+  //           if (degreeEntry.bullets && degreeEntry.bullets.length > 0) {
+  //             // 3. Bullets
+  //             html += constructBulletedList(degreeEntry.bullets);
+  //           }
+  //         });
+  //         html += `</ul>`;
+  //       });
+  //     }
 
-      // --- Work Experience section ---
-      if (section.title.toLowerCase().includes('work experience')) {
-        section.entries.forEach(entry => {
-          // 1. Section Title (i.e. company name + location + dates)
-          html += constructEntryHeader(entry.company, entry.location, entry.dates);
+  //     // --- Work Experience section ---
+  //     if (section.title.toLowerCase().includes('work experience')) {
+  //       section.entries.forEach(entry => {
+  //         // 1. Section Title (i.e. company name + location + dates)
+  //         html += constructEntryHeader(entry.company, entry.location, entry.dates);
 
-          // 2. Bullets
-          html += constructBulletedList(entry.bullets);
-          // html += `<p><p/>`; // Extra space after section
-        });
-      }
+  //         // 2. Bullets
+  //         html += constructBulletedList(entry.bullets);
+  //         // html += `<p><p/>`; // Extra space after section
+  //       });
+  //     }
 
-      // --- Research section ---
-      if (section.title.toLowerCase().includes('research')) {
-        section.entries.forEach(entry => {
-          // 1. Section Title (i.e. company name + location + dates)
-          html += constructEntryHeader(entry.company, entry.location, entry.dates);
+  //     // --- Research section ---
+  //     if (section.title.toLowerCase().includes('research')) {
+  //       section.entries.forEach(entry => {
+  //         // 1. Section Title (i.e. company name + location + dates)
+  //         html += constructEntryHeader(entry.company, entry.location, entry.dates);
 
-          // 2. Bullets
-          html += constructBulletedList(entry.bullets);
-        });
-      }
+  //         // 2. Bullets
+  //         html += constructBulletedList(entry.bullets);
+  //       });
+  //     }
 
-      // --- Projects section ---
-      if (section.title.toLowerCase().includes('projects')) {
-        html += `<ul style="padding-left: 1.5rem;">`;
-        section.entries.forEach(entry => {
-          html += `<li style="${BASE_EVERYTHING}">`;
-          html += `
-            <p style="${BASE_EVERYTHING}">
-              <u><strong>${entry.title}</strong></u> - ${entry.description}
-            </p>
-          `
-          html += `</li>`;
-        });
-        html += `</ul>`;
-      }
+  //     // --- Projects section ---
+  //     if (section.title.toLowerCase().includes('projects')) {
+  //       html += `<ul style="padding-left: 1.5rem;">`;
+  //       section.entries.forEach(entry => {
+  //         html += `<li style="${BASE_EVERYTHING}">`;
+  //         html += `
+  //           <p style="${BASE_EVERYTHING}">
+  //             <u><strong>${entry.title}</strong></u> - ${entry.description}
+  //           </p>
+  //         `
+  //         html += `</li>`;
+  //       });
+  //       html += `</ul>`;
+  //     }
 
-      // --- Leadership section ---
-      if (section.title.toLowerCase().includes('leadership')) {
-        html += `<ul style="padding-left: 1.5rem; list-style-type: disc;">`;
-        section.entries.forEach(entry => {
-          html += `<li style="${BASE_EVERYTHING}">`;
-          html += `
-            <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE}">
-              <u><strong>${entry.title}</strong></u> - ${entry.description})
-            </p>
-          `
-          html += `</li>`;
-        });
-        html += `</ul>`;
-      }
+  //     // --- Leadership section ---
+  //     if (section.title.toLowerCase().includes('leadership')) {
+  //       html += `<ul style="padding-left: 1.5rem; list-style-type: disc;">`;
+  //       section.entries.forEach(entry => {
+  //         html += `<li style="${BASE_EVERYTHING}">`;
+  //         html += `
+  //           <p style="${BASE_FONT} ${BASE_MARGIN} ${BASE_FONT_SIZE}">
+  //             <u><strong>${entry.title}</strong></u> - ${entry.description})
+  //           </p>
+  //         `
+  //         html += `</li>`;
+  //       });
+  //       html += `</ul>`;
+  //     }
 
-      // --- Skills section ---
-      if (section.title.toLowerCase().includes('skills')) {
-        html += `<p style="${BASE_FONT} ${BASE_LINE_HEIGHT} ${BASE_MARGIN} font-size: 9pt; text-align: center;">`;
-        section.entries.forEach(entry => {
-          html += `${entry}, `;
-        });
-        html = html.slice(0, -2); // Remove trailing comma and space
-        html += `</p>`;
-        return; // Skip the rest of the loop for skills
-      }
+  //     // --- Skills section ---
+  //     if (section.title.toLowerCase().includes('skills')) {
+  //       html += `<p style="${BASE_FONT} ${BASE_LINE_HEIGHT} ${BASE_MARGIN} font-size: 9pt; text-align: center;">`;
+  //       section.entries.forEach(entry => {
+  //         html += `${entry}, `;
+  //       });
+  //       html = html.slice(0, -2); // Remove trailing comma and space
+  //       html += `</p>`;
+  //       return; // Skip the rest of the loop for skills
+  //     }
     
-    });
+  //   });
 
-    return html;
-  };
+  //   return html;
+  // };
 
   const handleLoadStructuredData = async () => {
     try {
       const response = await axios.get('http://localhost:5000/get-data');
-      const structuredData = response.data;
-      const structuredHtml = generateResumeHtml(structuredData);
-      setResumeHtml(structuredHtml);
-      setToast({ message: 'Data loaded and styled!', type: 'success' });
+      const semanticJson = response.data;
+      
+      // CONVERT Semantic JSON -> Tiptap JSON
+      const tiptapJson = transformJsonToTiptap(semanticJson);
+      console.log('Transformed Tiptap JSON:\n', tiptapJson);
+      
+      // Pass JSON object directly (ResumeEditor handles it)
+      setResumeHtml(tiptapJson); 
+      setToast({ message: 'Structured Data Loaded!', type: 'success' });
     } catch (err) {
       const serverMsg = err.response?.data?.error || err.message;
       setToast({ message: `Load Error: ${serverMsg}. Check your Flask server/JSON file.`, type: 'error', stack: err.stack });
     }
   };
 
-  const handleGenerate = async () => {
+  const handleSave = () => {
+      // Create a reference or pass a callback to Editor to get JSON
+      // ideally passed up from ResumeEditor via onUpdate, 
+      // or use a ref to access editor instance.
+      // For now, let's assume we have access to the editor's current content via state or prop.
+  }
+
+  const handleAIGenerate = async () => {
     if (!jobDesc.trim()) return setToast({ message: 'Paste a JD first', type: 'error' });
     setIsLoading(true);
     try {
@@ -272,7 +284,7 @@ function App() {
       <header className="toolbar">
         <h1>Resume AI Editor</h1>
         <div className="toolbar-actions">
-          <button className="optimize-btn" onClick={handleGenerate} disabled={isLoading}>
+          <button className="optimize-btn" onClick={handleAIGenerate} disabled={isLoading}>
             {isLoading ? <><div className="spinner"></div> Processing...</> : '✨ Auto-Optimize'}
           </button>
         </div>
