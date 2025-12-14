@@ -13,18 +13,19 @@ export const FontSize = Extension.create({
         attributes: {
           fontSize: {
             default: null,
-            // keep units if present, strip trailing semicolons and whitespace
+            // Parse HTML: Read style and strip 'pt' (and trailing semicolon), storing only the number
             parseHTML: element => {
               const size = (element.style && element.style.fontSize) || null;
               if (!size) return null;
-              return size.toString().trim().replace(/;$/, '');
+              // Strip 'pt' and convert to number string
+              return size.toString().trim().replace(/pt$/, '').replace(/;$/, '');
             },
-            // when rendering, if the stored value is numeric-only append 'pt'
+            // Render HTML: Add 'pt' when rendering from the numeric value in PM state
             renderHTML: attributes => {
               if (!attributes.fontSize) return {};
-              const v = attributes.fontSize.toString().trim();
-              const value = /^\d+(\.\d+)?$/.test(v) ? `${v}pt` : v;
-              return { style: `font-size: ${value}` };
+              const value = attributes.fontSize.toString().trim();
+              // Ensure 'pt' is always added for numeric values
+              return { style: `font-size: ${value}pt` };
             },
           },
         },
@@ -34,6 +35,7 @@ export const FontSize = Extension.create({
   addCommands() {
     return {
       setFontSize: fontSize => ({ chain }) => {
+        // Command sets the numeric value directly, no 'pt' unit here
         return chain().setMark('textStyle', { fontSize }).run();
       },
       unsetFontSize: () => ({ chain }) => {

@@ -86,10 +86,13 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => 
     };
     
     const updateFontSize = () => {
+      let foundFontSize = '10'; // Default fallback
+
       // 1. Check for inline style (Mark) - Highest priority
       const markAttrs = editor.getAttributes('textStyle');
       if (markAttrs.fontSize) {
-        setCurrentFontSize(markAttrs.fontSize.replace('pt', ''));
+        foundFontSize = markAttrs.fontSize;
+        setCurrentFontSize(foundFontSize);
         return;
       }
 
@@ -100,14 +103,15 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => 
         if (editor.isActive(type)) {
           const nodeAttrs = editor.getAttributes(type);
           if (nodeAttrs.fontSize) {
-            setCurrentFontSize(nodeAttrs.fontSize.replace('pt', ''));
+            foundFontSize = markAttrs.fontSize;
+            setCurrentFontSize(foundFontSize);
             return;
           }
         }
       }
 
-      // 3. Default fallback
-      setCurrentFontSize('10');
+      // 3. Default fallback if no specific font size is found
+      setCurrentFontSize(foundFontSize);
     };
     
     const updateMarginSpacing = () => {

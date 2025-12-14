@@ -1,7 +1,7 @@
 TODO:
 
 RESUME FINAL FORMATTING
-1. Font size editor still isn't working. Only increments by one and doesn't update text box when it does increment.
+1. Figure out spacing between sections that doesn't rely on <ul> css styling
 2. Use AI to add <strong> tags to the json file given the resume in google docs
 3. Generate JSON resumes for each base resume and ensure they all look fine
 

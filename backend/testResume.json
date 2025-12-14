@@ -91,7 +91,7 @@
     { "title": "Projects",
       "entries": [
         {
-          "title": "Susbmersible ROV",
+          "title": "Submersible ROV",
           "description": "Created ROV to explore underwater caves with Raspberry Pi, custom PCB, & 3D printing",
           "skills": [
             "Python",
