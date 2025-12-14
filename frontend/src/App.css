@@ -299,3 +299,12 @@ input.format-input { width: 40px; text-align: center; }
   /* Ensure it spans the full width if needed */
   width: 100%;
 }
+
+/* This targets the div that wraps the contact details */
+div[data-type="contact-row"] {
+  display: flex;
+  justify-content: space-around; /* Evenly distributes space between items */
+  width: 100%; /* Ensures it spans the full document width */
+  margin-top: 5px;
+  margin-bottom: 5px;
+}

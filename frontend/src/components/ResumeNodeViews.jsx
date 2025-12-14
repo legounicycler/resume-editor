@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react'; // <--- Import useContext
 import { NodeViewWrapper, NodeViewContent } from '@tiptap/react';
+
+import { IconContext } from '../context/IconContext';
 
 // --- STYLES CONSTANTS (Matching generateResumeHtml) ---
 const BASE_FONT = 'Arial, sans-serif';
@@ -69,19 +71,76 @@ const HOVER_STYLES = `
 
 // --- 1. Personal Section (Top Header) ---
 export const PersonalSectionView = ({ node, updateAttributes }) => {
-    // Note: The content of PersonalSection is usually Header + Paragraphs
-    // We just provide the container to center it.
-    return (
-        <NodeViewWrapper
-            className="resume-node-view"
-            data-label="PERSONAL INFO"
-            style={{ ...VISUAL_WRAPPER, textAlign: 'center', marginBottom: '8px' }}
-        >
-            <NodeViewContent className="resume-node-content" />
-            <hr style={{ borderTop: '1px solid black', margin: '2px 0' }} />
-        </NodeViewWrapper>
-    )
+  return (
+    <NodeViewWrapper
+      className="resume-node-view"
+      data-label="PERSONAL INFO"
+      style={{ ...VISUAL_WRAPPER, textAlign: 'center', marginBottom: '8px' }}
+    >
+      <NodeViewContent className="resume-node-content" />
+    </NodeViewWrapper>
+  )
 }
+
+// --- 1.1 Contact Detail View ---
+export const ContactDetailView = ({ node }) => {
+  const icons = useContext(IconContext); // Use Context instead of props
+  
+  const { type, value } = node.attrs;
+
+  // 1. ICON RENDERING LOGIC
+  const IconComponent = () => {
+    // This will now automatically re-render when 'icons' updates in App.jsx!
+    const base64Src = icons && icons[type];
+    
+    if (!base64Src) {
+        return <span style={{ width: '12px', height: '12px', display: 'inline-block', background: "black"}}></span>; 
+    }
+    
+    return (
+      <img 
+        src={base64Src} 
+        alt={type} 
+        className="myicon"
+        style={{ verticalAlign: 'middle' }}
+      />
+    );
+  };
+
+  const isLink = ['linkedin', 'website', 'email'].includes(type);
+  let link = value;
+  if (type === 'email') {
+    link = `mailto:${value}`;
+  }
+
+
+  return (
+    <NodeViewWrapper 
+      data-label={`CONTACT: ${type}`}
+      style={{ 
+        display: 'inline-block', // Keep inline-block or switch to a flex/grid approach
+        flexGrow: 1, // Let it grow to take up space (if parent is flex)
+        textAlign: 'center', // Center the content within its space
+        minWidth: '20%', // Force minimum width, especially important for centering the content
+        margin: '0', // Remove margin from the sides, let parent container handle spacing
+        padding: '0 5px', // Add slight padding for visual separation
+        fontFamily: BASE_FONT, 
+        fontSize: '9pt', 
+        lineHeight: BASE_LINE_HEIGHT,
+      }}
+    >
+      <IconComponent />
+      <span style={{ whiteSpace: 'pre' }}> </span>
+      {isLink ? (
+        <a href={link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: 'inherit' }}>
+          {value}
+        </a>
+      ) : (
+        <span>{value}</span>
+      )}
+    </NodeViewWrapper>
+  );
+};
 
 // --- 2. Generic Section Container ---
 export const SectionView = ({ node, updateAttributes }) => {

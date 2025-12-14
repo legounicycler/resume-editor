@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useEditor, EditorContent } from '@tiptap/react';
+import { useEditor, EditorContent, ReactNodeViewRenderer } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
 // Tiptap Extensions
@@ -24,7 +24,10 @@ import { ParagraphSpacing } from './extensions/ParagraphSpacing';
 // Resume nodes
 import { 
   ResumeDocument, 
-  PersonalSection, 
+  PersonalSection,
+  ContactDetail,
+  SeparatorLine,
+  ContactRow,
   ResumeSection, 
   WorkEntry, 
   EducationEntry, 
@@ -34,6 +37,9 @@ import {
   SkillsEntry,
   EducationDegree
 } from './extensions/ResumeNodes';
+
+// Node view import for passing icon data to ContactDetail
+import { IconContext } from './context/IconContext'; // <--- Import the context
 
 const AiHighlight = Highlight.extend({
   addAttributes() {
@@ -47,25 +53,36 @@ const AiHighlight = Highlight.extend({
   },
 });
 
-const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => {
+const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, icons}) => {
   const [currentLineHeight, setCurrentLineHeight] = useState('1.0');
   const [currentFontSize, setCurrentFontSize] = useState('10');
   const [currentMarginBottom, setCurrentMarginBottom] = useState('0'); // New state for margin bottom
   const [currentMarginTop, setCurrentMarginTop] = useState('0');     // New state for margin top
-  
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ document: false }), // DISABLE default Document to use ours
-      ResumeDocument, // Custom Root
-      PersonalSection, // Custom top level node
-      ResumeSection, // Custom top level node
-      WorkEntry, 
-      EducationEntry, 
+      
+      // --- REGISTER THE CORE SEMANTIC NODES ---
+      ResumeDocument,
+      PersonalSection,
+      ResumeSection,
+      
+      // --- REGISTER ENTRIES (using original definitions) ---
+      WorkEntry,
+      EducationEntry,
+      EducationDegree,
       ProjectEntry,
       ResearchEntry,
       LeadershipEntry,
       SkillsEntry,
-      EducationDegree,
+
+      // --- REGISTER CONTACT/SEPARATOR ---
+      ContactDetail,
+      SeparatorLine,
+      ContactRow, // <--- REGISTER NEW NODE HERE
+
+      // -- REGISTER EXTENSIONS ---
       TextStyle,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       AiHighlight.configure({ multipart: true }),
@@ -165,12 +182,13 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => 
     editor.on('selectionUpdate', () => {
       updateLineHeight();
       updateFontSize();
-      updateMarginSpacing(); // Update margin spacing on selection change
+      updateMarginSpacing();
     });
+
     editor.on('update', () => {
       updateLineHeight();
       updateFontSize();
-      updateMarginSpacing(); // Update margin spacing on editor content change
+      updateMarginSpacing();
     });
     
     return () => {
@@ -204,6 +222,7 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => 
   if (!editor) return null;
 
   return (
+    <IconContext.Provider value={icons}>
     <div className="resume-panel-wrapper">
       
       {/* --- TOOLBAR --- */}
@@ -315,6 +334,7 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData}) => 
         </div>
       </div>
     </div>
+    </IconContext.Provider>
   );
 };
 

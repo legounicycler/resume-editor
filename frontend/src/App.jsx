@@ -241,7 +241,7 @@ function App() {
       
       // CONVERT Semantic JSON -> Tiptap JSON
       const tiptapJson = transformJsonToTiptap(semanticJson);
-      console.log('Transformed Tiptap JSON:\n', tiptapJson);
+      // console.log('Transformed Tiptap JSON:\n', tiptapJson);
       
       // Pass JSON object directly (ResumeEditor handles it)
       setResumeHtml(tiptapJson); 
@@ -297,6 +297,8 @@ function App() {
             zoom={resumeZoom}
             onLoadData={() => handleLoadStructuredData()}
             setZoom={setResumeZoom}
+            onEditorReady={(editor) => { editorRef.current = editor; }}
+            icons={icons}
           />
         </div>
 

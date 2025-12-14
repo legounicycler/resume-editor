@@ -13,23 +13,48 @@ export const transformJsonToTiptap = (resumeData) => {
   const docContent = [];
 
   // 1. Personal Section
-  const personalContentNodes = [
-    node('heading', { level: 1 }, [text(resumeData.personal.name)]),
-  ];
+  // a. Array to hold content for the Personal Section (Name, Summary, Separator, Contact Details)
+  const personalContentNodes = [];
+
+  // b. Name (Heading 1)
+  personalContentNodes.push(
+    node('heading', { level: 1 }, [text(resumeData.personal.name)])
+  );
+
+  // c. Summary (Paragraph)
   if (resumeData.personal.summary) {
     personalContentNodes.push(paragraph([text(resumeData.personal.summary)]));
   }
+  
+  // d. Separator (New custom node to render the <hr>)
+  // We insert a specific node to act as the boundary
+  personalContentNodes.push(node('separatorLine', {})); 
 
-  // Combine contact info into one paragraph
-  const contactInfoParts = [];
-  if (resumeData.personal.email) contactInfoParts.push(resumeData.personal.email);
-  if (resumeData.personal.phone) contactInfoParts.push(resumeData.personal.phone);
-  if (resumeData.personal.linkedin) contactInfoParts.push(resumeData.personal.linkedin);
-  if (resumeData.personal.website) contactInfoParts.push(resumeData.personal.website);
+  // e. Individual Contact Info Nodes
+  const contactDetailNodes = []; 
+  const createContactNode = (type, value) => 
+    node('contactDetail', { type: type, value: value });
 
-  if (contactInfoParts.length > 0) {
-    personalContentNodes.push(paragraph([text(contactInfoParts.join(' | '))]));
+  if (resumeData.personal.email) {
+    contactDetailNodes.push(createContactNode('email', resumeData.personal.email));
   }
+  if (resumeData.personal.phone) {
+    contactDetailNodes.push(createContactNode('phone', resumeData.personal.phone));
+  }
+  if (resumeData.personal.linkedin) {
+    contactDetailNodes.push(createContactNode('linkedin', resumeData.personal.linkedin));
+  }
+  if (resumeData.personal.website) {
+    contactDetailNodes.push(createContactNode('website', resumeData.personal.website));
+  }
+  
+  // WRAP all contact nodes in the dedicated contactRow node
+  if (contactDetailNodes.length > 0) {
+    personalContentNodes.push(
+      node('contactRow', {}, contactDetailNodes) // <--- CRITICAL CHANGE
+    );
+  }
+
   docContent.push(node('personalSection', {}, personalContentNodes));
 
   // 2. Sections

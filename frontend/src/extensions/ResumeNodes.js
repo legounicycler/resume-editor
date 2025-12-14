@@ -2,6 +2,7 @@ import { Node, mergeAttributes } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import { 
   SectionView, 
+  ContactDetailView,
   EducationEntryView, 
   WorkEntryView, 
   ResearchEntryView, 
@@ -22,11 +23,61 @@ export const ResumeDocument = Node.create({
 export const PersonalSection = Node.create({
   name: 'personalSection',
   group: 'block',
-  content: 'heading paragraph block+', // Name, Summary, Divider, Contact Info
+  content: 'heading paragraph separatorLine contactRow', // Name, Summary, Divider, Contact Info
   parseHTML() { return [{ tag: 'div[data-type="personal-section"]' }] },
   renderHTML({ HTMLAttributes }) {
     return ['div', { 'data-type': 'personal-section', ...HTMLAttributes }, 0];
   },
+});
+
+// 2.1 Separator Line Node (Non-editable, purely structural)
+export const SeparatorLine = Node.create({
+  name: 'separatorLine',
+  group: 'block',
+  content: '', // No content
+  inline: false,
+  // Renders the HR element directly
+  renderHTML() {
+    return ['hr', { 'data-type': 'separator-line' }]; 
+  },
+  // We don't need a React NodeView, the simple renderHTML is enough.
+});
+
+// 2.2 Contact Row Node (Container for contactDetail nodes)
+export const ContactRow = Node.create({
+  name: 'contactRow',
+  group: 'block',
+  content: 'contactDetail+', // Must contain one or more contactDetail nodes
+  inline: false,
+  parseHTML() { 
+    return [{ tag: 'div[data-type="contact-row"]' }] 
+  },
+  renderHTML({ HTMLAttributes }) {
+    // Render as a div with styling hooks. The actual flex styling will be in App.css.
+    return ['div', { 'data-type': 'contact-row', ...HTMLAttributes }, 0];
+  },
+  // We don't need a NodeView here, as we only need to render the container div.
+});
+
+// 2.2.1 Contact Detail Node (Holds one piece of contact info)
+export const ContactDetail = Node.create({
+  name: 'contactDetail',
+  group: 'block',
+  content: '', // No content, value is stored in attributes
+  inline: false, // Renders on its own line
+  addAttributes() {
+    return {
+      type: { default: null }, // 'email', 'phone', 'linkedin', 'website'
+      value: { default: null }, // the actual data
+    };
+  },
+  renderHTML({ HTMLAttributes }) {
+    // Basic fallback render
+    return ['div', { 'data-type': 'contact-detail', ...HTMLAttributes }, 0];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(ContactDetailView);
+  }
 });
 
 // 3. Generic Section Container (e.g., "Work Experience", "Education", "Skills", etc.)
