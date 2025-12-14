@@ -66,58 +66,6 @@ const HOVER_STYLES = `
   }
 `;
 
-// --- 0. Education Degree View ---
-export const EducationDegreeView = ({ node, updateAttributes }) => {
-  return (
-    <NodeViewWrapper 
-      className="resume-node-view" 
-      data-label="EDUCATION DEGREE"
-      style={{ 
-        ...VISUAL_WRAPPER, 
-        fontFamily: BASE_FONT, 
-        fontSize: BASE_SIZE, 
-        lineHeight: '1.15',
-        marginBottom: '2px' // Small margin for visual separation if multiple degrees
-      }}
-    >
-      {/* Sub-Header: Degree, Major, GPA */}
-      <div style={{ 
-        marginBottom: '2px'
-      }}>
-        <span style={{ fontWeight: 'bold' }}>
-           <input 
-             value={node.attrs.degree}
-             onChange={e => updateAttributes({ degree: e.target.value })}
-             placeholder="Degree"
-             style={{ ...INVISIBLE_INPUT, fontWeight: 'bold', display: 'inline', width: 'auto' }}
-           />:
-        </span>
-        <span> </span>
-        <input 
-           value={node.attrs.major}
-           onChange={e => updateAttributes({ major: e.target.value })}
-           placeholder="Major"
-           style={{ ...INVISIBLE_INPUT, display: 'inline', width: 'auto' }}
-        />
-        {node.attrs.gpa && (
-          <>
-            <span style={{ whiteSpace: 'pre' }}>      </span>{/* Gap */}
-            <span style={{ fontWeight: 'bold' }}>GPA: </span>
-            <input 
-               value={node.attrs.gpa}
-               onChange={e => updateAttributes({ gpa: e.target.value })}
-               placeholder="GPA"
-               style={{ ...INVISIBLE_INPUT, display: 'inline', width: 'auto' }}
-            />
-          </>
-        )}
-      </div>
-
-      {/* Content (Bullets for this degree) */}
-      <NodeViewContent className="resume-node-content" />
-    </NodeViewWrapper>
-  );
-};
 
 // --- 1. Personal Section (Top Header) ---
 export const PersonalSectionView = ({ node, updateAttributes }) => {
@@ -147,7 +95,9 @@ export const SectionView = ({ node, updateAttributes }) => {
     >
       <style>{HOVER_STYLES}</style>
       
-      {/* Section Header (H2 style) */}
+      {/* NEW: Render the Section Header using the attribute data.
+        This ensures it's rendered ONCE and styled correctly across the full width.
+      */}
       <div style={{ 
         borderBottom: '1px solid black', 
         marginBottom: '4px', 
@@ -163,18 +113,17 @@ export const SectionView = ({ node, updateAttributes }) => {
             fontSize: '10pt',
             textAlign: 'center',
             width: '100%',
-            textTransform: 'capitalize' // Optional
+            textTransform: 'capitalize' 
           }}
         />
       </div>
 
-      {/* Content Container */}
+      {/* Content Container - This now renders only the entries (workEntry, educationEntry, etc.) */}
       <div style={{ 
         fontFamily: BASE_FONT, 
         fontSize: BASE_SIZE, 
         lineHeight: BASE_LINE_HEIGHT 
       }}>
-        {/* If it's a project/leadership section, we wrap children in a UL structure visually */}
         <NodeViewContent 
           className="resume-node-content" 
           style={isListSection ? { paddingLeft: '1.5rem', listStyleType: 'disc' } : {}} 
@@ -184,7 +133,7 @@ export const SectionView = ({ node, updateAttributes }) => {
   );
 };
 
-// --- 3. Education Entry ---
+// --- 3a. Education Entry ---
 export const EducationEntryView = ({ node, updateAttributes }) => {
   return (
     <NodeViewWrapper 
@@ -235,6 +184,59 @@ export const EducationEntryView = ({ node, updateAttributes }) => {
       </div>
 
       {/* Content (This will now render the EducationDegree children, which include their own attributes and bullet lists) */}
+      <NodeViewContent className="resume-node-content" />
+    </NodeViewWrapper>
+  );
+};
+
+// --- 3b. Education Degree View ---
+export const EducationDegreeView = ({ node, updateAttributes }) => {
+  return (
+    <NodeViewWrapper 
+      className="resume-node-view" 
+      data-label="EDUCATION DEGREE"
+      style={{ 
+        ...VISUAL_WRAPPER, 
+        fontFamily: BASE_FONT, 
+        fontSize: BASE_SIZE, 
+        lineHeight: '1.15',
+        marginBottom: '2px' // Small margin for visual separation if multiple degrees
+      }}
+    >
+      {/* Sub-Header: Degree, Major, GPA */}
+      <div style={{ 
+        marginBottom: '2px'
+      }}>
+        <span style={{ fontWeight: 'bold' }}>
+           <input 
+             value={node.attrs.degree}
+             onChange={e => updateAttributes({ degree: e.target.value })}
+             placeholder="Degree"
+             style={{ ...INVISIBLE_INPUT, fontWeight: 'bold', display: 'inline', width: 'auto' }}
+           />:
+        </span>
+        <span> </span>
+        <input 
+           value={node.attrs.major}
+           onChange={e => updateAttributes({ major: e.target.value })}
+           placeholder="Major"
+           style={{ ...INVISIBLE_INPUT, display: 'inline', width: 'auto' }}
+        />
+        {node.attrs.gpa && (
+          <>
+            <span style={{ whiteSpace: 'pre' }}>      </span>{/* Gap */}
+            <span style={{ fontWeight: 'bold' }}>GPA: </span>
+            <input 
+               value={node.attrs.gpa}
+               onChange={e => updateAttributes({ gpa: e.target.value })}
+               placeholder="GPA"
+               style={{ ...INVISIBLE_INPUT, display: 'inline', width: 'auto' }}
+            />
+          </>
+        )}
+      </div>
+
+      {/* Content (Bullets for this degree) */}
       <NodeViewContent className="resume-node-content" />
     </NodeViewWrapper>
   );

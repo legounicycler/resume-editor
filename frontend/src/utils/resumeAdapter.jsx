@@ -37,9 +37,6 @@ export const transformJsonToTiptap = (resumeData) => {
     const sectionTitle = section.title;
     const sectionContentNodes = []; // Collects heading + entries for this section
 
-    // -- Heading --
-    sectionContentNodes.push(node('heading', { level: 2 }, [text(sectionTitle)]));
-
     // --- Special handling for Skills section (as it's a single entry with different structure) ---
     if (sectionTitle.toLowerCase().includes('skills')) {
       const skillsArray = section.entries || []; // `section.entries` is directly an array of strings for skills

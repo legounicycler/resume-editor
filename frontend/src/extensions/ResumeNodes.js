@@ -22,7 +22,7 @@ export const ResumeDocument = Node.create({
 export const PersonalSection = Node.create({
   name: 'personalSection',
   group: 'block',
-  content: 'heading paragraph block+', // Name, Summary, Contact Info
+  content: 'heading paragraph block+', // Name, Summary, Divider, Contact Info
   parseHTML() { return [{ tag: 'div[data-type="personal-section"]' }] },
   renderHTML({ HTMLAttributes }) {
     return ['div', { 'data-type': 'personal-section', ...HTMLAttributes }, 0];
