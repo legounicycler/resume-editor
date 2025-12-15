@@ -308,3 +308,122 @@ div[data-type="contact-row"] {
   margin-top: 5px;
   margin-bottom: 5px;
 }
+
+/* The Header Container */
+.entry-title-header {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline; /* Aligns text baselines */
+  width: 100%;
+  margin-bottom: 2px;
+  line-height: 1.15;
+}
+
+/* 1. Institution Node */
+.resume-institution {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* Add a separator after the institution name */
+.resume-institution::after {
+  content: " - ";
+  white-space: pre;
+  font-weight: normal;
+  color: black;
+  text-decoration: underline;
+}
+
+/* 2. Location Node */
+.resume-location {
+  font-style: italic;
+  text-decoration: underline;
+}
+
+/* 3. Date Node - The Magic Trick */
+.resume-date {
+  font-weight: bold;
+  margin-left: auto; /* Pushes the date all the way to the right! */
+  text-align: right;
+}
+
+/* Contact Info Row */
+div[data-type="contact-row"] {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+/* Institution / Company Name */
+.resume-institution {
+  font-weight: bold;
+}
+/* Automatically add the dash separator via CSS */
+.resume-institution::after {
+  content: " - ";
+  white-space: pre;
+  font-weight: normal;
+  color: black;
+}
+
+/* Location */
+.resume-location {
+  font-style: italic;
+}
+
+/* Date - Pushed to the right */
+.resume-date {
+  font-weight: bold;
+  margin-left: auto; /* This forces the date to the far right */
+  text-align: right;
+}
+
+/* --- SECTION TITLES --- */
+.resume-section-title {
+    font-size: 11pt;
+    font-weight: bold;
+    border-bottom: 1px solid black;
+    margin-bottom: 6px;
+    margin-top: 4px;
+    text-align: center;
+}
+
+/* --- EDUCATION DEGREE FORMATTING --- */
+.degree-header {
+    margin-bottom: 2px;
+}
+
+.resume-degree {
+    font-weight: bold;
+}
+.resume-degree::after {
+    content: ": "; /* Separator */
+    font-weight: bold;
+}
+
+.resume-major {
+    /* Normal weight */
+}
+
+/* Only show the GPA label if the node exists */
+.resume-gpa::before {
+    content: "   GPA: "; /* Spacing + Label */
+    font-weight: bold;
+    white-space: pre;
+}
+
+/* --- PROJECT / LEADERSHIP FORMATTING --- */
+.entry-title-simple {
+    font-weight: bold;
+    text-decoration: underline;
+}
+/* Note: The " - " separator is now real text added by the adapter, 
+   so we don't need a CSS pseudo-element for it in Project/Leadership. */
+
+div[data-type="project-entry"] p, 
+div[data-type="leadership-entry"] p {
+    margin: 0;
+    line-height: 1.15;
+}

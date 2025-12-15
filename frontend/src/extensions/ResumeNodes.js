@@ -2,49 +2,286 @@ import { Node, mergeAttributes } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import { 
   SectionView, 
-  ContactDetailView,
-  EducationEntryView, 
-  WorkEntryView, 
-  ResearchEntryView, 
-  ProjectEntryView, 
-  LeadershipEntryView, 
+  StandardEntryView,
   SkillsEntryView,
-  EducationDegreeView
+  ContactDetailView,
+  PersonalSectionView,
 } from '../components/ResumeNodeViews';
 
-// 1. The Root Document (Strict Locking)
-export const ResumeDocument = Node.create({
+// ----- ROOT NODE (Level 1)-----
+
+// ResumeDocument (The main node containing all other nodes)
+export const ResumeDocumentNode = Node.create({
   name: 'doc',
   topNode: true,
   content: 'personalSection resumeSection+', // Root must have Personal info, then 1+ Sections
 });
 
-// 2. The Personal Section (Hardcoded structure)
-export const PersonalSection = Node.create({
+// ----- SECTION NODES (Level 2) -----
+
+// Personal Section Node
+export const PersonalSectionNode = Node.create({
   name: 'personalSection',
   group: 'block',
-  content: 'heading paragraph separatorLine contactRow', // Name, Summary, Divider, Contact Info
+  content: 'heading paragraph+ separatorLine contactRow', // Name, Summary, Divider, Contact Info
   parseHTML() { return [{ tag: 'div[data-type="personal-section"]' }] },
   renderHTML({ HTMLAttributes }) {
     return ['div', { 'data-type': 'personal-section', ...HTMLAttributes }, 0];
   },
+  addNodeView() { return ReactNodeViewRenderer(PersonalSectionView);}
 });
 
-// 2.1 Separator Line Node (Non-editable, purely structural)
-export const SeparatorLine = Node.create({
-  name: 'separatorLine',
+// ResumeSection Node (Generic section container with SectionTitle node and Entry Nodes)
+export const ResumeSectionNode = Node.create({
+  name: 'resumeSection',
   group: 'block',
-  content: '', // No content
-  inline: false,
-  // Renders the HR element directly
-  renderHTML() {
-    return ['hr', { 'data-type': 'separator-line' }]; 
+  content: 'sectionTitle (educationEntry|workEntry|researchEntry|projectEntry|leadershipEntry|skillsEntry)+',
+  addAttributes() { return { sectionType: { default: 'generic' } }; }, // Keep attribute for logic, but display comes from node
+  renderHTML({ HTMLAttributes }) {
+    return ['section', mergeAttributes(HTMLAttributes), 0];
   },
-  // We don't need a React NodeView, the simple renderHTML is enough.
+  addNodeView() { return ReactNodeViewRenderer(SectionView); }
 });
 
-// 2.2 Contact Row Node (Container for contactDetail nodes)
-export const ContactRow = Node.create({
+// Section Title Node (First node in ResumeSection, holds the section title)
+export const SectionTitleNode = Node.create({
+  name: 'sectionTitle',
+  group: 'block',
+  content: 'text*', // It holds text
+  parseHTML() { return [{ tag: 'h2[data-type="section-title"]' }]; },
+  renderHTML({ HTMLAttributes }) {
+    return ['h2', mergeAttributes(HTMLAttributes, { 'data-type': 'section-title', class: 'resume-section-title' }), 0];
+  }
+});
+
+// ----- ENTRY NODES (Level 3) -----
+
+// Education Entry Node (Represents all degrees earned at a single school)
+export const EducationEntryNode = Node.create({
+  name: 'educationEntry',
+  group: 'block',
+  content: 'entryTitleHeader educationDegree+', // Education entry now contains one or more specific degrees
+  addAttributes() {
+    return {
+      school: { default: 'School...' },
+      location: { default: 'Location...' },
+      dates: { default: 'Dates...' },
+    };
+  },
+  parseHTML() { return [{ tag: 'div[data-type="education-entry"]' }] },
+  renderHTML({ HTMLAttributes }) {
+    return ['div', { 'data-type': 'education-entry', ...HTMLAttributes }, 0];
+  }
+});
+
+// Work Entry Node (Represents all work experiences at a single company)
+export const WorkEntryNode = Node.create({
+  name: 'workEntry',
+  group: 'block',
+  content: 'entryTitleHeader bulletList', // The user edits the bullets. The Header is handled by attributes.
+  addAttributes() {
+    return {
+      company: { default: 'Company Name' },
+      location: { default: 'Location' },
+      dates: { default: 'Dates' },
+    };
+  },
+  parseHTML() { return [{ tag: 'div[data-type="work-entry"]' }] },
+  renderHTML({ HTMLAttributes }) {
+    return ['div', { 'data-type': 'work-entry', ...HTMLAttributes }, 0];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(StandardEntryView);
+  },
+});
+
+// Research Entry Node (Represents all research experiences at a single institution)
+export const ResearchEntryNode = Node.create({
+  name: 'researchEntry',
+  group: 'block',
+  content: 'entryTitleHeader bulletList', // The user edits the bullets. The Header is handled by attributes.
+  addAttributes() {
+    return {
+      institution: { default: 'Institution Name' },
+      location: { default: 'Location' },
+      dates: { default: 'Dates' },
+    };
+  },
+  parseHTML() { return [{ tag: 'div[data-type="research-entry"]' }] },
+  renderHTML({ HTMLAttributes }) {
+    return ['div', { 'data-type': 'research-entry', ...HTMLAttributes }, 0];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(StandardEntryView);
+  },
+});
+
+// Project Entry Node (Represents a single project with title and description)
+export const ProjectEntryNode = Node.create({
+  name: 'projectEntry',
+  group: 'block',
+  // Content: A paragraph that contains the title node AND the text description
+  // This is the best way to ensure they stay on one line
+  content: 'paragraph', 
+  renderHTML({ HTMLAttributes }) {
+    return ['div', { 'data-type': 'project-entry', ...HTMLAttributes }, 0];
+  },
+  addNodeView() { return ReactNodeViewRenderer(StandardEntryView); },
+});
+
+// Leadership Entry Node (Represents a single leadership role with title and description)
+export const LeadershipEntryNode = Node.create({
+  name: 'leadershipEntry',
+  group: 'block',
+  content: 'paragraph',
+  renderHTML({ HTMLAttributes }) {
+    return ['div', { 'data-type': 'leadership-entry', ...HTMLAttributes }, 0];
+  },
+  addNodeView() { return ReactNodeViewRenderer(StandardEntryView); },
+});
+
+// Skills Entry Node (Represents all skills as a comma separated list in paragraph form)
+export const SkillsEntryNode = Node.create({
+  name: 'skillsEntry',
+  group: 'block',
+  content: 'paragraph', // Skills are displayed as a single paragraph of text
+  addAttributes() {
+    // title attribute removed as the skill itself is the paragraph content
+    return {}; 
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ['div', { 'data-type': 'skills-entry', ...HTMLAttributes }, 0];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(SkillsEntryView);
+  },
+});
+
+// ----- ENTRY NODE TITLES (Level 4) -----
+
+// Entry Title Node (First node within ProjectEntry, LeadershipEntry)
+//   - Contains the title to be displayed inline with the description
+export const EntryTitleSimpleNode = Node.create({
+  name: 'entryTitleSimple',
+  group: 'inline',
+  inline: true,
+  content: 'text*',
+  renderHTML({ HTMLAttributes }) {
+    return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'entry-title-simple', class: 'entry-title-simple' }), 0];
+  }
+});
+
+// Entry Header Node (First node within in WorkEntry, EducationEntry, ResearchEntry)
+//   - Displays institution, location, and dates in a single line
+export const EntryTitleHeaderNode = Node.create({
+  name: 'entryTitleHeader',
+  group: 'block',
+  content: 'institution location date', // STRICT ORDER: Institution -> Location -> Date
+  parseHTML() { return [{ tag: 'div[class="entry-title-header"]' }]; },
+  renderHTML({ HTMLAttributes }) {
+    return ['div', mergeAttributes(HTMLAttributes, { class: 'entry-title-header' }), 0];
+  }
+});
+
+// ----- ENTRY HEADER SUB-NODES (Level 5) -----
+
+// Institution Node (First node within EntryTitleHeader)
+export const InstitutionNode = Node.create({
+  name: 'institution',
+  group: 'inline',   // Behaves like a <span>
+  inline: true,
+  content: 'text*',  // Contains editable text
+  parseHTML() { return [{ tag: 'span[data-type="institution"]' }]; },
+  renderHTML({ HTMLAttributes }) {
+    return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'institution', class: 'resume-institution' }), 0];
+  }
+});
+
+// Location Node (Second node within EntryTitleHeader)
+export const LocationNode = Node.create({
+  name: 'location',
+  group: 'inline',
+  inline: true,
+  content: 'text*',
+  parseHTML() { return [{ tag: 'span[data-type="location"]' }]; },
+  renderHTML({ HTMLAttributes }) {
+    return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'location', class: 'resume-location' }), 0];
+  }
+});
+
+// Date Node (Third node within EntryTitleHeader)
+export const DateNode = Node.create({
+  name: 'date',
+  group: 'inline',
+  inline: true,
+  content: 'text*',
+  parseHTML() { return [{ tag: 'span[data-type="date"]' }]; },
+  renderHTML({ HTMLAttributes }) {
+    return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'date', class: 'resume-date' }), 0];
+  }
+});
+
+// ----- EDUCATION ENTRY SUB-NODES (Level 4 and down) -----
+
+// Education Degree Node (Primary node within EducationEntry)
+//   - Represents a single degree earned at a school with a header and optional bullet points
+export const EducationDegreeNode = Node.create({
+  name: 'educationDegree',
+  group: 'block',
+  content: 'degreeHeader bulletList?', // Header + optional bullets
+  renderHTML({ HTMLAttributes }) {
+    return ['div', { 'data-type': 'education-degree', ...HTMLAttributes }, 0];
+  },
+  addNodeView() { return ReactNodeViewRenderer(StandardEntryView); }
+});
+
+// Degree Header (First node in Education Degree. Holds degree, major, and GPA)
+export const DegreeHeaderNode = Node.create({
+  name: 'degreeHeader',
+  group: 'block',
+  content: 'degree major gpa', // Strict order
+  renderHTML({ HTMLAttributes }) {
+    return ['div', { class: 'degree-header' }, 0];
+  }
+});
+
+// Degree Node (Found within DegreeHeader)
+export const DegreeNode = Node.create({
+  name: 'degree',
+  group: 'inline',
+  inline: true,
+  content: 'text*',
+  renderHTML({ HTMLAttributes }) {
+    return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'degree', class: 'resume-degree' }), 0];
+  }
+});
+
+// Major Node (Found within DegreeHeader)
+export const MajorNode = Node.create({
+  name: 'major',
+  group: 'inline',
+  inline: true,
+  content: 'text*',
+  renderHTML({ HTMLAttributes }) {
+    return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'major', class: 'resume-major' }), 0];
+  }
+});
+
+// GPA Node (Found within DegreeHeader)
+export const GpaNode = Node.create({
+  name: 'gpa',
+  group: 'inline',
+  inline: true,
+  content: 'text*',
+  renderHTML({ HTMLAttributes }) {
+    return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'gpa', class: 'resume-gpa' }), 0];
+  }
+});
+
+// ----- PERSONAL SECTION SUB-NODES (Level 3 and down) -----
+
+// Contact Row Node (Used in PersonalSection)
+export const ContactRowNode = Node.create({
   name: 'contactRow',
   group: 'block',
   content: 'contactDetail+', // Must contain one or more contactDetail nodes
@@ -59,8 +296,8 @@ export const ContactRow = Node.create({
   // We don't need a NodeView here, as we only need to render the container div.
 });
 
-// 2.2.1 Contact Detail Node (Holds one piece of contact info)
-export const ContactDetail = Node.create({
+// Contact Detail Node (Used in ContactRow)
+export const ContactDetailNode = Node.create({
   name: 'contactDetail',
   group: 'block',
   content: '', // No content, value is stored in attributes
@@ -80,161 +317,17 @@ export const ContactDetail = Node.create({
   }
 });
 
-// 3. Generic Section Container (e.g., "Work Experience", "Education", "Skills", etc.)
-export const ResumeSection = Node.create({
-  name: 'resumeSection',
+// ----- GENERIC NODES -----
+
+// Separator Line Node (Displays a horizontal divider line across the whole page)
+export const SeparatorLineNode = Node.create({
+  name: 'separatorLine',
   group: 'block',
-  content: 'heading (educationEntry|workEntry|researchEntry|projectEntry|leadershipEntry|skillsEntry)+', // Title + List of entries
-  addAttributes() {
-    return {
-      sectionType: { default: 'generic' }, // 'education', 'work', 'projects', etc.
-    };
+  content: '', // No content
+  inline: false,
+  // Renders the HR element directly
+  renderHTML() {
+    return ['hr', { 'data-type': 'separator-line' }]; 
   },
-  parseHTML() { return [{ tag: 'section' }] },
-  renderHTML({ HTMLAttributes }) {
-    return ['section', mergeAttributes(HTMLAttributes), 0];
-  },
-  addNodeView() {
-    return ReactNodeViewRenderer(SectionView);
-  },
-});
-
-// 5. Education Entry
-export const EducationEntry = Node.create({
-  name: 'educationEntry',
-  group: 'block',
-  content: 'educationDegree+', // Education entry now contains one or more specific degrees
-  addAttributes() {
-    return {
-      school: { default: 'School' },
-      location: { default: 'Location' },
-      dates: { default: 'Dates' },
-    };
-  },
-  parseHTML() { return [{ tag: 'div[data-type="education-entry"]' }] },
-  renderHTML({ HTMLAttributes }) {
-    return ['div', { 'data-type': 'education-entry', ...HTMLAttributes }, 0];
-  },
-  addNodeView() {
-    return ReactNodeViewRenderer(EducationEntryView);
-  },
-});
-
-// NEW: Education Degree Node (e.g., Bachelor's, Master's within an Education Entry)
-export const EducationDegree = Node.create({
-  name: 'educationDegree',
-  group: 'block', // Can be a block within an EducationEntry
-  content: 'bulletList?', // Bullets specific to this degree
-  addAttributes() {
-    return {
-      degree: { default: 'Bachelors...' },
-      major: { default: 'Major...' },
-      gpa: { default: '' }
-    };
-  },
-  renderHTML({ HTMLAttributes }) {
-    // Render as a simple div. The complex styling is handled by the parent EducationEntryView.
-    return ['div', { 'data-type': 'education-degree', ...HTMLAttributes }, 0];
-  },
-  // Optional: Add NodeView for visualization (Recommended)
-  addNodeView() {
-      return ReactNodeViewRenderer(EducationDegreeView); // Use the view you created
-  }
-});
-
-
-// 4. Work Entry (Company, Locaiton, Dates, Bullets)
-export const WorkEntry = Node.create({
-  name: 'workEntry',
-  group: 'block',
-  content: 'bulletList', // The user edits the bullets. The Header is handled by attributes.
-  addAttributes() {
-    return {
-      company: { default: 'Company Name' },
-      location: { default: 'Location' },
-      dates: { default: 'Dates' },
-    };
-  },
-  parseHTML() { return [{ tag: 'div[data-type="work-entry"]' }] },
-  renderHTML({ HTMLAttributes }) {
-    return ['div', { 'data-type': 'work-entry', ...HTMLAttributes }, 0];
-  },
-  addNodeView() {
-    return ReactNodeViewRenderer(WorkEntryView);
-  },
-});
-
-// 5. Research Entry (Institution, Locaiton, Dates, Bullets)
-export const ResearchEntry = Node.create({
-  name: 'researchEntry',
-  group: 'block',
-  content: 'bulletList', // The user edits the bullets. The Header is handled by attributes.
-  addAttributes() {
-    return {
-      institution: { default: 'Institution Name' },
-      location: { default: 'Location' },
-      dates: { default: 'Dates' },
-    };
-  },
-  parseHTML() { return [{ tag: 'div[data-type="research-entry"]' }] },
-  renderHTML({ HTMLAttributes }) {
-    return ['div', { 'data-type': 'research-entry', ...HTMLAttributes }, 0];
-  },
-  addNodeView() {
-    return ReactNodeViewRenderer(ResearchEntryView);
-  },
-});
-
-// 6. Project Entry
-export const ProjectEntry = Node.create({
-  name: 'projectEntry',
-  group: 'block',
-  content: 'paragraph', // Description is a single paragraph
-  addAttributes() {
-    return {
-      title: { default: 'Title' },
-      skills: { default: [] } // Skills are an array attribute
-    };
-  },
-  renderHTML({ HTMLAttributes }) {
-    return ['div', { 'data-type': 'project-entry', ...HTMLAttributes }, 0];
-  },
-  addNodeView() {
-    return ReactNodeViewRenderer(ProjectEntryView);
-  },
-});
-
-// 6. Leadership Entry
-export const LeadershipEntry = Node.create({
-  name: 'leadershipEntry',
-  group: 'block',
-  content: 'paragraph', // Description is a single paragraph
-  addAttributes() {
-    return {
-      title: { default: 'Title' },
-    };
-  },
-  renderHTML({ HTMLAttributes }) {
-    return ['div', { 'data-type': 'leadership-entry', ...HTMLAttributes }, 0];
-  },
-  addNodeView() {
-    return ReactNodeViewRenderer(LeadershipEntryView);
-  },
-});
-
-// 7. Skills Entry
-export const SkillsEntry = Node.create({
-  name: 'skillsEntry',
-  group: 'block',
-  content: 'paragraph', // Skills are displayed as a single paragraph of text
-  addAttributes() {
-    // title attribute removed as the skill itself is the paragraph content
-    return {}; 
-  },
-  renderHTML({ HTMLAttributes }) {
-    return ['div', { 'data-type': 'skills-entry', ...HTMLAttributes }, 0];
-  },
-  addNodeView() {
-    return ReactNodeViewRenderer(SkillsEntryView);
-  },
+  // We don't need a React NodeView, the simple renderHTML is enough.
 });

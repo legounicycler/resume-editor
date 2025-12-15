@@ -23,19 +23,29 @@ import { ParagraphSpacing } from './extensions/ParagraphSpacing';
 
 // Resume nodes
 import { 
-  ResumeDocument, 
-  PersonalSection,
-  ContactDetail,
-  SeparatorLine,
-  ContactRow,
-  ResumeSection, 
-  WorkEntry, 
-  EducationEntry, 
-  ProjectEntry,
-  ResearchEntry,
-  LeadershipEntry,
-  SkillsEntry,
-  EducationDegree
+  ResumeDocumentNode, 
+  PersonalSectionNode,
+  ResumeSectionNode,
+  SectionTitleNode,
+  EducationEntryNode,
+  WorkEntryNode, 
+  ProjectEntryNode,
+  ResearchEntryNode,
+  LeadershipEntryNode,
+  SkillsEntryNode,
+  EntryTitleSimpleNode,
+  EntryTitleHeaderNode,
+  InstitutionNode,
+  LocationNode,
+  DateNode,
+  EducationDegreeNode,
+  DegreeHeaderNode,
+  DegreeNode,
+  MajorNode,
+  GpaNode,
+  ContactRowNode,
+  ContactDetailNode,
+  SeparatorLineNode,
 } from './extensions/ResumeNodes';
 
 // Node view import for passing icon data to ContactDetail
@@ -64,23 +74,29 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, icon
       StarterKit.configure({ document: false }), // DISABLE default Document to use ours
       
       // --- REGISTER THE CORE SEMANTIC NODES ---
-      ResumeDocument,
-      PersonalSection,
-      ResumeSection,
-      
-      // --- REGISTER ENTRIES (using original definitions) ---
-      WorkEntry,
-      EducationEntry,
-      EducationDegree,
-      ProjectEntry,
-      ResearchEntry,
-      LeadershipEntry,
-      SkillsEntry,
-
-      // --- REGISTER CONTACT/SEPARATOR ---
-      ContactDetail,
-      SeparatorLine,
-      ContactRow, // <--- REGISTER NEW NODE HERE
+      ResumeDocumentNode, 
+      PersonalSectionNode,
+      ResumeSectionNode,
+      SectionTitleNode,
+      EducationEntryNode,
+      WorkEntryNode, 
+      ProjectEntryNode,
+      ResearchEntryNode,
+      LeadershipEntryNode,
+      SkillsEntryNode,
+      EntryTitleSimpleNode,
+      EntryTitleHeaderNode,
+      InstitutionNode,
+      LocationNode,
+      DateNode,
+      EducationDegreeNode,
+      DegreeHeaderNode,
+      DegreeNode,
+      MajorNode,
+      GpaNode,
+      ContactRowNode,
+      ContactDetailNode,
+      SeparatorLineNode,
 
       // -- REGISTER EXTENSIONS ---
       TextStyle,
