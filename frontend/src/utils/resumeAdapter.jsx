@@ -141,12 +141,10 @@ export const transformJsonToTiptap = (resumeData) => {
         if (section.title.toLowerCase().includes('education')) {
           const degrees = (entry.degrees || []).map(d => {
             const headerContent = [
-                { type: 'degree', content: parseSmartContent(d.degree) },
-                { type: 'major', content: parseSmartContent(d.major) }
+                { type: 'degreeType', content: parseSmartContent(d['degree-type']) },
+                { type: 'major', content: parseSmartContent(d.major) },
+                { type: 'gpa', content: parseSmartContent(d.gpa) }
             ];
-            if (d.gpa) {
-                headerContent.push({ type: 'gpa', content: parseSmartContent(d.gpa) });
-            }
 
             const degreeChildren = [{ type: 'degreeHeader', content: headerContent }];
             
@@ -156,7 +154,7 @@ export const transformJsonToTiptap = (resumeData) => {
                      content: d.bullets.map(b => node('listItem', {}, [paragraph(parseSmartContent(b))]))
                  });
             }
-            return { type: 'educationDegree', content: degreeChildren };
+            return { type: 'degree', content: degreeChildren };
           });
 
           sectionContentNodes.push(node('educationEntry', {}, [
@@ -287,7 +285,7 @@ export const transformTiptapToJson = (tiptapJson) => {
             
             else if (child.type === 'educationEntry') {
                 const header = child.content.find(n => n.type === 'entryTitleHeader');
-                const degrees = child.content.filter(n => n.type === 'educationDegree');
+                const degrees = child.content.filter(n => n.type === 'degree');
                 
                 const entryObj = {
                     school: header.content.find(n => n.type === 'institution')?.content,
@@ -297,7 +295,7 @@ export const transformTiptapToJson = (tiptapJson) => {
                         const degHeader = deg.content.find(n => n.type === 'degreeHeader');
                         const bulletList = deg.content.find(n => n.type === 'bulletList');
                         return {
-                            degree: degHeader.content.find(n => n.type === 'degree')?.content,
+                            degreeType: degHeader.content.find(n => n.type === 'degreeType')?.content,
                             major: degHeader.content.find(n => n.type === 'major')?.content,
                             gpa: degHeader.content.find(n => n.type === 'gpa')?.content,
                             bullets: bulletList ? bulletList.content.map(li => li.content[0].content) : []

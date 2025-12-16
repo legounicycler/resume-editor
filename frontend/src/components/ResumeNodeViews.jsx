@@ -9,7 +9,7 @@ const getNodeClass = (nodeType) => {
     institution: 'resume-institution',
     location: 'resume-location',
     date: 'resume-date',
-    degree: 'resume-degree',
+    degreeType: 'resume-degree-type',
     major: 'resume-major',
     gpa: 'resume-gpa',
     entryTitleSimple: 'entry-title-simple'

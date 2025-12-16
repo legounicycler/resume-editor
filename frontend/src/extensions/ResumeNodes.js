@@ -61,7 +61,7 @@ export const SectionTitleNode = Node.create({
 export const EducationEntryNode = Node.create({
   name: 'educationEntry',
   group: 'block',
-  content: 'entryTitleHeader educationDegree+', // Education entry now contains one or more specific degrees
+  content: 'entryTitleHeader degree+', // Education entry now contains one or more specific degrees
   addAttributes() {
     return {
       school: { default: 'School...' },
@@ -274,36 +274,36 @@ export const DateNode = Node.create({
 
 // ----- EDUCATION ENTRY SUB-NODES (Level 4 and down) -----
 
-// Education Degree Node (Primary node within EducationEntry)
+// Degree Node (Primary node within EducationEntry)
 //   - Represents a single degree earned at a school with a header and optional bullet points
-export const EducationDegreeNode = Node.create({
-  name: 'educationDegree',
+export const DegreeNode = Node.create({
+  name: 'degree',
   group: 'block',
   content: 'degreeHeader bulletList?', // Header + optional bullets
   renderHTML({ HTMLAttributes }) {
-    return ['div', { 'data-type': 'education-degree', ...HTMLAttributes }, 0];
+    return ['div', { 'data-type': 'degree', ...HTMLAttributes }, 0];
   },
   addNodeView() { return ReactNodeViewRenderer(StandardEntryView); }
 });
 
-// Degree Header (First node in Education Degree. Holds degree, major, and GPA)
+// Degree Header (First node in Degree. Holds degreeType, major, and GPA)
 export const DegreeHeaderNode = Node.create({
   name: 'degreeHeader',
   group: 'block',
-  content: 'degree major gpa', // Strict order
+  content: 'degreeType major gpa', // Strict order
   renderHTML({ HTMLAttributes }) {
     return ['div', { class: 'degree-header' }, 0];
   }
 });
 
-// Degree Node (Found within DegreeHeader)
-export const DegreeNode = Node.create({
-  name: 'degree',
+// Degree Type Node (Found within DegreeHeader)
+export const DegreeTypeNode = Node.create({
+  name: 'degreeType',
   group: 'inline',
   inline: true,
   content: 'text*',
   renderHTML({ HTMLAttributes }) {
-    return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'degree', class: 'resume-degree' }), 0];
+    return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'degree-type', class: 'resume-degree-type' }), 0];
   },
   addNodeView() {
     return ReactNodeViewRenderer(InlineNodeView);

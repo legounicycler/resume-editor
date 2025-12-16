@@ -515,8 +515,8 @@ div[data-type="contact-row"] {
 .resume-institution::after { content: " - "; font-weight: normal; color: black; white-space: pre; }
 .resume-location { font-style: italic; }
 .degree-header { margin-bottom: 2px; }
-.resume-degree { font-weight: bold; }
-.resume-degree::after { content: ": "; font-weight: bold; }
+.resume-degree-type { font-weight: bold; }
+.resume-degree-type::after { content: ": "; font-weight: bold; }
 .resume-gpa::before { content: "   GPA: "; font-weight: bold; white-space: pre; }
 .entry-title-simple { font-weight: bold; text-decoration: underline; }
 
@@ -545,7 +545,7 @@ div[data-label="LEADERSHIPENTRY"] {
 }
 
 /* 2. Education Degrees: Bullet Points & Layout */
-div[data-label="EDUCATIONDEGREE"] {
+div[data-label="DEGREE"] {
     display: list-item;       /* Turn the wrapper into a list item */
     list-style-type: disc;    /* Add the bullet */
     margin-left: 1.5rem;      /* Indent */
