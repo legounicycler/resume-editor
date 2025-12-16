@@ -309,14 +309,26 @@ div[data-type="contact-row"] {
   margin-bottom: 5px;
 }
 
-/* The Header Container */
+/* --- ENTRY HEADERS (Institution, Location, Date) --- */
+/* Enable Flexbox to handle alignment and the Date push */
 .entry-title-header {
-  display: flex;
-  flex-direction: row;
-  align-items: baseline; /* Aligns text baselines */
-  width: 100%;
-  margin-bottom: 2px;
-  line-height: 1.15;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: baseline; /* Aligns text baselines */
+}
+
+/* Push date to the far right */
+.resume-date {
+    margin-left: auto;
+    text-align: right;
+    font-weight: bold;
+}
+
+/* Tighten spacing for inline header nodes to fix gaps */
+.entry-title-header .resume-node-view {
+    padding: 0 1px; /* Minimal padding */
+    margin: 0;
 }
 
 /* 1. Institution Node */
@@ -340,7 +352,7 @@ div[data-type="contact-row"] {
   text-decoration: underline;
 }
 
-/* 3. Date Node - The Magic Trick */
+/* 3. Date Node */
 .resume-date {
   font-weight: bold;
   margin-left: auto; /* Pushes the date all the way to the right! */
@@ -390,26 +402,6 @@ div[data-type="contact-row"] {
     text-align: center;
 }
 
-/* --- EDUCATION DEGREE FORMATTING --- */
-.degree-header {
-    margin-bottom: 2px;
-}
-
-.resume-degree {
-    font-weight: bold;
-}
-.resume-degree::after {
-    content: ": "; /* Separator */
-    font-weight: bold;
-}
-
-/* Only show the GPA label if the node exists */
-.resume-gpa::before {
-    content: "   GPA: "; /* Spacing + Label */
-    font-weight: bold;
-    white-space: pre;
-}
-
 /* --- PROJECT / LEADERSHIP FORMATTING --- */
 
 /* Target the BulletList node */
@@ -436,4 +428,211 @@ div[data-type="contact-row"] {
 .entry-title-simple {
     font-weight: bold;
     text-decoration: underline;
+}
+
+/* --- RESUME EDITOR INTERFACE STYLES --- */
+
+/* 1. Base Node Styling */
+.resume-node-view {
+  position: relative;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  box-sizing: border-box; 
+  /* Fix: Use inline decoration for underline to bridge gaps */
+  text-decoration-skip-ink: none; 
+}
+
+/* 2. Hover Effects */
+.resume-node-view:hover {
+  outline: 2px dashed #94a3b8;
+  background-color: rgba(241, 245, 249, 0.3);
+  z-index: 10;
+}
+
+/* 3. Labels */
+.resume-node-view:hover::before {
+  content: attr(data-label);
+  position: absolute;
+  top: -12px;
+  right: 0;
+  background: #94a3b8;
+  color: white;
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  pointer-events: none;
+  font-family: sans-serif;
+  z-index: 20;
+  white-space: nowrap;
+}
+
+/* --- FIX: ENTRY HEADERS (Date Alignment & Underline Gap) --- */
+
+.entry-title-header {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: baseline;
+}
+
+/* Tiptap wraps React views in a span with class "node-[nodeName]".
+   We must target THIS wrapper to make flex properties work.
+*/
+.entry-title-header > .node-date {
+    margin-left: auto; /* Pushes the date wrapper to the right */
+}
+
+/* Fix the underline gap by removing horizontal padding on header items */
+.entry-title-header .resume-node-view {
+    padding: 0; 
+    margin: 0;
+}
+
+/* --- FIX: PROJECTS & LEADERSHIP LISTS --- */
+
+/* Target the Tiptap wrapper div for the project entries.
+   This forces the wrapper itself to behave like a bullet point.
+*/
+.node-projectEntry,
+.node-leadershipEntry {
+    display: list-item;
+    list-style-type: disc;
+    margin-left: 1rem;
+    line-height: 1.0;
+    text-indent: -0.15rem;
+}
+
+/* Ensure the inner content flows inline */
+.node-projectEntry p,
+.node-leadershipEntry p {
+    display: inline;
+    margin: 0;
+}
+
+/* --- SEMANTIC STYLING RESTORATION --- */
+.resume-institution { font-weight: bold; }
+.resume-institution::after { content: " - "; font-weight: normal; color: black; white-space: pre; }
+.resume-location { font-style: italic; }
+.degree-header { margin-bottom: 2px; }
+.resume-degree { font-weight: bold; }
+.resume-degree::after { content: ": "; font-weight: bold; }
+.resume-gpa::before { content: "   GPA: "; font-weight: bold; white-space: pre; }
+.entry-title-simple { font-weight: bold; text-decoration: underline; }
+
+/* Personal Section Hover Fixes */
+.personal-content-wrapper > h1:hover, .personal-content-wrapper > p:hover {
+  outline: 1px dashed #6b7280; 
+  background-color: rgba(229, 231, 235, 0.5); 
+  cursor: text;
+  position: relative;
+}
+.personal-content-wrapper > h1:hover::before { 
+    content: "NAME"; position: absolute; top: -10px; right: 0; 
+    background: #6b7280; color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; pointer-events: none;
+}
+.personal-content-wrapper > p:hover::before { 
+    content: "SUMMARY"; position: absolute; top: -10px; right: 0; 
+    background: #6b7280; color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; pointer-events: none;
+}
+
+/* --- FINAL POLISH FIXES --- */
+
+/* 1. Remove Bottom Margin from Project Entries */
+div[data-label="PROJECTENTRY"],
+div[data-label="LEADERSHIPENTRY"] {
+    margin-bottom: 0 !important;
+}
+
+/* 2. Education Degrees: Bullet Points & Layout */
+div[data-label="EDUCATIONDEGREE"] {
+    display: list-item;       /* Turn the wrapper into a list item */
+    list-style-type: disc;    /* Add the bullet */
+    margin-left: 1.5rem;      /* Indent */
+    padding: 0;               /* Reset internal padding */
+    margin-bottom: 4px;
+}
+
+/* 4. Float GPA Right */
+.node-gpa {
+    margin-left: auto;
+}
+
+/* 5. Skills Entry: Font Size & Center */
+div[data-label="SKILLS ENTRY"] p {
+    font-size: 9pt;
+    text-align: center;
+    margin: 0;
+}
+
+/* Fix for Contact Links (Visual style for editable inputs) */
+.contact-editable {
+    color: inherit;
+    text-decoration: inherit;
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: text;
+    min-width: 10px;
+    font-family: inherit;
+    font-size: inherit;
+}
+.contact-editable:hover {
+    background-color: rgba(0,0,0,0.05); /* Subtle hover hint */
+}
+
+/* 1. Force the Degree Header to use Flexbox */
+/* This is required for the 'margin-left: auto' on the GPA to work */
+.degree-header {
+    display: flex !important;
+    width: 100%;
+    flex-direction: row;
+    align-items: baseline;
+}
+
+/* 2. Float the GPA Node */
+/* We target the wrapper class applied by InlineNodeView */
+.resume-gpa {
+    margin-left: auto !important; /* Pushes to the far right */
+    margin-right: 0;
+}
+
+/* 3. FIX THE DISAPPEARING PREFIX */
+
+/* Step A: When hovering GPA, stop the generic label from overwriting the text.
+   We force the ::before content to stay as "GPA: " and reset positioning. */
+.resume-gpa:hover::before {
+    content: "   GPA: " !important;
+    position: static !important;
+    background: transparent !important;
+    color: inherit !important;
+    font-size: inherit !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+/* Step B: Move the "Label" (the little gray box) to ::after for GPA only.
+   This allows both the prefix and the label to exist simultaneously. */
+.resume-gpa:hover::after {
+    content: attr(data-label);
+    position: absolute;
+    top: -12px;
+    right: 0;
+    background: #94a3b8;
+    color: white;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    pointer-events: none;
+    font-family: sans-serif;
+    z-index: 20;
+    white-space: nowrap;
+}
+
+/* --- FIX: LEADERSHIP ENTRY MARGIN --- */
+/* Target the specific data-label generated by the Node View */
+div[data-label="LEADERSHIPENTRY"],
+div[data-label="PROJECTENTRY"] {
+    margin-bottom: 0 !important;
 }

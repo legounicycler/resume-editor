@@ -6,6 +6,7 @@ import {
   SkillsEntryView,
   ContactDetailView,
   PersonalSectionView,
+  InlineNodeView
 } from '../components/ResumeNodeViews';
 
 // ----- ROOT NODE (Level 1)-----
@@ -143,7 +144,9 @@ export const ProjectEntryNode = Node.create({
         }
         return false;
       },
-      // Optional: Tab/Shift-Tab for list indenting if you implement those commands
+      'Tab': () => {
+         return true; // Return true to say "we handled this", effectively doing nothing but keeping focus.
+      }
     };
   }
 });
@@ -169,6 +172,9 @@ export const LeadershipEntryNode = Node.create({
         }
         return false;
       },
+      'Tab': () => {
+         return true; // Return true to say "we handled this", effectively doing nothing but keeping focus.
+      }
     };
   },
 });
@@ -201,6 +207,9 @@ export const EntryTitleSimpleNode = Node.create({
   content: 'text*',
   renderHTML({ HTMLAttributes }) {
     return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'entry-title-simple', class: 'entry-title-simple' }), 0];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(InlineNodeView);
   }
 });
 
@@ -227,6 +236,9 @@ export const InstitutionNode = Node.create({
   parseHTML() { return [{ tag: 'span[data-type="institution"]' }]; },
   renderHTML({ HTMLAttributes }) {
     return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'institution', class: 'resume-institution' }), 0];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(InlineNodeView);
   }
 });
 
@@ -239,6 +251,9 @@ export const LocationNode = Node.create({
   parseHTML() { return [{ tag: 'span[data-type="location"]' }]; },
   renderHTML({ HTMLAttributes }) {
     return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'location', class: 'resume-location' }), 0];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(InlineNodeView);
   }
 });
 
@@ -251,6 +266,9 @@ export const DateNode = Node.create({
   parseHTML() { return [{ tag: 'span[data-type="date"]' }]; },
   renderHTML({ HTMLAttributes }) {
     return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'date', class: 'resume-date' }), 0];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(InlineNodeView);
   }
 });
 
@@ -286,6 +304,9 @@ export const DegreeNode = Node.create({
   content: 'text*',
   renderHTML({ HTMLAttributes }) {
     return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'degree', class: 'resume-degree' }), 0];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(InlineNodeView);
   }
 });
 
@@ -297,6 +318,9 @@ export const MajorNode = Node.create({
   content: 'text*',
   renderHTML({ HTMLAttributes }) {
     return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'major', class: 'resume-major' }), 0];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(InlineNodeView);
   }
 });
 
@@ -308,6 +332,9 @@ export const GpaNode = Node.create({
   content: 'text*',
   renderHTML({ HTMLAttributes }) {
     return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'gpa', class: 'resume-gpa' }), 0];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(InlineNodeView);
   }
 });
 

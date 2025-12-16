@@ -6,16 +6,15 @@ const paragraph = (content = []) => node('paragraph', {}, content);
 // --- 1. SMART INGESTION HELPER ---
 // Detects if the data is already Tiptap JSON (Array) or a String (HTML/Plain)
 const parseSmartContent = (data) => {
-  // Case A: It's already Tiptap JSON (Array of nodes)
+  // If the data source already provides the Mark array, use it directly.
   if (Array.isArray(data)) {
     return data;
   }
   
-  // Case B: It's a string (Legacy data or HTML)
+  // If it's a string, use DOMParser (This implementation assumes you copied the full function from the previous thought)
   if (typeof data === 'string') {
     if (!data) return [];
     
-    // Use DOMParser to handle "<strong>", "<em>", etc. inside the string
     const parser = new DOMParser();
     const doc = parser.parseFromString(data, 'text/html');
     const nodes = [];
@@ -38,9 +37,50 @@ const parseSmartContent = (data) => {
     doc.body.childNodes.forEach(node => processNode(node));
     return nodes;
   }
-
-  // Fallback
   return [];
+};
+
+
+// Helper to convert Tiptap Content Array back into an HTML string
+const convertContentToHtml = (contentArray) => {
+    let html = '';
+    if (!contentArray) return '';
+
+    contentArray.forEach(node => {
+        if (node.type === 'text') {
+            let textStr = node.text;
+            let marks = node.marks || [];
+
+            // Simple HTML conversion for AI
+            marks.forEach(mark => {
+                if (mark.type === 'bold') textStr = `<strong>${textStr}</strong>`;
+                if (mark.type === 'italic') textStr = `<em>${textStr}</em>`;
+                if (mark.type === 'textStyle' && mark.attrs?.textDecoration === 'underline') textStr = `<u>${textStr}</u>`;
+                if (mark.type === 'highlight' || mark.type === 'aiHighlight') textStr = `<mark>${textStr}</mark>`;
+                // Note: Font size needs to be handled at the block level, not inline text marks
+            });
+            html += textStr;
+
+        } else if (node.type === 'entryTitleSimple') {
+            // Special handling for the title node: treat its content as rich text and wrap it
+             html += `<strong><u>${convertContentToHtml(node.content)}</u></strong>`;
+
+        } else if (node.content && node.type !== 'paragraph' && node.type !== 'listItem') {
+            html += convertContentToHtml(node.content);
+        }
+        else if (node.type === 'paragraph' || node.type === 'listItem') {
+            // Ignore block wrappers, just get the content
+            html += convertContentToHtml(node.content);
+        }
+    });
+    return html;
+};
+
+
+// Helper to extract rich text content from a Tiptap node (e.g., from an entryTitleSimple node)
+const extractRichContent = (contentArray) => {
+    // We store the content array directly into the semantic JSON field
+    return contentArray; 
 };
 
 // Helper to create the entry header structure
@@ -56,7 +96,7 @@ const createEntryHeader = (institution, location, dates) => {
 export const transformJsonToTiptap = (resumeData) => {
   const docContent = [];
 
-  // 1. Personal Section
+  // 1. Personal Section (Name, Summary, Contacts)
   const personalContentNodes = [];
   personalContentNodes.push(
     node('heading', { level: 1 }, parseSmartContent(resumeData.personal.name))
@@ -68,7 +108,7 @@ export const transformJsonToTiptap = (resumeData) => {
 
   const contactDetailNodes = []; 
   const createContactNode = (type, value) => 
-    node('contactDetail', { type: type, value: value }); // Attributes don't need rich text parsing
+    node('contactDetail', { type: type, value: value });
 
   if (resumeData.personal.email) contactDetailNodes.push(createContactNode('email', resumeData.personal.email));
   if (resumeData.personal.phone) contactDetailNodes.push(createContactNode('phone', resumeData.personal.phone));
@@ -90,11 +130,10 @@ export const transformJsonToTiptap = (resumeData) => {
     // A. Skills
     if (sectionTitle.toLowerCase().includes('skills')) {
       const skillsArray = section.entries || []; 
-      // Handle case where entries might be strings or objects
       const skillsString = skillsArray.map(s => typeof s === 'string' ? s : JSON.stringify(s)).join(', ');
       sectionContentNodes.push(node('skillsEntry', {}, [paragraph(parseSmartContent(skillsString))]));
     }
-    // B. Generic Entries
+    // B. Loop through entries for Education, Work, etc.
     else if (section.entries) {
       section.entries.forEach(entry => {
         
@@ -117,7 +156,6 @@ export const transformJsonToTiptap = (resumeData) => {
                      content: d.bullets.map(b => node('listItem', {}, [paragraph(parseSmartContent(b))]))
                  });
             }
-
             return { type: 'educationDegree', content: degreeChildren };
           });
 
@@ -127,7 +165,7 @@ export const transformJsonToTiptap = (resumeData) => {
           ]));
         }
 
-        // Work & Research (Standard structure)
+        // Work & Research
         else if (sectionTitle.toLowerCase().includes('work') || sectionTitle.toLowerCase().includes('research')) {
           const isWork = sectionTitle.toLowerCase().includes('work');
           const entryType = isWork ? 'workEntry' : 'researchEntry';
@@ -141,51 +179,31 @@ export const transformJsonToTiptap = (resumeData) => {
           ]));
         }
 
-        // Project & Leadership (UPDATED: Now uses standard Bullet List for "Enter" support)
-        else if (section.title.toLowerCase().includes('project') || section.title.toLowerCase().includes('leadership')) {
-            // Note: We treat the entire entry as a single rich-text block now. 
-            // If the user hits enter, they create a new listItem, which equates to a new Entry.
-            
-            const contentSequence = [];
-            
-            // If we have separate title/description, we merge them for the editor
-            // But we keep them as rich text nodes so formatting is preserved.
-            if (entry.title) {
-               contentSequence.push({ type: 'entryTitleSimple', content: parseSmartContent(entry.title) });
-               contentSequence.push(text(' - '));
-            }
-            if (entry.description) {
-               contentSequence.push(...parseSmartContent(entry.description));
-            }
+        // Project
+        else if (section.title.toLowerCase().includes('project')) {
+            const paragraphContent = [
+                { type: 'entryTitleSimple', content: parseSmartContent(entry.title) }, 
+                text(' - '), 
+                ...parseSmartContent(entry.description)
+            ];
+            sectionContentNodes.push(node('projectEntry', { 
+                title: entry.title,
+                skills: entry.skills || []
+            }, [paragraph(paragraphContent)]));
+        }
 
-            // We push a listItem. The parent 'bulletList' will be created by the loop if we grouped them,
-            // but here we are iterating entries. 
-            // To make "Enter" work between entries, all entries must be siblings in ONE list.
-            // This loop structure creates separate lists per entry if we aren't careful.
-            
-            // To fix this, we'll collect all items first, then push ONE list.
-            // (See implementation below outside this forEach loop)
+        // Leadership
+        else if (section.title.toLowerCase().includes('leadership')) {
+            const paragraphContent = [
+                { type: 'entryTitleSimple', content: parseSmartContent(entry.title) }, 
+                text(' - '), 
+                ...parseSmartContent(entry.description)
+            ];
+            sectionContentNodes.push(node('leadershipEntry', { 
+                title: entry.title 
+            }, [paragraph(paragraphContent)]));
         }
       });
-
-      // Special handling for Project/Leadership to group them into ONE list
-      if (section.title.toLowerCase().includes('project') || section.title.toLowerCase().includes('leadership')) {
-        const listItems = section.entries.map(entry => {
-            const contentSequence = [];
-            if (entry.title) {
-               contentSequence.push({ type: 'entryTitleSimple', content: parseSmartContent(entry.title) });
-               contentSequence.push(text(' - '));
-            }
-            if (entry.description) {
-               contentSequence.push(...parseSmartContent(entry.description));
-            }
-            return node('listItem', {}, [paragraph(contentSequence)]);
-        });
-        
-        if (listItems.length > 0) {
-            sectionContentNodes.push(node('bulletList', {}, listItems));
-        }
-      }
     }
 
     docContent.push(node('resumeSection', { sectionType: sectionTitle }, sectionContentNodes));
