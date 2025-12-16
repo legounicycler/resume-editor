@@ -127,6 +127,25 @@ export const ProjectEntryNode = Node.create({
     return ['div', { 'data-type': 'project-entry', ...HTMLAttributes }, 0];
   },
   addNodeView() { return ReactNodeViewRenderer(StandardEntryView); },
+  // NEW: Add keyboard shortcuts for splitting
+  addKeyboardShortcuts() {
+    return {
+      // Execute the "split list item" command on the custom node type
+      'Enter': ({ editor }) => {
+        // Find the ProjectEntry node around the selection
+        const { $from } = editor.state.selection;
+        const parent = $from.node($from.depth - 1); // Get the node containing the paragraph
+        
+        // Ensure we are inside this node and try to split it
+        if (parent.type.name === this.name) {
+          // splitListItem works well here to split the parent node (projectEntry)
+          return editor.chain().focus().splitListItem(this.type).run();
+        }
+        return false;
+      },
+      // Optional: Tab/Shift-Tab for list indenting if you implement those commands
+    };
+  }
 });
 
 // Leadership Entry Node (Represents a single leadership role with title and description)
@@ -138,6 +157,20 @@ export const LeadershipEntryNode = Node.create({
     return ['div', { 'data-type': 'leadership-entry', ...HTMLAttributes }, 0];
   },
   addNodeView() { return ReactNodeViewRenderer(StandardEntryView); },
+  // NEW: Add keyboard shortcuts for splitting
+  addKeyboardShortcuts() {
+    return {
+      'Enter': ({ editor }) => {
+        const { $from } = editor.state.selection;
+        const parent = $from.node($from.depth - 1);
+        
+        if (parent.type.name === this.name) {
+          return editor.chain().focus().splitListItem(this.type).run();
+        }
+        return false;
+      },
+    };
+  },
 });
 
 // Skills Entry Node (Represents all skills as a comma separated list in paragraph form)

@@ -1,9 +1,16 @@
 TODO:
 
 RESUME FINAL FORMATTING
-1. Figure out spacing between sections that doesn't rely on <ul> css styling
-2. Use AI to add <strong> tags to the json file given the resume in google docs
-3. Generate JSON resumes for each base resume and ensure they all look fine
+1. Make leadership/projects show up as bulleted lists with line height of 1.0
+2. Ensure that bullets display the <strong> tags
+3. Display the degree as a bullet with the GPA floated right
+4. Get border highlighting on everything
+5. Figure out why double click selecting "honors" in the degree also selects 3.9 in the GPA
+6. Use AI to apply STRONG tags to bolded points in all base resumes
+7. Generate JSON resumes for each base resume and ensure they all look fine
+
+SAVING/LOADING RESUMES
+1. Implement save functionality
 
 
 DOCUMENT EDITOR FORMATTING

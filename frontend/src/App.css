@@ -403,10 +403,6 @@ div[data-type="contact-row"] {
     font-weight: bold;
 }
 
-.resume-major {
-    /* Normal weight */
-}
-
 /* Only show the GPA label if the node exists */
 .resume-gpa::before {
     content: "   GPA: "; /* Spacing + Label */
@@ -415,15 +411,29 @@ div[data-type="contact-row"] {
 }
 
 /* --- PROJECT / LEADERSHIP FORMATTING --- */
+
+/* Target the BulletList node */
+.editor-content .ProseMirror ul {
+    padding-left: 1.5rem;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    list-style-type: disc;
+}
+
+/* Target the ListItem paragraphs */
+.editor-content .ProseMirror li p {
+    margin: 0;
+    line-height: 1.0; /* Strict line height */
+}
+
+/* Ensure the inline title still looks good */
 .entry-title-simple {
     font-weight: bold;
     text-decoration: underline;
 }
-/* Note: The " - " separator is now real text added by the adapter, 
-   so we don't need a CSS pseudo-element for it in Project/Leadership. */
 
-div[data-type="project-entry"] p, 
-div[data-type="leadership-entry"] p {
-    margin: 0;
-    line-height: 1.15;
+/* 3. Style the Title Node (Inline) */
+.entry-title-simple {
+    font-weight: bold;
+    text-decoration: underline;
 }
