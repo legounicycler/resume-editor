@@ -1,0 +1,72 @@
+{
+  "personal": {
+    "name": "Anthony Limiero",
+    "summary": "Aerospace engineer with 2.5 years experience developing embedded flight software in C/C++ for spaceflight missions with a focus on creating command validation tools for C&DH handling.",
+    "details": "US citizen | Eligible for security clearance | Seeking full-time entry level positions | Available January 2025",
+    "email": "anthony@limiero.com",
+    "phone": "661-431-7218",
+    "linkedin": "linkedin.com/in/anthony-limiero/",
+    "github": "github.com/legounicycler",
+    "website": "anthony.limiero.com"
+  },
+  "sections": [
+    {
+      "title": "Education",
+      "entries": [
+        {
+          "school": "Georgia Institute of Technology, College of Engineering",
+          "location": "Atlanta, GA",
+          "dates": "Aug 2017 – May 2022",
+          "degrees": [
+            {
+              "gpa": "3.90 / 4.00",
+              "degreeType": "Bachelor of Science",
+              "major": "Aerospace Engineering - Highest Honors",
+              "bullets": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Work Experience",
+      "entries": [
+        {
+          "company": "NASA Jet Propulsion Laboratory",
+          "positions": [
+            {
+              "title": "Software Computing System Intern",
+              "dates": "May 2022 – Jul 2022",
+              "bullets": [
+                "Created compiler tool in Scala to generate C++ command validation code for the C&DH subsystem of the MSR lander",
+                "Developed automated unit tests with Python for command sequence validation in continuous integration pipelines",
+                "Contributed to open-source FSW frameworks FPrime & FPP used across multiple NASA missions for C&DH",
+                "Developed in Windows and Linux environments, using Git for version control and cross-team collaboration"
+              ]
+            }
+          ]
+        },
+        {
+          "company": "Space Systems Design Lab (SSDL)",
+          "positions": [
+            {
+              "title": "GT-2 Project Lead & FSW Team Lead",
+              "bullets": [
+                "Managed multi-disciplinary team of engineers in fast-paced CubeSat mission with rapid 1 year development timeline",
+                "Directed FSW team in designing telemetry data storage & command routing with multiprocessor RS-485 connections",
+                "Served as software team lead by training, recruiting, tasking, managing GitHub, and designing system topologies",
+                "Coordinated with JAXA to define requirements and integration protocols and formulate test plan documentation"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Skills",
+      "entries": [
+        "Command & Data Handling (C&DH)", "Telemetry Systems", "Serial Interfaces (I²C, SPI, RS-485)", "Python", "C++", "C", "FPrime", "Fpp", "Embedded Development", "Logic Analyzers", "Digital Oscilloscope"
+      ]
+    }
+  ]
+}

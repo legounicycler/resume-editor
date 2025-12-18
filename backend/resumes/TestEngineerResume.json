@@ -1,0 +1,39 @@
+{
+  "personal": {
+    "name": "Anthony Limiero",
+    "summary": "Aerospace Engineer with 2+ years of hands-on experience planning, developing, and executing verification and qualification test programs for spaceflight hardware.",
+    "details": "US citizen | Eligible for security clearance | Seeking full-time employment | Available January 2026",
+    "email": "anthony@limiero.com",
+    "phone": "661-431-7218",
+    "linkedin": "https://www.linkedin.com/in/anthony-limiero/",
+    "website": "anthony.limiero.com"
+  },
+  "sections": [
+    {
+      "title": "Work Experience",
+      "entries": [
+        {
+          "company": "Georgia Tech Research Institute (GTRI)",
+          "positions": [
+            {
+              "title": "Mech Engineering Student Co-op",
+              "dates": "Aug 2019 – Jun 2021",
+              "bullets": [
+                "Conducted mechanical and electrical verification/debug campaigns for high-reliability avionics on the C-5 cargo plane",
+                "Owned the development/build of mechanical test fixturing for verifying test requirements for vibration testing",
+                "Generated and maintained test documentation and characterized test data to determine pass/fail criteria",
+                "Precision assembly of mechanical test fixtures using tools like torque wrenches, calipers, and micrometers"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Skills",
+      "entries": [
+        "Environmental Testing (Vibration, TVAC)", "Data Analysis", "Automated Test Scripting", "Design for Test Principles", "DAQ", "Oscilloscope", "Logic Analyzer", "Multimeters"
+      ]
+    }
+  ]
+}

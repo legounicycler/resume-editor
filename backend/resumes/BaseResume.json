@@ -1,0 +1,28 @@
+{
+  "personal": {
+    "name": "Anthony Limiero",
+    "summary": "Recent AE grad with a focus on developing spaceflight hardware, embedded flight software, and mechanical design.",
+    "details": "US citizen | Eligible for security clearance | Seeking full-time entry level positions | Available January 2026",
+    "email": "anthony@limiero.com",
+    "phone": "661-431-7218",
+    "linkedin": "linkedin.com/in/anthony-limiero/",
+    "website": "https://anthony.limiero.com"
+  },
+  "sections": [
+    {
+      "title": "Projects",
+      "entries": [
+        {
+          "title": "Submersible ROV",
+          "description": "Fully custom robotic exploration platform for traversing underwater cave passages",
+          "skills": ["Raspberry Pi", "3D printing", "PCB design", "electronics debugging"]
+        },
+        {
+          "title": "Custom E-Trike",
+          "description": "Created electric trike with arduino controlled BLDC motors",
+          "skills": ["Soldering", "circuit design", "metal working", "C++"]
+        }
+      ]
+    }
+  ]
+}
