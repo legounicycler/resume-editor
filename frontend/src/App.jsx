@@ -3,7 +3,7 @@ import axios from 'axios';
 import ResumeEditor from './resumeEditor/ResumeEditor';
 import JobDescription from './JobDescription';
 import './App.css';
-import { transformJsonToTiptap, transformTiptapToJson } from './resumeEditor/ResumeAdapterThing';
+import { transformJsonToTiptap, transformTiptapToJson } from './resumeEditor/ResumeAdapter';
 
 const Toast = ({ message, type, stack, onClose }) => {
   const [showStack, setShowStack] = useState(false);

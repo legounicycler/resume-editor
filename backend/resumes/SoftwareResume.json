@@ -103,8 +103,9 @@
           "positions": [
             {
               "title": "GT-2 Project Lead & FSW Team Lead",
-              "dates": "Jan 2020 - May 2022",
               "location": "Georgia Tech - Atlanta, GA",
+              "dates": "Jan 2020 - May 2022",
+              "description": "(1U CubeSat mission)",
               "bullets": [
                 "Managed cross-disciplinary team of engineers in fast-paced CubeSat mission with 1 year development timeline",
                 "Served as software team lead by training, recruiting, tasking, managing GitHub, and designing system topologies",
@@ -114,6 +115,9 @@
             },
             {
               "title": "GT-1 Flight Software Engineer",
+              "location": "Georgia Tech - Atlanta, GA",
+              "dates": "Jan 2020 - May 2022",
+              "description": "(1U CubeSat deployed from ISS in February 2022)",
               "bullets": [
                 "Developed embedded baremetal C/C++ for shift register drivers, I2C control of EPS, and amateur radio payload",
                 "Implemented command and data handling and telemetry monitoring in FPrime ground station software w/ Python",

@@ -199,14 +199,15 @@ export const SkillsEntryNode = Node.create({
 export const PositionEntryNode = Node.create({
   name: 'positionEntry',
   group: 'block',
-  content: 'bulletList', // Contains the bullets for this specific position
+  // FIX: Content is now strictly Block + Block
+  content: 'positionEntryHeader bulletList', 
   addAttributes() {
     return {
       title: { default: '' },
       location: { default: '' },
       date: { default: '' },
       description: { default: '' },
-      variant: { default: 'condensed' } // 'condensed' (2A) or 'full' (2B)
+      variant: { default: 'condensed' } 
     };
   },
   parseHTML() { return [{ tag: 'div[class="position-entry"]' }]; },
@@ -215,6 +216,46 @@ export const PositionEntryNode = Node.create({
   },
   addNodeView() {
     return ReactNodeViewRenderer(PositionEntryView);
+  }
+});
+
+// Position Entry Header (lives within PositionEntry)
+export const PositionEntryHeaderNode = Node.create({
+  name: 'positionEntryHeader',
+  group: 'block',
+  content: 'positionTitle positionDescription? location? date?', // All inline children
+  parseHTML() { return [{ tag: 'div[class="position-entry-header"]' }]; },
+  renderHTML({ HTMLAttributes }) {
+    return ['div', mergeAttributes(HTMLAttributes, { class: 'position-entry-header' }), 0];
+  }
+});
+
+// Institution Node (Second node within EntryHeader)
+export const PositionTitleNode = Node.create({
+  name: 'positionTitle',
+  group: 'inline',   // Behaves like a <span>
+  inline: true,
+  content: 'text*',  // Contains editable text
+  parseHTML() { return [{ tag: 'span[data-type="position-title"]' }]; },
+  renderHTML({ HTMLAttributes }) {
+    return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'position-title', class: 'resume-position-title' }), 0];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(InlineNodeView);
+  }
+});
+
+export const PositionDescriptionNode = Node.create({
+  name: 'positionDescription',
+  group: 'inline',
+  inline: true,
+  content: 'text*',
+  parseHTML() { return [{ tag: 'span[data-type="position-description"]' }]; },
+  renderHTML({ HTMLAttributes }) {
+    return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'position-description', class: 'resume-position-description' }), 0];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(InlineNodeView);
   }
 });
 
@@ -240,7 +281,7 @@ export const EntryTitleSimpleNode = Node.create({
 export const EntryTitleHeaderNode = Node.create({
   name: 'entryTitleHeader',
   group: 'block',
-  content: 'institution positionTitle? location date', // Optional positionTitle
+  content: 'institution positionTitle? location? date', // Optional positionTitle
   parseHTML() { return [{ tag: 'div[class="entry-title-header"]' }]; },
   renderHTML({ HTMLAttributes }) {
     return ['div', mergeAttributes(HTMLAttributes, { class: 'entry-title-header' }), 0];
@@ -258,21 +299,6 @@ export const InstitutionNode = Node.create({
   parseHTML() { return [{ tag: 'span[data-type="institution"]' }]; },
   renderHTML({ HTMLAttributes }) {
     return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'institution', class: 'resume-institution' }), 0];
-  },
-  addNodeView() {
-    return ReactNodeViewRenderer(InlineNodeView);
-  }
-});
-
-// Institution Node (Second node within EntryHeader)
-export const PositionTitleNode = Node.create({
-  name: 'positionTitle',
-  group: 'inline',   // Behaves like a <span>
-  inline: true,
-  content: 'text*',  // Contains editable text
-  parseHTML() { return [{ tag: 'span[data-type="position-title"]' }]; },
-  renderHTML({ HTMLAttributes }) {
-    return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'position-title', class: 'resume-position-title' }), 0];
   },
   addNodeView() {
     return ReactNodeViewRenderer(InlineNodeView);

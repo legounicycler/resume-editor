@@ -93,6 +93,27 @@ const createEntryHeader = (institution, positionTitle, location, dates) => {
   return node('entryTitleHeader', {}, headerContent);
 };
 
+const createPositionHeader = (positionTitle, positionDescription, location, dates) => {
+  const headerContent = [];
+  
+  if (positionTitle) {
+      headerContent.push(node('positionTitle', {}, parseSmartContent(positionTitle)));
+  }
+  if (positionDescription) {
+      headerContent.push(node('positionDescription', {}, parseSmartContent(positionDescription)));
+  }
+  // TODO: Implement this view eventually
+  // if (location) {
+  //     headerContent.push(node('location', {}, parseSmartContent(location)));
+  // }
+  // if (dates) {
+  //     headerContent.push(node('date', {}, parseSmartContent(dates)));
+  // }
+
+  // Return the new BLOCK container
+  return node('positionEntryHeader', {}, headerContent);
+};
+
 // --- 2. MAIN ADAPTER (JSON -> TIPTAP) ---
 export const transformJsonToTiptap = (resumeData) => {
   const docContent = [];
@@ -191,6 +212,7 @@ export const transformJsonToTiptap = (resumeData) => {
         }
     }
 
+    // D. Work & Research
     else if (titleLower.includes('work') || titleLower.includes('research')) {
       if (section.entries) {
         section.entries.forEach(entry => {
@@ -214,26 +236,45 @@ export const transformJsonToTiptap = (resumeData) => {
           
           // --- SCENARIO 2: NESTED VIEW (Multiple Positions) ---
           else if (positions.length > 1) {
-            const allLocations = positions.map(p => p.location);
+            const allLocations = positions.map(p => p.location).filter(loc => loc && loc.trim());
             const isSameLoc = new Set(allLocations).size === 1;
             
-            // Parent Header: Just Company and shared Location
-            const headerNode = node('entryTitleHeader', {}, [
-              node('institution', {}, parseSmartContent(companyName)),
-              node('location', {}, parseSmartContent(isSameLoc ? allLocations[0] : ''))
-              // Date is omitted here for Scenario 2B, or added as range for 2A
-            ]);
+            // A. Construct the ENTRY header node by node
+            const entryHeaderContent = [];
 
+            // 1. Add the institution
+            entryHeaderContent.push(node('institution', {}, parseSmartContent(companyName)));
+            
+            // 2. Optionally add the location
+            if (allLocations.length > 0) {
+              entryHeaderContent.push(node('location', {}, parseSmartContent(isSameLoc ? allLocations[0] : '')));
+            }
+
+            
+
+            // 3. Add the dates
+            entryHeaderContent.push(node('date', {}, parseSmartContent(positions[0].dates)))
+            
+            // 4. Construct the final header node
+            const headerNode = node('entryTitleHeader', {}, entryHeaderContent);
+
+            // B. Create the positionnon-header nodes
             const positionNodes = positions.map(pos => {
-              return node('positionEntry', {
-                variant: 'condensed' // Toggle based on your preference
-              }, [
-                // Child has its own editable title node
-                node('positionTitle', {}, parseSmartContent(pos.title)),
-                node('bulletList', {}, (pos.bullets || []).map(b => 
-                  node('listItem', {}, [paragraph(parseSmartContent(b))])
-                ))
-              ]);
+              const positionEntryContent = [];
+              
+              // 1. Create Header Block
+              positionEntryContent.push(
+                  createPositionHeader(pos.title, pos.description, pos.location, pos.dates)
+              );
+              
+              // 2. Create List Block
+              const bulletList = node('bulletList', {}, (pos.bullets || []).map(b => 
+                node('listItem', {}, [paragraph(parseSmartContent(b))])
+              ));
+              positionEntryContent.push(bulletList);
+
+              // 3. Return Parent Block
+              return node('positionEntry', { variant: 'condensed' }, positionEntryContent);
             });
 
             sectionContentNodes.push(node(entryType, {}, [headerNode, ...positionNodes]));

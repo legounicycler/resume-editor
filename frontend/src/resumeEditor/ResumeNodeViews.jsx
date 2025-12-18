@@ -8,6 +8,7 @@ const getNodeClass = (nodeType) => {
   const map = {
     institution: 'resume-institution',
     positionTitle: 'resume-position-title',
+    positionDescription: 'resume-position-description',
     location: 'resume-location',
     date: 'resume-date',
     degreeType: 'resume-degree-type',
@@ -144,10 +145,6 @@ export const PositionEntryView = ({ node }) => {
   if (variant === 'condensed') {
     return (
       <NodeViewWrapper className="resume-node-view position-entry">
-        <div>
-          <span>{title}</span>
-          {description && <span> - {description}</span>}
-        </div>
         <NodeViewContent className="resume-node-content" /> {/* The Bullets */}
       </NodeViewWrapper>
     );
@@ -157,12 +154,6 @@ export const PositionEntryView = ({ node }) => {
   // Looks like a mini EntryHeader (Title - Location ... Date)
   return (
     <NodeViewWrapper className="resume-node-view position-entry">
-      {/* Mini Header */}
-        <div className="entry-title-header">
-          {title && <span className="resume-institution">{title}</span>}
-          {location && <span className="resume-location">, {location}</span>}
-          <span className="resume-date">{date}</span>
-        </div>
       <NodeViewContent className="resume-node-content" /> {/* The Bullets */}
     </NodeViewWrapper>
   );

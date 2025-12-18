@@ -328,25 +328,33 @@ div[data-type="contact-row"] {
 }
 
 /* Add a separator after the institution name */
-.resume-institution::after {
+/* .resume-institution::after {
   content: " - ";
   white-space: pre;
   font-weight: bold;
   color: black;
   text-decoration: underline;
-}
+} */
 
 .resume-position-title {
   font-weight: bold;
   text-decoration: underline;
 }
 
-.resume-position-title::after {
+.resume-position-title::before, .resume-location::before {
   content: " - ";
   white-space: pre;
   font-weight: normal;
   color: black;
   text-decoration: underline;
+}
+
+.resume-position-description::before {
+  content: " - ";
+  white-space: pre;
+  font-weight: normal;
+  color: black;
+  padding: 0 !important;
 }
 
 /* 2. Location Node */
@@ -374,13 +382,6 @@ div[data-type="contact-row"] {
 /* Institution / Company Name */
 .resume-institution {
   font-weight: bold;
-}
-/* Automatically add the dash separator via CSS */
-.resume-institution::after {
-  content: " - ";
-  white-space: pre;
-  font-weight: normal;
-  color: black;
 }
 
 /* Location */
@@ -492,12 +493,11 @@ div[data-type="contact-row"] {
 
 /* --- SEMANTIC STYLING RESTORATION --- */
 .resume-institution { font-weight: bold; }
-.resume-institution::after { content: " - "; font-weight: normal; color: black; white-space: pre; }
 .resume-location { font-style: italic; }
 .degree-header { margin-bottom: 2px; }
 .resume-degree-type { font-weight: bold; }
 .resume-degree-type::after { content: ": "; font-weight: bold; }
-.resume-gpa::before { content: "   GPA: "; font-weight: bold; white-space: pre; }
+.resume-gpa::before { content: "GPA: "; font-weight: bold; white-space: pre; }
 .entry-title-simple { font-weight: bold; text-decoration: underline; }
 
 /* Remove Bottom Margin from Project Entries */
@@ -616,4 +616,24 @@ div[data-label="PROJECTENTRY"] {
 /* Ensure sub-headers in 2B align correctly */
 .position-entry .entry-title-header {
     margin-bottom: 2px;
+}
+
+/* .resume-location:hover::after, */
+.resume-position-title:hover::after, .resume-position-description:hover::after {
+    content: attr(data-label);
+    position: absolute;
+    top: -12px;
+    right: 0;
+    background: #94a3b8;
+    color: white;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+/* Remove the " - " separator for any position title after the first one 
+   within the same Resume Entry container */
+div[data-label="RESEARCHENTRY"] .resume-position-title::before {
+    content: none;
 }
