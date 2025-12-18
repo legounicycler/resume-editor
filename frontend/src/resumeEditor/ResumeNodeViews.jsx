@@ -1,12 +1,13 @@
 import React, { useContext } from 'react';
 import { NodeViewWrapper, NodeViewContent } from '@tiptap/react';
-import { IconContext } from '../context/IconContext';
+import { IconContext } from "../context/IconContext"
 
 // --- HELPER: Map Node Types to CSS Classes ---
 // This bridges the gap between Tiptap Nodes and your App.css
 const getNodeClass = (nodeType) => {
   const map = {
     institution: 'resume-institution',
+    positionTitle: 'resume-position-title',
     location: 'resume-location',
     date: 'resume-date',
     degreeType: 'resume-degree-type',
@@ -50,7 +51,7 @@ export const StandardEntryView = ({ node }) => {
     <NodeViewWrapper 
       className="resume-node-view" 
       data-label={node.type.name.toUpperCase()} 
-      style={{ marginBottom: '4px' }}
+      style={{ marginBottom: '10px' }}
     >
       <NodeViewContent className="resume-node-content" />
     </NodeViewWrapper>
@@ -133,3 +134,36 @@ export const SkillsEntryView = ({ node }) => {
     </NodeViewWrapper>
   );
 }
+
+// --- NEW: POSITION ENTRY VIEW ---
+export const PositionEntryView = ({ node }) => {
+  const { title, location, date, description, variant } = node.attrs;
+
+  // SCENARIO 2A: Condensed View
+  // Title & Description inline, no date/loc (inherited from parent)
+  if (variant === 'condensed') {
+    return (
+      <NodeViewWrapper className="resume-node-view position-entry">
+        <div>
+          <span>{title}</span>
+          {description && <span> - {description}</span>}
+        </div>
+        <NodeViewContent className="resume-node-content" /> {/* The Bullets */}
+      </NodeViewWrapper>
+    );
+  }
+
+  // SCENARIO 2B: Full View
+  // Looks like a mini EntryHeader (Title - Location ... Date)
+  return (
+    <NodeViewWrapper className="resume-node-view position-entry">
+      {/* Mini Header */}
+        <div className="entry-title-header">
+          {title && <span className="resume-institution">{title}</span>}
+          {location && <span className="resume-location">, {location}</span>}
+          <span className="resume-date">{date}</span>
+        </div>
+      <NodeViewContent className="resume-node-content" /> {/* The Bullets */}
+    </NodeViewWrapper>
+  );
+};

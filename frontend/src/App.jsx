@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-import ResumeEditor from './ResumeEditor';
+import ResumeEditor from './resumeEditor/ResumeEditor';
 import JobDescription from './JobDescription';
 import './App.css';
-import { transformJsonToTiptap, transformTiptapToJson } from './utils/resumeAdapter';
+import { transformJsonToTiptap, transformTiptapToJson } from './resumeEditor/resumeAdapter';
 
 const Toast = ({ message, type, stack, onClose }) => {
   const [showStack, setShowStack] = useState(false);

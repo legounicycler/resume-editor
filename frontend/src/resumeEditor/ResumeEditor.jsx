@@ -16,10 +16,10 @@ import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 
 // Custom Extensions
-import { CustomTableCell } from './extensions/CustomTableCell';
-import { LineHeight } from './extensions/LineHeight';
-import { FontSize } from './extensions/FontSize';
-import { ParagraphSpacing } from './extensions/ParagraphSpacing';
+import { CustomTableCell } from '../extensions/CustomTableCell';
+import { LineHeight } from '../extensions/LineHeight';
+import { FontSize } from '../extensions/FontSize';
+import { ParagraphSpacing } from '../extensions/ParagraphSpacing';
 
 // Resume nodes
 import { 
@@ -33,9 +33,11 @@ import {
   ResearchEntryNode,
   LeadershipEntryNode,
   SkillsEntryNode,
+  PositionEntryNode,
   EntryTitleSimpleNode,
   EntryTitleHeaderNode,
   InstitutionNode,
+  PositionTitleNode,
   LocationNode,
   DateNode,
   DegreeNode,
@@ -46,10 +48,10 @@ import {
   ContactRowNode,
   ContactDetailNode,
   SeparatorLineNode,
-} from './extensions/ResumeNodes';
+} from './ResumeNodes';
 
 // Node view import for passing icon data to ContactDetail
-import { IconContext } from './context/IconContext'; // <--- Import the context
+import { IconContext } from '../context/IconContext'; // <--- Import the context
 
 const AiHighlight = Highlight.extend({
   addAttributes() {
@@ -84,9 +86,11 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, icon
       ResearchEntryNode,
       LeadershipEntryNode,
       SkillsEntryNode,
+      PositionEntryNode,
       EntryTitleSimpleNode,
       EntryTitleHeaderNode,
       InstitutionNode,
+      PositionTitleNode,
       LocationNode,
       DateNode,
       DegreeNode,

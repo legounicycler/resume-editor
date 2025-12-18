@@ -1,0 +1,29 @@
+RESUME FINAL FORMATTING
+1. Come up with updated schema for resume variations
+    a. Subsections on research entries
+    b. Optional skills bullet for project entries
+    c. Optional bullet points for degrees
+2. Translate existing resumes to new json schema (use AI)
+3. Ensure each resume displays as expected
+4. Implement/test save functionality
+    a. Ensure new bullet points are persistent
+    b. Ensure updates to bold/italics within bullets are persistent
+    c. Ensure changes to font-size / line height / margin are persistent
+
+
+DOCUMENT EDITOR FORMATTING
+1. Get rid of extra scroll space at end of document
+2. Ensure that when text overflows onto the next page it respects bottom margin and displays on a separate page
+3. Figure out how to export to PDF and ensure it still looks good
+
+
+
+AI INTEGRATION
+0. Functional - Determine architecture for expressing edits within the document
+1. Visual - Implement programtic highlighting for document
+2. Visual - Implement programatic highlighting for job description
+3. Visual - Design diffed bullet points
+4. Visual - Design info box that shows on hover of diff
+5. Visual - Design arrows/splines linking document and job description
+6. Functional - Determine output format for AI
+7. Functional - Proompt engineering

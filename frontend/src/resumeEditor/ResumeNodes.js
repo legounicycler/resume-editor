@@ -3,11 +3,12 @@ import { ReactNodeViewRenderer } from '@tiptap/react';
 import { 
   SectionView, 
   StandardEntryView,
+  PositionEntryView,
   SkillsEntryView,
   ContactDetailView,
   PersonalSectionView,
   InlineNodeView
-} from '../components/ResumeNodeViews';
+} from './ResumeNodeViews';
 
 // ----- ROOT NODE (Level 1)-----
 
@@ -79,14 +80,12 @@ export const EducationEntryNode = Node.create({
 export const WorkEntryNode = Node.create({
   name: 'workEntry',
   group: 'block',
-  content: 'entryTitleHeader bulletList', // The user edits the bullets. The Header is handled by attributes.
-  addAttributes() {
-    return {
-      company: { default: 'Company Name' },
-      location: { default: 'Location' },
-      dates: { default: 'Dates' },
-    };
-  },
+  content: 'entryTitleHeader (bulletList | positionEntry+)', // The user edits the bullets. The Header is handled by attributes.
+  // addAttributes() {
+  //   return {
+  //     company: { default: 'Company Name' },
+  //   };
+  // },
   parseHTML() { return [{ tag: 'div[data-type="work-entry"]' }] },
   renderHTML({ HTMLAttributes }) {
     return ['div', { 'data-type': 'work-entry', ...HTMLAttributes }, 0];
@@ -100,14 +99,12 @@ export const WorkEntryNode = Node.create({
 export const ResearchEntryNode = Node.create({
   name: 'researchEntry',
   group: 'block',
-  content: 'entryTitleHeader bulletList', // The user edits the bullets. The Header is handled by attributes.
-  addAttributes() {
-    return {
-      institution: { default: 'Institution Name' },
-      location: { default: 'Location' },
-      dates: { default: 'Dates' },
-    };
-  },
+  content: 'entryTitleHeader (bulletList | positionEntry+)', // The user edits the bullets. The Header is handled by attributes.
+  // addAttributes() {
+  //   return {
+  //     institution: { default: 'Institution Name' },
+  //   };
+  // },
   parseHTML() { return [{ tag: 'div[data-type="research-entry"]' }] },
   renderHTML({ HTMLAttributes }) {
     return ['div', { 'data-type': 'research-entry', ...HTMLAttributes }, 0];
@@ -196,7 +193,32 @@ export const SkillsEntryNode = Node.create({
   },
 });
 
-// ----- ENTRY NODE TITLES (Level 4) -----
+// ----- POSITION NODE ----
+
+// Position Entry Node (Lives within Work Entry or Research Entry)
+export const PositionEntryNode = Node.create({
+  name: 'positionEntry',
+  group: 'block',
+  content: 'bulletList', // Contains the bullets for this specific position
+  addAttributes() {
+    return {
+      title: { default: '' },
+      location: { default: '' },
+      date: { default: '' },
+      description: { default: '' },
+      variant: { default: 'condensed' } // 'condensed' (2A) or 'full' (2B)
+    };
+  },
+  parseHTML() { return [{ tag: 'div[class="position-entry"]' }]; },
+  renderHTML({ HTMLAttributes }) {
+    return ['div', mergeAttributes(HTMLAttributes, { class: 'position-entry' }), 0];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(PositionEntryView);
+  }
+});
+
+// ----- ENTRY NODE TITLES -----
 
 // Entry Title Node (First node within ProjectEntry, LeadershipEntry)
 //   - Contains the title to be displayed inline with the description
@@ -218,7 +240,7 @@ export const EntryTitleSimpleNode = Node.create({
 export const EntryTitleHeaderNode = Node.create({
   name: 'entryTitleHeader',
   group: 'block',
-  content: 'institution location date', // STRICT ORDER: Institution -> Location -> Date
+  content: 'institution positionTitle? location date', // Optional positionTitle
   parseHTML() { return [{ tag: 'div[class="entry-title-header"]' }]; },
   renderHTML({ HTMLAttributes }) {
     return ['div', mergeAttributes(HTMLAttributes, { class: 'entry-title-header' }), 0];
@@ -236,6 +258,21 @@ export const InstitutionNode = Node.create({
   parseHTML() { return [{ tag: 'span[data-type="institution"]' }]; },
   renderHTML({ HTMLAttributes }) {
     return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'institution', class: 'resume-institution' }), 0];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(InlineNodeView);
+  }
+});
+
+// Institution Node (Second node within EntryHeader)
+export const PositionTitleNode = Node.create({
+  name: 'positionTitle',
+  group: 'inline',   // Behaves like a <span>
+  inline: true,
+  content: 'text*',  // Contains editable text
+  parseHTML() { return [{ tag: 'span[data-type="position-title"]' }]; },
+  renderHTML({ HTMLAttributes }) {
+    return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'position-title', class: 'resume-position-title' }), 0];
   },
   addNodeView() {
     return ReactNodeViewRenderer(InlineNodeView);

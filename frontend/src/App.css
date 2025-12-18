@@ -99,12 +99,9 @@ body { margin: 0; overflow: hidden; background-color: #f3f4f6; font-family: 'Int
   display: block;
   width: 100%;
   border-bottom: 1px solid black; /* Thicker, clear line */
-  padding-bottom: 2px;
-  margin-top: 12pt; 
-  margin-bottom: 4pt;
   text-align: center;
   font-size: 10pt;
-  line-height: 1.0;
+  margin-bottom: .2rem;
 }
 
 /* Keep H1 (Name) styling */
@@ -224,9 +221,8 @@ input.format-input { width: 40px; text-align: center; }
 /* Bullets */
 .editor-content .ProseMirror ul {
   padding-left: .85rem;
-  margin-top: 0;
-  margin-bottom: 1em;
   text-indent: -0.25rem;
+  margin: 0;
 }
 
 
@@ -239,13 +235,6 @@ input.format-input { width: 40px; text-align: center; }
   text-decoration: underline;
 }
 
-.editor-content .ProseMirror h2 {
-  margin-top: 0;
-  margin-bottom: 0;
-  line-height: 1.0;
-  font-size: 10pt;
-  font-weight: bold;
-}
 .editor-content .ProseMirror h3 {
   margin-top: 0; margin-bottom: 0; line-height: 1.0;
 }
@@ -316,6 +305,7 @@ div[data-type="contact-row"] {
     flex-direction: row;
     width: 100%;
     align-items: baseline; /* Aligns text baselines */
+    margin-bottom: .15rem;
 }
 
 /* Push date to the far right */
@@ -327,7 +317,7 @@ div[data-type="contact-row"] {
 
 /* Tighten spacing for inline header nodes to fix gaps */
 .entry-title-header .resume-node-view {
-    padding: 0 1px; /* Minimal padding */
+    padding: 0px !important;
     margin: 0;
 }
 
@@ -339,6 +329,19 @@ div[data-type="contact-row"] {
 
 /* Add a separator after the institution name */
 .resume-institution::after {
+  content: " - ";
+  white-space: pre;
+  font-weight: bold;
+  color: black;
+  text-decoration: underline;
+}
+
+.resume-position-title {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.resume-position-title::after {
   content: " - ";
   white-space: pre;
   font-weight: normal;
@@ -404,14 +407,6 @@ div[data-type="contact-row"] {
 
 /* --- PROJECT / LEADERSHIP FORMATTING --- */
 
-/* Target the BulletList node */
-.editor-content .ProseMirror ul {
-    padding-left: 1.5rem;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    list-style-type: disc;
-}
-
 /* Target the ListItem paragraphs */
 .editor-content .ProseMirror li p {
     margin: 0;
@@ -467,26 +462,11 @@ div[data-type="contact-row"] {
   white-space: nowrap;
 }
 
-/* --- FIX: ENTRY HEADERS (Date Alignment & Underline Gap) --- */
-
-.entry-title-header {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    align-items: baseline;
-}
-
 /* Tiptap wraps React views in a span with class "node-[nodeName]".
    We must target THIS wrapper to make flex properties work.
 */
 .entry-title-header > .node-date {
     margin-left: auto; /* Pushes the date wrapper to the right */
-}
-
-/* Fix the underline gap by removing horizontal padding on header items */
-.entry-title-header .resume-node-view {
-    padding: 0; 
-    margin: 0;
 }
 
 /* --- FIX: PROJECTS & LEADERSHIP LISTS --- */
@@ -520,37 +500,23 @@ div[data-type="contact-row"] {
 .resume-gpa::before { content: "   GPA: "; font-weight: bold; white-space: pre; }
 .entry-title-simple { font-weight: bold; text-decoration: underline; }
 
-/* Personal Section Hover Fixes */
-.personal-content-wrapper > h1:hover, .personal-content-wrapper > p:hover {
-  outline: 1px dashed #6b7280; 
-  background-color: rgba(229, 231, 235, 0.5); 
-  cursor: text;
-  position: relative;
-}
-.personal-content-wrapper > h1:hover::before { 
-    content: "NAME"; position: absolute; top: -10px; right: 0; 
-    background: #6b7280; color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; pointer-events: none;
-}
-.personal-content-wrapper > p:hover::before { 
-    content: "SUMMARY"; position: absolute; top: -10px; right: 0; 
-    background: #6b7280; color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; pointer-events: none;
-}
-
-/* --- FINAL POLISH FIXES --- */
-
-/* 1. Remove Bottom Margin from Project Entries */
+/* Remove Bottom Margin from Project Entries */
+/* Default margin is applied by  */
 div[data-label="PROJECTENTRY"],
 div[data-label="LEADERSHIPENTRY"] {
     margin-bottom: 0 !important;
 }
 
-/* 2. Education Degrees: Bullet Points & Layout */
+/* Education Degrees: Bullet Points & Layout */
 div[data-label="DEGREE"] {
     display: list-item;       /* Turn the wrapper into a list item */
     list-style-type: disc;    /* Add the bullet */
-    margin-left: 1.5rem;      /* Indent */
-    padding: 0;               /* Reset internal padding */
-    margin-bottom: 4px;
+    margin-left: 1rem;        /* Indent */
+    margin-bottom: 0px !important;
+}
+
+div[data-label="DEGREE"] .resume-node-content {
+  margin-left: -.5em;
 }
 
 /* 4. Float GPA Right */
@@ -635,4 +601,19 @@ div[data-label="SKILLS ENTRY"] p {
 div[data-label="LEADERSHIPENTRY"],
 div[data-label="PROJECTENTRY"] {
     margin-bottom: 0 !important;
+}
+
+/* Position Entry Styling */
+.position-entry {
+    margin-left: 0; /* Align with parent bullets */
+}
+
+/* For Scenario 2A: Ensure the title/description block is close to the bullets */
+.position-entry .resume-node-content ul {
+    margin-top: 2px !important;
+}
+
+/* Ensure sub-headers in 2B align correctly */
+.position-entry .entry-title-header {
+    margin-bottom: 2px;
 }
