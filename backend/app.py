@@ -11,7 +11,7 @@ import sys
 import base64
 
 # List the icon names we expect to load (must match your JSON fields)
-EXPECTED_ICON_NAMES = ['email', 'phone', 'linkedin', 'website']
+EXPECTED_ICON_NAMES = ['email', 'phone', 'linkedin', 'website', 'github']
 
 def load_image_icons(icon_names):
     """
@@ -83,7 +83,6 @@ def upload_file():
 
     return jsonify({"html": html_content})
 
-# --- NEW ROUTE TO SERVE JSON DATA ---
 @app.route('/get-data', methods=['GET'])
 def get_resume_data():
     try:
@@ -95,6 +94,15 @@ def get_resume_data():
         return jsonify({"error": "MechanicalResume.json not found in backend directory."}), 404
     except json.JSONDecodeError:
         return jsonify({"error": "Error reading JSON data."}), 500
+
+@app.route('/api/resume/<filename>')
+def get_resume(filename):
+    # Security note: In production, validate filename to prevent directory traversal
+    try:
+        with open(f'resumes/{filename}', 'r') as f: #
+            return jsonify(json.load(f))
+    except FileNotFoundError:
+        return jsonify({"error": "Resume not found"}), 404
 
 @app.route('/analyze', methods=['POST'])
 def analyze_resume():

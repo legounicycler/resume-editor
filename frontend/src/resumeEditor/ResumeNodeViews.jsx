@@ -25,7 +25,7 @@ export const InlineNodeView = ({ node, HTMLAttributes }) => {
   const semanticClass = getNodeClass(node.type.name);
   
   // 2. Generate Label
-  const label = node.type.name.toUpperCase().replace('NODE', '').replace('SIMPLE', '');
+  const label = node.attrs.displayName || node.type.name.toUpperCase().replace('NODE', '').replace('SIMPLE', '');
 
   return (
     <NodeViewWrapper 
@@ -48,10 +48,11 @@ export const InlineNodeView = ({ node, HTMLAttributes }) => {
 
 // --- THE UNIVERSAL VIEW (Work/Project/Research/Leadership) ---
 export const StandardEntryView = ({ node }) => {
+  const label = node.attrs.displayName || node.type.name.toUpperCase();
   return (
     <NodeViewWrapper 
       className="resume-node-view" 
-      data-label={node.type.name.toUpperCase()} 
+      data-label={label} 
       style={{ marginBottom: '10px' }}
     >
       <NodeViewContent className="resume-node-content" />
@@ -97,7 +98,7 @@ export const ContactDetailView = ({ node }) => {
     return <img src={base64Src} alt={type} className="myicon" style={{ verticalAlign: 'middle' }} />;
   };
 
-  const isLink = ['linkedin', 'website', 'email'].includes(type);
+  const isLink = ['linkedin', 'website', 'email', 'github'].includes(type);
   const link = type === 'email' ? `mailto:${value}` : value;
 
   return (
@@ -108,7 +109,7 @@ export const ContactDetailView = ({ node }) => {
         display: 'inline-block', 
         textAlign: 'center', 
         minWidth: '20%', 
-        padding: '0 5px', 
+        padding: '0px 4px', 
         fontSize: '9pt', 
       }}
     >
@@ -136,15 +137,33 @@ export const SkillsEntryView = ({ node }) => {
   );
 }
 
-// --- NEW: POSITION ENTRY VIEW ---
+// --- NEW: PROJECT SKILLS VIEW ---
+export const ProjectSkillsView = ({ node }) => {
+  return (
+    <NodeViewWrapper 
+      as="div" // Keep as div to allow the list-item behavior (new line)
+      className="resume-node-view project-skills-view" 
+      data-label="PROJECT SKILLS"
+      style={{ fontSize: '9pt', marginTop: '2px' }}
+    >
+      <span contentEditable={false} style={{ fontWeight: 'bold', marginRight: '4px' }}>
+        Skills: 
+      </span>
+      {/* Force as="span" here to fight the internal div creation */}
+      <NodeViewContent as="span" className="project-skills-content" />
+    </NodeViewWrapper>
+  );
+}
+
+// --- POSITION ENTRY VIEW ---
 export const PositionEntryView = ({ node }) => {
-  const { title, location, date, description, variant } = node.attrs;
+  const { displayName, title, location, date, description, variant } = node.attrs;
 
   // SCENARIO 2A: Condensed View
   // Title & Description inline, no date/loc (inherited from parent)
   if (variant === 'condensed') {
     return (
-      <NodeViewWrapper className="resume-node-view position-entry">
+      <NodeViewWrapper className="resume-node-view position-entry" data-label={displayName}>
         <NodeViewContent className="resume-node-content" /> {/* The Bullets */}
       </NodeViewWrapper>
     );
@@ -153,7 +172,7 @@ export const PositionEntryView = ({ node }) => {
   // SCENARIO 2B: Full View
   // Looks like a mini EntryHeader (Title - Location ... Date)
   return (
-    <NodeViewWrapper className="resume-node-view position-entry">
+    <NodeViewWrapper className="resume-node-view position-entry" data-label={displayName}>
       <NodeViewContent className="resume-node-content" /> {/* The Bullets */}
     </NodeViewWrapper>
   );

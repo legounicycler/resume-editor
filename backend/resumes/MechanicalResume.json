@@ -124,12 +124,7 @@
         {
           "title": "Submersible ROV",
           "description": "Created ROV to explore underwater caves with Raspberry Pi, custom PCB, & 3D printing",
-          "skills": [
-            "Python",
-            "Raspberry Pi",
-            "PCB Design",
-            "3D Printing"
-          ]
+          "skills": []
         },
         {
           "title": "Space Life Detection Instrument",

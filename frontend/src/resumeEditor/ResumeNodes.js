@@ -7,7 +7,8 @@ import {
   SkillsEntryView,
   ContactDetailView,
   PersonalSectionView,
-  InlineNodeView
+  InlineNodeView,
+  ProjectSkillsView // [New Import]
 } from './ResumeNodeViews';
 
 // ----- ROOT NODE (Level 1)-----
@@ -38,7 +39,12 @@ export const ResumeSectionNode = Node.create({
   name: 'resumeSection',
   group: 'block',
   content: 'sectionTitle (educationEntry|workEntry|researchEntry|projectEntry|leadershipEntry|skillsEntry)+',
-  addAttributes() { return { sectionType: { default: 'generic' } }; }, // Keep attribute for logic, but display comes from node
+  addAttributes() { 
+    return {
+      sectionType: { default: 'generic' },
+      displayName: { default: 'Resume Section'}
+    };
+  },
   renderHTML({ HTMLAttributes }) {
     return ['section', mergeAttributes(HTMLAttributes), 0];
   },
@@ -81,11 +87,11 @@ export const WorkEntryNode = Node.create({
   name: 'workEntry',
   group: 'block',
   content: 'entryTitleHeader (bulletList | positionEntry+)', // The user edits the bullets. The Header is handled by attributes.
-  // addAttributes() {
-  //   return {
-  //     company: { default: 'Company Name' },
-  //   };
-  // },
+  addAttributes() {
+    return {
+      displayName: { default: 'WORK ENTRY' }
+    };
+  },
   parseHTML() { return [{ tag: 'div[data-type="work-entry"]' }] },
   renderHTML({ HTMLAttributes }) {
     return ['div', { 'data-type': 'work-entry', ...HTMLAttributes }, 0];
@@ -100,11 +106,11 @@ export const ResearchEntryNode = Node.create({
   name: 'researchEntry',
   group: 'block',
   content: 'entryTitleHeader (bulletList | positionEntry+)', // The user edits the bullets. The Header is handled by attributes.
-  // addAttributes() {
-  //   return {
-  //     institution: { default: 'Institution Name' },
-  //   };
-  // },
+  addAttributes() {
+    return {
+      displayName: { default: 'RESEARCH ENTRY' }
+    };
+  },
   parseHTML() { return [{ tag: 'div[data-type="research-entry"]' }] },
   renderHTML({ HTMLAttributes }) {
     return ['div', { 'data-type': 'research-entry', ...HTMLAttributes }, 0];
@@ -118,9 +124,12 @@ export const ResearchEntryNode = Node.create({
 export const ProjectEntryNode = Node.create({
   name: 'projectEntry',
   group: 'block',
-  // Content: A paragraph that contains the title node AND the text description
-  // This is the best way to ensure they stay on one line
-  content: 'paragraph', 
+  content: 'paragraph projectSkills?',
+  addAttributes() {
+    return {
+      displayName: { default: 'PROJECT ENTRY' }
+    };
+  },
   renderHTML({ HTMLAttributes }) {
     return ['div', { 'data-type': 'project-entry', ...HTMLAttributes }, 0];
   },
@@ -148,11 +157,30 @@ export const ProjectEntryNode = Node.create({
   }
 });
 
+// [NEW NODE] Project Skills Node (Displayed beneath the project title line)
+export const ProjectSkillsNode = Node.create({
+  name: 'projectSkills',
+  group: 'block',
+  content: 'text*', // Editable text (comma separated list)
+  parseHTML() { return [{ tag: 'div[data-type="project-skills"]' }]; },
+  renderHTML({ HTMLAttributes }) {
+    return ['div', mergeAttributes(HTMLAttributes, { 'data-type': 'project-skills', class: 'project-skills' }), 0];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(ProjectSkillsView);
+  }
+});
+
 // Leadership Entry Node (Represents a single leadership role with title and description)
 export const LeadershipEntryNode = Node.create({
   name: 'leadershipEntry',
   group: 'block',
   content: 'paragraph',
+  addAttributes() {
+    return {
+      displayName: { default: 'LEADERSHIP ENTRY' }
+    };
+  },
   renderHTML({ HTMLAttributes }) {
     return ['div', { 'data-type': 'leadership-entry', ...HTMLAttributes }, 0];
   },
@@ -180,10 +208,11 @@ export const LeadershipEntryNode = Node.create({
 export const SkillsEntryNode = Node.create({
   name: 'skillsEntry',
   group: 'block',
-  content: 'paragraph', // Skills are displayed as a single paragraph of text
+  content: 'paragraph', // Skills are displayed as a single paragraph of comma separated values
   addAttributes() {
-    // title attribute removed as the skill itself is the paragraph content
-    return {}; 
+    return {
+      displayName: { default: 'SKILLS ENTRY' }
+    };
   },
   renderHTML({ HTMLAttributes }) {
     return ['div', { 'data-type': 'skills-entry', ...HTMLAttributes }, 0];
@@ -203,11 +232,12 @@ export const PositionEntryNode = Node.create({
   content: 'positionEntryHeader bulletList', 
   addAttributes() {
     return {
+      displayName: {default: 'POSITION ENTRY'},
       title: { default: '' },
       location: { default: '' },
       date: { default: '' },
       description: { default: '' },
-      variant: { default: 'condensed' } 
+      variant: { default: 'condensed' }
     };
   },
   parseHTML() { return [{ tag: 'div[class="position-entry"]' }]; },
@@ -233,9 +263,14 @@ export const PositionEntryHeaderNode = Node.create({
 // Institution Node (Second node within EntryHeader)
 export const PositionTitleNode = Node.create({
   name: 'positionTitle',
-  group: 'inline',   // Behaves like a <span>
+  group: 'inline',
   inline: true,
-  content: 'text*',  // Contains editable text
+  content: 'text*',
+  addAttributes() {
+    return {
+      displayName: { default: 'POSITION TITLE' }
+    };
+  },
   parseHTML() { return [{ tag: 'span[data-type="position-title"]' }]; },
   renderHTML({ HTMLAttributes }) {
     return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'position-title', class: 'resume-position-title' }), 0];
@@ -250,6 +285,11 @@ export const PositionDescriptionNode = Node.create({
   group: 'inline',
   inline: true,
   content: 'text*',
+  addAttributes() {
+    return {
+      displayName: { default: 'POSITION DESCRIPTION' }
+    };
+  },
   parseHTML() { return [{ tag: 'span[data-type="position-description"]' }]; },
   renderHTML({ HTMLAttributes }) {
     return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'position-description', class: 'resume-position-description' }), 0];
@@ -268,6 +308,11 @@ export const EntryTitleSimpleNode = Node.create({
   group: 'inline',
   inline: true,
   content: 'text*',
+  addAttributes() {
+    return {
+      displayName: { default: 'ENTRY TITLE' }
+    };
+  },
   renderHTML({ HTMLAttributes }) {
     return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'entry-title-simple', class: 'entry-title-simple' }), 0];
   },
@@ -365,6 +410,11 @@ export const DegreeTypeNode = Node.create({
   group: 'inline',
   inline: true,
   content: 'text*',
+  addAttributes() {
+    return {
+      displayName: { default: 'DEGREE TYPE' }
+    };
+  },
   renderHTML({ HTMLAttributes }) {
     return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'degree-type', class: 'resume-degree-type' }), 0];
   },
@@ -419,7 +469,7 @@ export const ContactRowNode = Node.create({
   // We don't need a NodeView here, as we only need to render the container div.
 });
 
-// Contact Detail Node (Used in ContactRow)
+// Contact Detail Node (Used in ContactRow. Displays an icon prefix and snippet of info like a link)
 export const ContactDetailNode = Node.create({
   name: 'contactDetail',
   group: 'block',
@@ -427,7 +477,7 @@ export const ContactDetailNode = Node.create({
   inline: false, // Renders on its own line
   addAttributes() {
     return {
-      type: { default: null }, // 'email', 'phone', 'linkedin', 'website'
+      type: { default: null }, // 'email', 'phone', 'linkedin', 'website', 'github'
       value: { default: null }, // the actual data
     };
   },

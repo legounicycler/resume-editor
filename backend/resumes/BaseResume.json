@@ -181,10 +181,6 @@
         "description": "Prototyped instrument for in-situ water measurements on icy moons",
         "skills": []
       },
-      { "title": "Space Life Detection Instrument",
-        "description": "Prototyped instrument for in-situ water measurements on icy moons",
-        "skills": []
-      },
       {
         "title": "MATLAB Jet Engine Design Tool",
         "description": "Modeled/simulated thermodynamic states of ramjets, turbofans, & turbojets",
@@ -228,7 +224,7 @@
     },
     { "title": "Skills",
       "entries": [
-        "CAD", "SolidWorks", "Onshape", "SolidWorks PDM", "FEA", "GD&T", "Python", "MATLAB", "Simulink", "C++", "Embedded C", "Java", "JavaScript", "Scala", "JavaScript", "Git", "GitHub Management", "Command Line Unix", "FPrime", "Fpp", "HTML/CSS", "SQLite", "Arduino", "Virtual Machines", "Linux", "Windows", "DAQ", "Soldering", "Oscilloscope", "Logic Analyzer", "Design For Manufacturing", "Mechanical/Electrical Drawings", "Machining", "Mill", "Lathe", "Water Jet", "Welder", "Laser Cutter", "3D Printing", "Jira", "Control Theory", "Motor Control", "Microsoft Office", "Spanish", "Orbital Dynamics"
+        "CAD", "SolidWorks", "OnShape", "SolidWorks PDM", "FEA", "GD&T", "Python", "MATLAB", "Simulink", "C++", "Embedded C", "Java", "JavaScript", "Scala", "JavaScript", "Git", "GitHub Management", "Command Line Unix", "FPrime", "Fpp", "HTML/CSS", "SQLite", "Arduino", "Virtual Machines", "Linux", "Windows", "DAQ", "Soldering", "Oscilloscope", "Logic Analyzer", "Design For Manufacturing", "Mechanical/Electrical Drawings", "Machining", "Mill", "Lathe", "Water Jet", "Welder", "Laser Cutter", "3D Printing", "Jira", "Control Theory", "Motor Control", "Microsoft Office", "Spanish", "Orbital Dynamics"
       ]
     }
   ]

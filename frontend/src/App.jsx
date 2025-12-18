@@ -5,6 +5,14 @@ import JobDescription from './JobDescription';
 import './App.css';
 import { transformJsonToTiptap, transformTiptapToJson } from './resumeEditor/ResumeAdapter';
 
+const baseResumes = [
+  { id: 'BaseResume.json', label: 'Standard' },
+  { id: 'SoftwareResume.json', label: 'Software Engineer' },
+  { id: 'MechanicalResume.json', label: 'Mechanical Engineer' },
+  { id: 'TestEngineerResume.json', label: 'Test Engineer' },
+  { id: 'C&DHResume.json', label: 'C&DH' }
+];
+
 const Toast = ({ message, type, stack, onClose }) => {
   const [showStack, setShowStack] = useState(false);
   if (!message) return null;
@@ -83,6 +91,22 @@ function App() {
     }
   };
 
+  const handleLoadBaseResume = async (filename) => {
+  try {
+    setIsLoading(true);
+    const response = await fetch(`http://localhost:5000/api/resume/${filename}`); //
+    const data = await response.json();
+    
+    // Use the adapter to transform JSON to Tiptap format
+    const tiptapJson = transformJsonToTiptap(data);
+    setResumeHtml(tiptapJson);
+  } catch (error) {
+    console.error("Error loading base resume:", error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
   const handleSave = () => {
       // Create a reference or pass a callback to Editor to get JSON
       // ideally passed up from ResumeEditor via onUpdate, 
@@ -112,14 +136,31 @@ function App() {
     <div className="app-container">
       <Toast {...toast} onClose={() => setToast({ message: '' })} />
 
-      <header className="toolbar">
-        <h1>Resume AI Editor</h1>
-        <div className="toolbar-actions">
-          <button className="optimize-btn" onClick={handleAIGenerate} disabled={isLoading}>
-            {isLoading ? <><div className="spinner"></div> Processing...</> : '✨ Auto-Optimize'}
-          </button>
-        </div>
-      </header>
+      {/* 1. Add a state for the list of resumes (or hardcode them based on your backend files) */}
+
+{/* 2. Update the Toolbar JSX */}
+<div className="toolbar">
+  <h1>Resume AI Editor</h1>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+    <span style={{ fontSize: '0.85rem' }}>Load Base:</span>
+    <select 
+      className="format-select" 
+      style={{ backgroundColor: '#334155', color: 'white', border: '1px solid #475569', borderRadius: '4px' }}
+      onChange={(e) => handleLoadBaseResume(e.target.value)}
+      defaultValue=""
+    >
+      <option value="" disabled>Select Resume...</option>
+      {baseResumes.map(res => (
+        <option key={res.id} value={res.id}>{res.label}</option>
+      ))}
+    </select>
+    
+    {/* <button className="optimize-btn" onClick={handleOptimize}> */}
+    <button className="optimize-btn">
+      {isLoading ? <div className="spinner"></div> : "Optimize"}
+    </button>
+  </div>
+</div>
 
       <div className="main-split">
         <div className="panel-container" style={{ width: `${leftWidth}%` }}>

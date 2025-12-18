@@ -30,6 +30,7 @@ import {
   EducationEntryNode,
   WorkEntryNode, 
   ProjectEntryNode,
+  ProjectSkillsNode,
   ResearchEntryNode,
   LeadershipEntryNode,
   SkillsEntryNode,
@@ -53,7 +54,7 @@ import {
 } from './ResumeNodes';
 
 // Node view import for passing icon data to ContactDetail
-import { IconContext } from '../context/IconContext'; // <--- Import the context
+import { IconContext } from '../context/IconContext';
 
 const AiHighlight = Highlight.extend({
   addAttributes() {
@@ -85,6 +86,7 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, icon
       EducationEntryNode,
       WorkEntryNode, 
       ProjectEntryNode,
+      ProjectSkillsNode,
       ResearchEntryNode,
       LeadershipEntryNode,
       SkillsEntryNode,

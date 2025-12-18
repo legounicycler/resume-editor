@@ -11,7 +11,7 @@ const parseSmartContent = (data) => {
     return data;
   }
   
-  // If it's a string, use DOMParser (This implementation assumes you copied the full function from the previous thought)
+  // If it's a string, use DOMParser
   if (typeof data === 'string') {
     if (!data) return [];
     
@@ -135,7 +135,9 @@ export const transformJsonToTiptap = (resumeData) => {
   if (resumeData.personal.email) contactDetailNodes.push(createContactNode('email', resumeData.personal.email));
   if (resumeData.personal.phone) contactDetailNodes.push(createContactNode('phone', resumeData.personal.phone));
   if (resumeData.personal.linkedin) contactDetailNodes.push(createContactNode('linkedin', resumeData.personal.linkedin));
+  // [MODIFIED] Only add website and github if they exist in the JSON
   if (resumeData.personal.website) contactDetailNodes.push(createContactNode('website', resumeData.personal.website));
+  if (resumeData.personal.github) contactDetailNodes.push(createContactNode('github', resumeData.personal.github));
   
   if (contactDetailNodes.length > 0) {
     personalSectionNodes.push(node('contactRow', {}, contactDetailNodes));
@@ -202,12 +204,19 @@ export const transformJsonToTiptap = (resumeData) => {
                     ...parseSmartContent(entry.description)
                 ];
 
+                // [MODIFIED] Create content array. If skills exist, append projectSkills node.
+                const projectContent = [paragraph(paragraphContent)];
+
+                if (entryType === 'projectEntry' && entry.skills && entry.skills.length > 0) {
+                   // Flatten skills to string
+                   const skillsStr = Array.isArray(entry.skills) ? entry.skills.join(', ') : entry.skills;
+                   projectContent.push(node('projectSkills', {}, [text(skillsStr)]));
+                }
+
                 sectionContentNodes.push(node(entryType, { 
                     title: entry.title,
                     skills: (entryType === 'projectEntry') ? (entry.skills || []) : undefined
-                }, [
-                    paragraph(paragraphContent)
-                ]));
+                }, projectContent));
             });
         }
     }
@@ -250,15 +259,13 @@ export const transformJsonToTiptap = (resumeData) => {
               entryHeaderContent.push(node('location', {}, parseSmartContent(isSameLoc ? allLocations[0] : '')));
             }
 
-            
-
             // 3. Add the dates
             entryHeaderContent.push(node('date', {}, parseSmartContent(positions[0].dates)))
             
             // 4. Construct the final header node
             const headerNode = node('entryTitleHeader', {}, entryHeaderContent);
 
-            // B. Create the positionnon-header nodes
+            // B. Create the position nodes
             const positionNodes = positions.map(pos => {
               const positionEntryContent = [];
               
