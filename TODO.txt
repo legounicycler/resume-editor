@@ -1,11 +1,12 @@
 RESUME FINAL FORMATTING
-1. Come up with updated schema for resume variations
-    a. Subsections on research entries
-    b. Optional skills bullet for project entries
-    c. Optional bullet points for degrees
-2. Translate existing resumes to new json schema (use AI)
-3. Ensure each resume displays as expected
-4. Implement/test save functionality
+1. Test how sub-bullets for project skills load/look
+2. Test how EACH resume looks
+3. Add some margin under Positions when there are multiple
+4. Add some margin on the left to indent them slightly (only when there are multiple)
+5. Positon description tag shows up twice on hover
+6. Stop ::before elements from disappearing on hover for inline entry/position titles
+7. Position node doesn't show up on hover
+8. Implement/test save functionality
     a. Ensure new bullet points are persistent
     b. Ensure updates to bold/italics within bullets are persistent
     c. Ensure changes to font-size / line height / margin are persistent

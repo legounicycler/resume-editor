@@ -10,13 +10,12 @@
     "website": "anthony.limiero.com"
   },
   "sections": [
-    {
-      "title": "Education",
+    { "title": "Education",
       "entries": [
         {
           "school": "Georgia Institute of Technology, College of Engineering",
           "location": "Atlanta, GA",
-          "dates": "Aug 2017 – May 2022",
+          "dates": "Aug 2017 - May 2022",
           "degrees": [
             {
               "gpa": "3.90 / 4.00",
@@ -28,29 +27,94 @@
         }
       ]
     },
-    {
-      "title": "Work Experience",
+    { "title": "Work Experience",
       "entries": [
+        {
+          "company": "Georgia Tech Christian Campus Fellowship",
+          "positions": [
+            {
+              "title": "Associate Campus Minister",
+              "location": "Atlanta, GA",
+              "dates": "Aug 2022 - May 2025",
+              "bullets": [
+                "Managed a team of 3 interns and oversaw the ministry for all incoming freshmen",
+                "Demonstrated strong communication skills through public speaking and small group facilitation",
+                "Led and planned community service trips to foster leadership and community building",
+                "Gained conversational <strong>Spanish</strong> while serving for 5 months in Santiago, Chile"
+              ]
+            }
+          ]
+        },
         {
           "company": "NASA Jet Propulsion Laboratory",
           "positions": [
             {
               "title": "Software Computing System Intern",
-              "dates": "May 2022 – Jul 2022",
+              "location": "Pasadena, CA",
+              "dates": "May 2022 - Jul 2022",
               "bullets": [
                 "Created compiler tool in Scala to generate C++ command validation code for the C&DH subsystem of the MSR lander",
                 "Developed automated unit tests with Python for command sequence validation in continuous integration pipelines",
-                "Contributed to open-source FSW frameworks FPrime & FPP used across multiple NASA missions for C&DH",
+                "Contributed to open-source FSW  frameworks FPrime & FPP used across multiple NASA missions for C&DH",
                 "Developed in Windows and Linux environments, using Git for version control and cross-team collaboration"
               ]
             }
           ]
         },
         {
-          "company": "Space Systems Design Lab (SSDL)",
+          "company": "NASA Goddard Space Flight Center",
+          "positions": [
+            {
+              "title": "In-Space Assembly Intern",
+              "location": "Greenbelt, MD",
+              "dates": "Jun 2021 - Aug 2021",
+              "bullets": [
+                "Developed animated CONOPS for robotically-assembled spacecraft harnessing in SolidWorks and Blender",
+                "Interviewed engineers from OSAM-1 satellite refueling mission to synthesize info about in-space assembly & refueling"
+              ]
+            }
+          ]
+        },
+        {
+          "company": "Georgia Tech Research Institute (GTRI)",
+          "positions": [
+            {
+              "title": "Mech Engineering Student Co-op",
+              "location": "Atlanta, GA",
+              "dates": "Aug 2019 - Jun 2021",
+              "bullets": [
+                "Conducted electrical and mechanical test engineering campaigns for avionics components on the C-5 cargo plane",
+                "Implemented sinusoidal BLDC motor control in embedded C & characterized performance w/ oscilloscope",
+                "Used MATLAB and Simulink to simulate dynamics of aircraft servo’s internal mechanical components",
+                "Designed mechanical test fixturing in SolidWorks for vibration testing and other requirement verification tests"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    { "title": "Research",
+      "entries": [
+        {
+          "institution": "Space Systems Design Lab (SSDL)",
           "positions": [
             {
               "title": "GT-2 Project Lead & FSW Team Lead",
+              "location": "Georgia Tech - Atlanta, GA",
+              "dates": "Jan 2020 - May 2022",
+              "description": "(1U CubeSat mission)",
+              "bullets": [
+                "Developed embedded baremetal C/C++ for shift register drivers, I2C control of EPS, and amateur radio payloa",
+                "Implemented command and data handling and telemetry monitoring in FPrime ground station software w/ Python",
+                "Debugged spacecraft bus and GSE using tools like multimeters, oscilloscopes, and logic analyzers",
+                "Supported RF testing, vibration testing, TVAC testing, command validation testing, and clean room integration"
+              ]
+            },
+            {
+              "title": "GT-1 Flight Software Engineer",
+              "location": "Georgia Tech - Atlanta, GA",
+              "dates": "Jan 2020 - May 2022",
+              "description": "(1U CubeSat deployed from ISS in February 2022)",
               "bullets": [
                 "Managed multi-disciplinary team of engineers in fast-paced CubeSat mission with rapid 1 year development timeline",
                 "Directed FSW team in designing telemetry data storage & command routing with multiprocessor RS-485 connections",
@@ -62,10 +126,18 @@
         }
       ]
     },
-    {
-      "title": "Skills",
+    { "title": "Projects",
       "entries": [
-        "Command & Data Handling (C&DH)", "Telemetry Systems", "Serial Interfaces (I²C, SPI, RS-485)", "Python", "C++", "C", "FPrime", "Fpp", "Embedded Development", "Logic Analyzers", "Digital Oscilloscope"
+        { "title": "Personal Finance Web App", "description": "Full stack web app using Python and JavaScript hosted on remote Linux server" },
+        { "title": "MATLAB Jet Engine Design Tool", "description": "Modeled/simulated thermodynamic states of ramjets, turbofans, & turbojets" },
+        { "title": "Submersible ROV", "description": "Created ROV to explore underwater caves using Raspberry Pi, custom PCB, & 3D printing" },
+        { "title": "Space Life Detection Instrument", "description": "Prototyped instrument for in-situ water measurements on icy moons" },
+        { "title": "Self-Published Novels", "description": "Co-wrote 2 young adult time-travel fantasy novels in the Son of Time Chronicles" }
+      ]
+    },
+    { "title": "Skills",
+      "entries": [
+        "Python", "MATLAB", "Simulink", "C++", "C", "Command & Data Handling (C&DH)", "Telemetry Systems", "Serial Interfaces (I²C", "SPI", "RS-485)", "Java", "Scala", "JavaScript", "Git", "GitHub Management", "Command Line Unix", "FPrime", "Fpp", "HTML/CSS", "SQLite", "Arduino", "Virtual Machines", "Linux", "Windows", "Compilers", "Microsoft Office", "CAD (SolidWorks)", "Machining", "3D Printing", "Spanish", "Embedded Development", "Project Management", "Jira", "Control Theory", "Motor Control", "Digital Oscilloscope", "Digital Multimeter (DMM)", "Logic Analyzers"
       ]
     }
   ]

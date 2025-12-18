@@ -88,7 +88,7 @@ def upload_file():
 def get_resume_data():
     try:
         # Load the JSON file directly from the backend directory
-        with open('./resumes/SoftwareResume.json', 'r') as f:
+        with open('./resumes/BaseResume.json', 'r') as f:
             data = json.load(f)
         return jsonify(data)
     except FileNotFoundError:

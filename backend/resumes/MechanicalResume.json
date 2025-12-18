@@ -2,7 +2,7 @@
   "personal": {
     "name": "Anthony Limiero",
     "summary": "Aerospace engineer with 2 years experience as a mechanical engineer designing avionics hardware and test fixturing using SolidWorks, owning projects from requirements to design to manufacturing to assembly and testing.",
-    "details": "U.S. citizen eligible for security clearance seeking full time employment starting January 2026.",
+    "details": "US citizen | Eligible for security clearance | Seeking full-time employment | Available January 2026",
     "email": "anthony@limiero.com",
     "phone": "661-431-7218",
     "linkedin": "https://www.linkedin.com/in/anthony-limiero",
@@ -189,28 +189,7 @@
     },
     { "title": "Skills",
       "entries": [
-        "GD&T",
-        "CAD",
-        "SolidWorks",
-        "SolidWorks PDM",
-        "OnShape",
-        "MATLAB",
-        "Simulink",
-        "Python",
-        "Embedded C/C++",
-        "Git",
-        "Java",
-        "Linux",
-        "Arduino",
-        "Scripting",
-        "Microsoft Office",
-        "Blender",
-        "Design For Manufacturing",
-        "3D Printing",
-        "Mill",
-        "Lathe",
-        "Water Jet",
-        "Welding"
+        "GD&T", "CAD", "SolidWorks", "SolidWorks PDM", "OnShape", "MATLAB", "Simulink", "Python", "Embedded C/C++", "Git", "Java", "Linux", "Arduino", "Scripting", "Microsoft Office", "Blender", "Design For Manufacturing", "Mechanical/Electrical Drawings", "Machining (Mill", "Lathe", "Water Jet", "Welder", "Laser Cutter)", "3D Printing", "Jira", "Control Theory", "Motor Control", "Microsoft Office", "Spanish", "Orbital Dynamics"
       ]
     }
   ]

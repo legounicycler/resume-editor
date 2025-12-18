@@ -1,7 +1,7 @@
 {
   "personal": {
     "name": "Anthony Limiero",
-    "summary": "Aerospace Engineer with 2+ years of hands-on experience planning, developing, and executing verification and qualification test programs for spaceflight hardware.",
+    "summary": "Aerospace Engineer with 2+ years of hands-on experience planning, developing, and executing verification and qualification test programs for spaceflight hardware. Proficient in mechanical, electrical, RF, avionics, and environmental testing (Vibration, TVAC), data analysis, and generating test procedures for complex space systems.",
     "details": "US citizen | Eligible for security clearance | Seeking full-time employment | Available January 2026",
     "email": "anthony@limiero.com",
     "phone": "661-431-7218",
@@ -9,30 +9,181 @@
     "website": "anthony.limiero.com"
   },
   "sections": [
-    {
-      "title": "Work Experience",
+    { "title": "Education",
       "entries": [
         {
-          "company": "Georgia Tech Research Institute (GTRI)",
-          "positions": [
+          "school": "Georgia Institute of Technology",
+          "location": "Atlanta, GA",
+          "dates": "Aug 2017 - May 2022",
+          "degrees": [
             {
-              "title": "Mech Engineering Student Co-op",
-              "dates": "Aug 2019 – Jun 2021",
+              "gpa": "3.90 / 4.00",
+              "degreeType": "Bachelor's of Science",
+              "major": "Aerospace Engineering - Highest Honors",
               "bullets": [
-                "Conducted mechanical and electrical verification/debug campaigns for high-reliability avionics on the C-5 cargo plane",
-                "Owned the development/build of mechanical test fixturing for verifying test requirements for vibration testing",
-                "Generated and maintained test documentation and characterized test data to determine pass/fail criteria",
-                "Precision assembly of mechanical test fixtures using tools like torque wrenches, calipers, and micrometers"
               ]
             }
           ]
         }
       ]
     },
-    {
-      "title": "Skills",
+    { "title": "Work Experience",
       "entries": [
-        "Environmental Testing (Vibration, TVAC)", "Data Analysis", "Automated Test Scripting", "Design for Test Principles", "DAQ", "Oscilloscope", "Logic Analyzer", "Multimeters"
+        {
+          "company": "Georgia Tech Christian Campus Fellowship",
+          "positions": [
+            {
+              "title": "Associate Campus Minister",
+              "location": "Atlanta, GA",
+              "dates": "Aug 2022 - May 2025",
+              "description": null,
+              "bullets": [
+                "Managed a team of 3 interns and oversaw the ministry for all incoming freshmen",
+                "Demonstrated strong communication skills through public speaking and small group facilitation",
+                "Led and planned community service trips to foster leadership and community building",
+                "Gained conversational <strong>Spanish</strong> while serving for 5 months in Santiago, Chile"
+              ]
+            }
+          ]
+        },
+        {
+          "company": "NASA Jet Propulsion Laboratory",
+          "positions": [
+            {
+              "title": "Software Computing System Intern",
+              "location": "Pasadena, CA",
+              "dates": "May 2022 - Jul 2022",
+              "description": null,
+              "bullets": [
+                "Created compiler tool in Scala to generate C++ command validation code for Mars Sample Return mission",
+                "Developed automated test scripts in bash and Python for continuous integration procedures",
+                "Helped developed open-source flight software framework FPrime in Windows and Linux environments"
+
+              ]
+            }
+          ]
+        },
+        {
+            "company": "NASA Goddard Space Flight Center",
+            "positions": [
+              {
+                "title": "In-Space Assembly Intern",
+                "location": "Greenbelt, MD",
+                "dates": "Jun 2021 - Aug 2021",
+                "description": null,
+                "bullets": [
+                  "Developed animated CONOPS for robotically-assembled spacecraft harnessing in SolidWorks and Blender",
+                  "Interviewed engineers from OSAM-1 satellite refueling mission to learn about in-space assembly & refueling"
+
+                ]
+              }
+            ]
+        },
+        {
+          "company": "Georgia Tech Research Institute (GTRI)",
+          "positions": [
+            {
+              "title": "Mech Engineering Student Co-op",
+              "location": "Atlanta, GA",
+              "dates": "Aug 2019 - Jun 2021",
+              "description": null,
+              "bullets": [
+                "Conducted mechanical and electrical verification/debug campaigns for high-reliability avionics on the C-5 cargo plane",
+                "Owned the development/build of mechanical test fixturing for verifying test requirements for vibration testing",
+                "Generated and maintained test documentation and characterized test data to determine pass/fail criteria",
+                "Characterized performance of BLDC motor w/ oscilloscope after implementing sinusoidal control in embedded C",
+                "Used MATLAB and Simulink to simulate dynamics of aircraft servo's internal mechanical components",
+                "Generated part/assembly drawings and analyzed tolerance stackups with GD&T principles as per ASME Y14.5",
+                "Ran FEA on servo body using SolidWorks Simulation to validate structural performance under operational loads",
+                "Precision assembly of mechanical test fixtures using tools like torque wrenches, calipers, and micrometers"
+
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    { "title": "Research",
+      "entries": [
+        {
+          "institution": "Space Systems Design Lab (SSDL)",
+          "positions": [
+            {
+              "title": "GT-2 Project Lead",
+              "dates": "Jan 2020 - May 2022",
+              "location": "Georgia Tech - Atlanta, GA",
+              "description": "(1U CubeSat mission)",
+              "bullets": [
+                "Managed cross-disciplinary team of engineers in fast-paced CubeSat mission with 1 year development timeline",
+                "Coordinated with Japanese Space Agency to translate mission requirements into integration protocols and test plans",
+                "Served as software team lead by training, recruiting, tasking, managing GitHub, and designing system topologies"
+
+              ]
+            },
+            {
+              "title": "GT-1 Flight Software Engineer",
+              "dates": "Jan 2020 - May 2022",
+              "location": "Georgia Tech - Atlanta, GA",
+              "description": "(1U CubeSat deployed from ISS in February 2022)",
+              "bullets": [
+                "Developed embedded software in C/C++ for shift register drivers, I2C control of EPS, and amateur radio payload",
+                "Implemented command and data handling and telemetry monitoring in FPrime ground station software w/ Python",
+                "Debugged spacecraft bus and EGSE test anomalies using tools like multimeters, oscilloscopes, and logic analyzers",
+                "Conducted software unit tests and wrote test procedures to verify functionality of individual hardware components",
+                "Executed environmental test campaigns: RF, vibration, TVAC, and clean room integration of mission-critical hardware"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    { "title": "Projects",
+      "entries": [
+        {
+          "title": "Submersible ROV",
+          "description": "Created ROV to explore underwater caves with Raspberry Pi, custom PCB, & 3D printing",
+          "skills": [
+            "Python",
+            "Raspberry Pi",
+            "PCB Design",
+            "3D Printing"
+          ]
+        },
+        {
+          "title": "Space Life Detection Instrument",
+          "description": "Prototyped instrument for in-situ water measurements on icy moons",
+          "skills": []
+        },
+        {
+          "title": "Custom 3D Printer",
+          "description": "Designed a direct-drive 3D printer with custom manufactured parts",
+          "skills": []
+        },
+        {
+          "title": "Mars Mission Proposal",
+          "description": "Senior design project modeling lander/orbiter in SolidWorks for seismic research",
+          "skills": []
+        },
+        {
+          "title": "MATLAB Jet Engine Design Tool",
+          "description": "Modeled/simulated thermodynamic states of ramjets, turbofans, & turbojets",
+          "skills": []
+        },
+        {
+          "title": "Personal Finance Web App",
+          "description": "Full stack web app using Python and JavaScript hosted on Linux virtual machine",
+          "skills": []
+        },
+        {
+          "title": "Self-Published Novels",
+          "description": "Co-wrote 2 young adult time-travel fantasy novels in the Son of Time Chronicles",
+          "skills": []
+        }
+      ]
+    },
+    { "title": "Skills",
+      "entries": [
+        "CAD", "SolidWorks", "OnShape", "GD&T", "MATLAB", "Simulink", "Python", "Embedded C/C++", "Git", "Java", "Linux", "Automated Test Scripting", "Microsoft Office", "Design For Manufacturing Principles", "Design for Test Principles", "3D Printing", "Mill", "Lathe", "Water Jet", "Welding", "Laser Cutting", "DAQ", "Soldering", "Oscilloscope", "Logic Analyzer", "Spanish", "Project Management", "Jira", "Mechanical/Electrical Drawings"
       ]
     }
   ]
