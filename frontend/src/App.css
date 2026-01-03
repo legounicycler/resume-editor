@@ -205,13 +205,11 @@ input.format-input { width: 40px; text-align: center; }
 }
 
 .editor-content .ProseMirror {
-  /* width: 8.5in; */
-  /* min-height: 11in; */
+  /* PaginationPlus extension controls width, height, and margins */
   background-color: white;
   color: black;
   outline: none;
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-  padding: var(--page-margin, 0.5in); /* Dynamic margins controlled by toolbar */
   box-sizing: border-box;
 
   /* Fonts */
@@ -221,10 +219,6 @@ input.format-input { width: 40px; text-align: center; }
 
   /* Print media support for proper page breaks */
   position: relative;
-}
-
-.rm-first-page-header {
-  display: none !important;
 }
 
 /* Ensure content respects page boundaries when printing */
@@ -667,57 +661,157 @@ div[data-label="WORK ENTRY"] .position-ntry:last-child {
     margin-bottom: 0 !important;
 }
 
-/* --- PAGE BREAK SYSTEM --- */
-
 /* Print styles */
 @media print {
-  /* Hide all UI elements */
+  /* Hide all non-editor elements */
+  .toolbar,
   .panel-toolbar,
-  .page-overlay {
+  .page-overlay,
+  .right-panel-content,
+  .resize-handle,
+  .main-split > .panel-container:last-child {
     display: none !important;
   }
 
-  /* Reset body and container for printing */
-  body {
-    margin: 0;
-    padding: 0;
+  /* Hide pagination system completely */
+  .rm-page-break,
+  .breaker,
+  .rm-pagination-gap,
+  .ProseMirror-widget,
+  [data-rm-pagination="true"] {
+    display: none !important;
   }
 
-  .resume-panel-wrapper {
+  /* CRITICAL: Reset margins/padding selectively */
+  body, html {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    overflow: visible !important;
     width: 100%;
     height: auto;
+    border: none !important;
   }
 
-  .editor-scroll-area {
-    overflow: visible;
-    height: auto;
+  .app-container,
+  .main-split,
+  .main-split > .panel-container:first-child,
+  .resume-panel-wrapper,
+  .editor-scroll-area,
+  .zoom-frame {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+    width: 100% !important;
+    border: none !important;
   }
 
-  /* Reset zoom transformation for printing */
   .zoom-frame {
     transform: none !important;
+    gap: 0 !important;
+    display: block !important;
   }
 
-  /* Clean up editor content for print */
+  .editor-content {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
   .editor-content .ProseMirror {
-    box-shadow: none;
-    page-break-after: auto;
-    width: 100%;
-    margin: 0;
-    padding: 0.25in; /* Use the page margin */
+    box-shadow: none !important;
+    page-break-after: auto !important;
+    width: 8.5in !important;
+    margin: 0 auto !important;
+    padding: 0.25in !important;
+    min-height: auto !important;
+    border: none !important;
+    background: white !important;
   }
 
-  /* Prevent awkward page breaks in print */
-  .editor-content .ProseMirror .entry-title-header,
-  .editor-content .ProseMirror .degree-header,
-  .editor-content .ProseMirror .position-entry-header,
+  /* PRESERVE FLEXBOX FOR HEADERS - CRITICAL */
+  .entry-title-header {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+    align-items: baseline !important;
+    margin-bottom: 0.15rem !important;
+    page-break-inside: avoid !important;
+  }
+
+  .entry-title-header .resume-date {
+    margin-left: auto !important;
+    text-align: right !important;
+    margin-right: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .degree-header {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+    align-items: baseline !important;
+    page-break-inside: avoid !important;
+    margin-bottom: 2px !important;
+  }
+
+  .degree-header .resume-gpa {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+  }
+
   .editor-content .ProseMirror h2 {
-    page-break-inside: avoid;
-    page-break-after: avoid;
+    page-break-inside: avoid !important;
+    page-break-after: avoid !important;
   }
 
-  .editor-content .ProseMirror li,
-  .editor-content .ProseMirror .position-entry {
-    page-break-inside: avoid;
+  /* PRESERVE LIST STYLING */
+  .editor-content .ProseMirror ul,
+  .editor-content .ProseMirror ol {
+    margin-left: 1.5em !important;
+    padding-left: 0 !important;
+  }
+
+  .editor-content .ProseMirror li {
+    display: list-item !important;
+    list-style-position: outside !important;
+    page-break-inside: avoid !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* PRESERVE PROJECT & LEADERSHIP BULLETS */
+  .node-projectEntry,
+  .node-leadershipEntry {
+    display: list-item !important;
+    list-style: disc !important;
+    list-style-position: outside !important;
+    margin-left: 1.5em !important;
+    margin-bottom: 4px !important;
+    page-break-inside: avoid !important;
+  }
+
+  .node-projectEntry p,
+  .node-leadershipEntry p {
+    display: inline !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Ensure contact row displays properly */
+  div[data-type="contact-row"] {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    page-break-inside: avoid !important;
+    margin: 5px 0 !important;
+  }
+
+  /* Hide react wrapper divs that add spacing */
+  .react-renderer {
+    display: contents !important;
   }
 }

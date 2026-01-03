@@ -74,6 +74,7 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, icon
   const [currentFontSize, setCurrentFontSize] = useState('10');
   const [currentMarginBottom, setCurrentMarginBottom] = useState('0');
   const [currentMarginTop, setCurrentMarginTop] = useState('0');
+  const [pageMargin, setPageMargin] = useState('0.25'); // Page margins in inches (default 0.25")
 
   const editor = useEditor({
     extensions: [
@@ -127,10 +128,14 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, icon
         pageBreakBackground: '#525659',
         contentMarginTop: 0,
         contentMarginBottom: 0,
-        headerLeft: '',  // Remove header
-        headerRight: '', // Remove header
-        footerLeft: '',  // Remove footer
-        footerRight: '', // Remove footer
+        // headerLeft: '',  // Remove header
+        // headerRight: '', // Remove header
+        footerLeft: '',
+        footerRight: '',
+        marginTop: 24,    // pixels at 96 DPI (0.25")
+        marginBottom: 24,
+        marginLeft: 24,
+        marginRight: 24,
       }),
     ],
     content: content,
@@ -231,19 +236,57 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, icon
 
   // Handle page margin updates
   useEffect(() => {
+    console.log('🔵 Margin useEffect triggered, pageMargin:', pageMargin);
+    
     if (editor && editor.isEditable) {
-      // Convert inches to pixels at 96 DPI
       const marginPx = parseFloat(pageMargin) * 96;
+      console.log('🔵 Calculated marginPx:', marginPx);
 
-      // Update PaginationPlus margins using the extension's command
+      // Check current option values BEFORE update
+      const pageBreakExt = editor.extensionManager.extensions.find(ext => ext.name === 'paginationPlus');
+      if (pageBreakExt) {
+        console.log('🔵 BEFORE update - options:', {
+          marginTop: pageBreakExt.options.marginTop,
+          marginBottom: pageBreakExt.options.marginBottom,
+          marginLeft: pageBreakExt.options.marginLeft,
+          marginRight: pageBreakExt.options.marginRight,
+        });
+      }
+
       editor.commands.updateMargins({
         top: marginPx,
         bottom: marginPx,
         left: marginPx,
         right: marginPx,
       });
+
+      // Check AFTER update
+      if (pageBreakExt) {
+        console.log('🔵 AFTER update - options:', {
+          marginTop: pageBreakExt.options.marginTop,
+          marginBottom: pageBreakExt.options.marginBottom,
+          marginLeft: pageBreakExt.options.marginLeft,
+          marginRight: pageBreakExt.options.marginRight,
+        });
+      }
+
+      // Check CSS variables on DOM
+      const editorElement = editor.view.dom;
+      const computedStyle = window.getComputedStyle(editorElement);
+      console.log('🔵 CSS Variables:', {
+        top: computedStyle.getPropertyValue('--rm-margin-top'),
+        bottom: computedStyle.getPropertyValue('--rm-margin-bottom'),
+        left: computedStyle.getPropertyValue('--rm-margin-left'),
+        right: computedStyle.getPropertyValue('--rm-margin-right'),
+      });
+
+      const { state } = editor;
+      const { tr } = state;
+      console.log('🔵 Dispatching transaction');
+      editor.view.dispatch(tr);
     }
   }, [pageMargin, editor]);
+
 
   // Handle Search Highlighting
   useEffect(() => {
