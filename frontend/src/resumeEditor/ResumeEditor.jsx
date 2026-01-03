@@ -124,18 +124,18 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, icon
       ParagraphSpacing,
       PaginationPlus.configure({
         ...PAGE_SIZES.LETTER,
-        pageGap: 20,
+        pageGap: 0,
         pageBreakBackground: '#525659',
         contentMarginTop: 0,
         contentMarginBottom: 0,
-        // headerLeft: '',  // Remove header
-        // headerRight: '', // Remove header
+        headerLeft: '',  // Remove header
+        headerRight: '', // Remove header
         footerLeft: '',
         footerRight: '',
-        marginTop: 24,    // pixels at 96 DPI (0.25")
-        marginBottom: 24,
-        marginLeft: 24,
-        marginRight: 24,
+        marginTop: 20,    // pixels at 96 DPI (0.25")
+        marginBottom: 20,
+        marginLeft: 20,
+        marginRight: 20,
       }),
     ],
     content: content,
@@ -234,57 +234,28 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, icon
     };
   }, [editor]);
 
-  // Handle page margin updates
+// Handle page margin updates
   useEffect(() => {
-    console.log('🔵 Margin useEffect triggered, pageMargin:', pageMargin);
+    if (!editor || !editor.isEditable) return;
+
+    // 1. Convert inches to pixels (96 DPI is standard for web print)
+    const marginPx = Math.floor(parseFloat(pageMargin) * 96);
     
-    if (editor && editor.isEditable) {
-      const marginPx = parseFloat(pageMargin) * 96;
-      console.log('🔵 Calculated marginPx:', marginPx);
-
-      // Check current option values BEFORE update
-      const pageBreakExt = editor.extensionManager.extensions.find(ext => ext.name === 'paginationPlus');
-      if (pageBreakExt) {
-        console.log('🔵 BEFORE update - options:', {
-          marginTop: pageBreakExt.options.marginTop,
-          marginBottom: pageBreakExt.options.marginBottom,
-          marginLeft: pageBreakExt.options.marginLeft,
-          marginRight: pageBreakExt.options.marginRight,
-        });
-      }
-
-      editor.commands.updateMargins({
+    // 2. Run the command
+    // We explicitly chain focusing to ensure the editor state is active
+    editor.chain()
+      .focus()
+      .updateMargins({
         top: marginPx,
         bottom: marginPx,
         left: marginPx,
         right: marginPx,
-      });
+      })
+      .run();
 
-      // Check AFTER update
-      if (pageBreakExt) {
-        console.log('🔵 AFTER update - options:', {
-          marginTop: pageBreakExt.options.marginTop,
-          marginBottom: pageBreakExt.options.marginBottom,
-          marginLeft: pageBreakExt.options.marginLeft,
-          marginRight: pageBreakExt.options.marginRight,
-        });
-      }
+    // 3. Debugging: Log what we just tried to set
+    console.log(`Margins updated to: ${pageMargin}in (${marginPx}px)`);
 
-      // Check CSS variables on DOM
-      const editorElement = editor.view.dom;
-      const computedStyle = window.getComputedStyle(editorElement);
-      console.log('🔵 CSS Variables:', {
-        top: computedStyle.getPropertyValue('--rm-margin-top'),
-        bottom: computedStyle.getPropertyValue('--rm-margin-bottom'),
-        left: computedStyle.getPropertyValue('--rm-margin-left'),
-        right: computedStyle.getPropertyValue('--rm-margin-right'),
-      });
-
-      const { state } = editor;
-      const { tr } = state;
-      console.log('🔵 Dispatching transaction');
-      editor.view.dispatch(tr);
-    }
   }, [pageMargin, editor]);
 
 

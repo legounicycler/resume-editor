@@ -22,10 +22,14 @@ body { margin: 0; overflow: hidden; background-color: #f3f4f6; font-family: 'Int
   z-index: 20;
 }
 
-.toolbar h1 { margin: 0; font-size: 1.1rem; font-weight: 600; }
+/* Toolbar header "Resume Editor AI" */
+.toolbar h1 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
 
-/* frontend/src/App.css */
-
+/* Dropdown for base resume selection */
 .toolbar select.format-select {
   padding: 4px 8px;
   cursor: pointer;
@@ -33,11 +37,11 @@ body { margin: 0; overflow: hidden; background-color: #f3f4f6; font-family: 'Int
   font-size: 0.85rem;
   transition: border-color 0.2s;
 }
-
 .toolbar select.format-select:hover {
   border-color: #3b82f6;
 }
 
+/* Resume AI optimize button styling */
 .optimize-btn {
   background-color: #3b82f6;
   color: white;
@@ -50,7 +54,11 @@ body { margin: 0; overflow: hidden; background-color: #f3f4f6; font-family: 'Int
   align-items: center;
   gap: 8px;
 }
-.optimize-btn:hover { background-color: #2563eb; }
+.optimize-btn:hover {
+  background-color: #2563eb;
+}
+
+/* TODO: (NOT HERE ANYMORE?) Spinner animation within resume button */
 .spinner {
   width: 12px; height: 12px;
   border: 2px solid rgba(255,255,255,0.3);
@@ -76,80 +84,62 @@ body { margin: 0; overflow: hidden; background-color: #f3f4f6; font-family: 'Int
   height: 100%;
 }
 
-/* --- LEFT PANEL SPECIFIC --- */
+/* The drag handle between the two panels */
+.resize-handle {
+  width: 6px; background: #e2e8f0; cursor: col-resize;
+  z-index: 20; display: flex; justify-content: center; align-items: center;
+}
+.resize-handle:hover { background: #3b82f6; }
+
+/* Toasts for displaying messages including stacktrace errors */
+.toast-container {
+  position: fixed; bottom: 20px; right: 20px;
+  background: #ef4444; color: white; padding: 12px 16px;
+  border-radius: 6px; box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+  z-index: 1000; display: flex; gap: 12px; align-items: flex-start;
+}
+.toast-container.success { background: #10b981; }
+.stack-trace {
+  background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 4px;
+  font-size: 0.75rem; white-space: pre-wrap; max-height: 200px; overflow-y: auto; margin-top: 0.5rem;
+}
+
+
+
+
+
+
+/* --- RIGHT PANEL (JOB DESCRIPTION) --- */
+
+.right-panel-content {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  background: white;
+  color: #1e293b;
+}
+
+/* --- Rich Text Input Styling --- */
+.jd-input-rich {
+  outline: none;
+  white-space: pre-wrap;
+  min-height: 200px;
+}
+
+
+
+
+
+
+
+/* --- LEFT PANEL (RESUME EDITOR) --- */
+
+/* Contains the resume editor including toolbar and scroll area */
 .resume-panel-wrapper {
   display: flex;
   flex-direction: column;
-  height: 100%; /* Fill the panel-container */
-  overflow: hidden; /* Prevent wrapper scroll */
-}
-
-/* --- FIX: TABLES & HEADERS --- */
-
-/* 1. Force Tables to Full Width */
-/* Overrides Tiptap's calculated widths */
-.editor-content .ProseMirror .tableWrapper {
-  margin: 0;
-  overflow-x: auto;
-  width: 100% !important; 
-}
-
-.editor-content .ProseMirror table {
-  width: 100% !important;
-  table-layout: fixed; /* Ensures columns respect percentages */
-  border-collapse: collapse;
-  margin: 0;
-}
-
-.editor-content .ProseMirror td {
-  vertical-align: top;
-  padding: 0;
-  border: none;
-}
-
-/* 2. Fix Header Underlines */
-/* Ensures H2 spans full width so border goes across page */
-.editor-content .ProseMirror h2 {
-  display: block;
-  width: 100%;
-  border-bottom: 1px solid black; /* Thicker, clear line */
-  text-align: center;
-  font-size: 10pt;
-  margin-bottom: .2rem;
-}
-
-/* Keep H1 (Name) styling */
-.editor-content .ProseMirror h1 {
-  text-align: center;
-  text-decoration: underline;
-  font-size: 14pt;
-  margin: 0;
-  display: block;
-}
-
-table, th, td {
-  border-collapse: collapse;
-}
-
-.editor-scroll-area {
-  flex: 1; /* Consume all remaining space below toolbar */
-  overflow-y: auto; /* ENABLE SCROLL HERE */
-  overflow-x: hidden;
-  background-color: #525659;
-  padding: 2rem 0;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.zoom-frame {
-  transform-origin: top center;
-  transition: transform 0.1s ease-out;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 20px; /* Space between pages */
+  height: 100%;
+  overflow: hidden;
 }
 
 /* --- Panel Toolbars --- */
@@ -167,11 +157,18 @@ table, th, td {
   z-index: 10;
 }
 
-/* Controls Styles */
+/* Styles for the resume editor toolbar buttons/controls */
 .upload-label {
-  background: #fff; border: 1px solid #cbd5e1; color: #334155;
-  padding: 4px 8px; border-radius: 4px; cursor: pointer;
-  font-size: 0.8rem; display: flex; align-items: center; gap: 4px;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 .upload-label:hover { background: #f1f5f9; border-color: #94a3b8; }
 .upload-label input { display: none; }
@@ -190,6 +187,7 @@ select.format-select, input.format-input {
 }
 input.format-input { width: 40px; text-align: center; }
 
+/* The zoom +/- buttons */
 .icon-btn {
   background: transparent; border: none; padding: 4px 6px;
   cursor: pointer; color: #475569; border-radius: 3px;
@@ -197,126 +195,105 @@ input.format-input { width: 40px; text-align: center; }
 }
 .icon-btn:hover { background-color: #e2e8f0; color: #1e293b; }
 .icon-btn.active { background-color: #e0f2fe; color: #0284c7; }
+
+/* The vertical separator between controls/buttons in the resume editor toolbar */
 .separator { width: 1px; height: 20px; background: #cbd5e1; margin: 0 4px; }
 
-/* --- THE PAGE (Editor) --- */
-.editor-content {
-  position: relative; /* Required for absolute positioning of page overlays */
+/* Scroll area for the resume editor content */
+.editor-scroll-area {
+  overflow-y: auto; /* ENABLE SCROLL HERE */
+  overflow-x: hidden;
+  background-color: #525659;
+  padding: 2rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
+/* Zoom Frame: Holds the resume pages and applies zoom */
+.zoom-frame {
+  transform-origin: top center;
+  transition: transform 0.1s ease-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px; /* Space between pages */
+}
+
+
+
+
+
+
+/* --- THE DOCUMENT EDITOR (DISPLAYS THE PAGES) --- */
+
 .editor-content .ProseMirror {
-  /* PaginationPlus extension controls width, height, and margins */
   background-color: white;
   color: black;
   outline: none;
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
   box-sizing: border-box;
-
-  /* Fonts */
   font-family: 'Arial', sans-serif;
   line-height: 1.0;
   font-size: 10pt;
-
-  /* Print media support for proper page breaks */
-  position: relative;
+  position: relative; /* Enables proper page breaks */
 }
 
-/* Ensure content respects page boundaries when printing */
-@media print {
-  .editor-content .ProseMirror {
-    width: 8.5in;
-    height: auto;
-    min-height: 0;
-    padding: 0.75in;
-    box-shadow: none;
-    page-break-after: auto;
-  }
-}
-
-/* --- Import Formatting Fixes --- */
-/* Bottom Borders from Word */
-.editor-content .ProseMirror .has-border-bottom {
-  border-bottom: 1px solid #000;
-  padding-bottom: 4px;
-  margin-bottom: 8px;
-}
-/* Centering */
-.editor-content .ProseMirror .center-align,
-.editor-content .ProseMirror div[align="center"] {
-  text-align: center;
-}
-/* Bullets */
-.editor-content .ProseMirror ul {
-  padding-left: .85rem;
-  text-indent: -0.25rem;
-  margin: 0;
-}
-
-
-/* Headers */
+/* Style the Resume Title (Big centered name at the top) */
 .editor-content .ProseMirror h1 {
+  text-align: center;
+  text-decoration: underline;
+  font-size: 14pt;
+  margin: 0;
   margin-top: 0;
   margin-bottom: 0;
   line-height: 1.0;
-  font-size: 14pt;
-  text-decoration: underline;
+  display: block;
 }
 
-.editor-content .ProseMirror h3 {
-  margin-top: 0; margin-bottom: 0; line-height: 1.0;
+/* Style the section titles so they span full width and bottom border spans entire page */
+.editor-content .ProseMirror h2 {
+  display: block;
+  width: 100%;
+  border-bottom: 1px solid black;
+  text-align: center;
+  font-size: 10pt;
+  margin-bottom: .2rem;
 }
 
+/* Styling for the bulleted lists under work/research entries */
+.editor-content .ProseMirror ul {
+  padding-left: .95rem;
+  text-indent: -0.35rem;
+  margin: 0;
+}
+
+/* Remove default paragraph spacing so line-height works properly*/
 .editor-content .ProseMirror p {
-  margin: 0; /* removes default spacing */
+  margin: 0;
 }
 
-/* --- Right Panel --- */
-.right-panel-content {
-  flex: 1; padding: 1.5rem; overflow-y: auto; background: white; color: #1e293b;
-}
-.jd-input-rich { outline: none; white-space: pre-wrap; min-height: 200px; }
-
-/* Drag Handle */
-.resize-handle {
-  width: 6px; background: #e2e8f0; cursor: col-resize;
-  z-index: 20; display: flex; justify-content: center; align-items: center;
-}
-.resize-handle:hover { background: #3b82f6; }
-
-/* Toast */
-.toast-container {
-  position: fixed; bottom: 20px; right: 20px;
-  background: #ef4444; color: white; padding: 12px 16px;
-  border-radius: 6px; box-shadow: 0 10px 15px rgba(0,0,0,0.2);
-  z-index: 1000; display: flex; gap: 12px; align-items: flex-start;
-}
-.toast-container.success { background: #10b981; }
-.stack-trace {
-  background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 4px;
-  font-size: 0.75rem; white-space: pre-wrap; max-height: 200px; overflow-y: auto; margin-top: 0.5rem;
+/* Style the paragraphs within list items */
+.editor-content .ProseMirror li p {
+    margin: 0;
+    line-height: 1.0; /* Strict line height */
 }
 
+
+
+
+
+/* ----- STYLES FOR CONTACT SECTION NODES ----- */
+
+/* Style for the small icons in contact info */
 .myicon {
   width: 12px;
   height: 12px;
-  vertical-align: middle;;
+  vertical-align: middle;
 }
 
-/* Target the horizontal rule element for styling */
-.editor-content .ProseMirror hr {
-  /* Remove default border and add custom border */
-  border: none;
-  border-top: 1px solid black; 
-  
-  /* Remove default spacing and add custom margins */
-  margin-top: 2pt;
-  margin-bottom: 2pt;
-  
-  /* Ensure it spans the full width if needed */
-  width: 100%;
-}
-
-/* This targets the div that wraps the contact details */
+/* Style the contact info row */
 div[data-type="contact-row"] {
   display: flex;
   justify-content: space-around; /* Evenly distributes space between items */
@@ -324,9 +301,38 @@ div[data-type="contact-row"] {
   margin-top: 5px;
   margin-bottom: 5px;
 }
+.contact-editable {
+  color: inherit;
+  text-decoration: inherit;
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: text;
+  min-width: 10px;
+  font-family: inherit;
+  font-size: inherit;
+}
+.contact-editable:hover {
+    background-color: rgba(0,0,0,0.05); /* Subtle hover hint */
+}
 
-/* --- ENTRY HEADERS (Institution, Location, Date) --- */
-/* Enable Flexbox to handle alignment and the Date push */
+
+
+/* ----- STYLES FOR SECTION TITLE NODES ----- */
+
+/* --- Section title styling ("Work", "Research", "Projects", etc) --- */
+.resume-section-title {
+  font-size: 11pt;
+  font-weight: bold;
+  border-bottom: 1px solid black;
+  margin-bottom: 6px;
+  margin-top: 4px;
+  text-align: center;
+}
+
+
+
+/* --- STYLES FOR ENTRY HEADER NODES (Institution, Location, Date) --- */
 .entry-title-header {
     display: flex;
     flex-direction: row;
@@ -335,30 +341,33 @@ div[data-type="contact-row"] {
     margin-bottom: .15rem;
 }
 
-/* Push date to the far right */
-.resume-date {
-    margin-left: auto;
-    text-align: right;
-    font-weight: bold;
-}
-
-/* Tighten spacing for inline header nodes to fix gaps */
+/* Tighten spacing for inline header nodes (project title, position title, etc.) to fix gaps */
 .entry-title-header .resume-node-view {
     padding: 0px !important;
     margin: 0;
 }
 
-/* 1. Institution Node */
+/* Pushes the date wrapper to the right within entry title header */
+/*
+  NOTE: 
+  Tiptap wraps React views in a span with class "node-[nodeName]".
+  We must target THIS wrapper to make flex properties work.
+*/
+.entry-title-header > .node-date {
+    margin-left: auto;
+}
+
+/* Work/Research Institution Name within entry title header */
 .resume-institution {
   font-weight: bold;
   text-decoration: underline;
 }
 
+/* Work/Research position title within entry title header */
 .resume-position-title {
   font-weight: bold;
   text-decoration: underline;
 }
-
 .resume-position-title::before, .resume-location::before {
   content: " - ";
   white-space: pre;
@@ -367,6 +376,20 @@ div[data-type="contact-row"] {
   text-decoration: underline;
 }
 
+/* Location Node within entry title header */
+.resume-location {
+  font-style: italic;
+  text-decoration: underline;
+}
+
+/* Pushes date to the far right within entry title header */
+.resume-date {
+    margin-left: auto;
+    text-align: right;
+    font-weight: bold;
+}
+
+/* Work/Research position description (used within Research section) */
 .resume-position-description::before {
   content: " - ";
   white-space: pre;
@@ -375,155 +398,53 @@ div[data-type="contact-row"] {
   padding: 0 !important;
 }
 
-/* 2. Location Node */
-.resume-location {
-  font-style: italic;
-  text-decoration: underline;
-}
-
-/* 3. Date Node */
-.resume-date {
-  font-weight: bold;
-  margin-left: auto; /* Pushes the date all the way to the right! */
-  text-align: right;
-}
-
-/* Contact Info Row */
-div[data-type="contact-row"] {
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
-/* Institution / Company Name */
-.resume-institution {
-  font-weight: bold;
-}
-
-/* Location */
-.resume-location {
-  font-style: italic;
-}
-
-/* Date - Pushed to the right */
-.resume-date {
-  font-weight: bold;
-  margin-left: auto; /* This forces the date to the far right */
-  text-align: right;
-}
-
-/* --- SECTION TITLES --- */
-.resume-section-title {
-    font-size: 11pt;
-    font-weight: bold;
-    border-bottom: 1px solid black;
-    margin-bottom: 6px;
-    margin-top: 4px;
-    text-align: center;
-}
-
-/* --- PROJECT / LEADERSHIP FORMATTING --- */
-
-/* Target the ListItem paragraphs */
-.editor-content .ProseMirror li p {
-    margin: 0;
-    line-height: 1.0; /* Strict line height */
-}
-
-/* Ensure the inline title still looks good */
+/* The simpler inline entry title for projects/leadership */
 .entry-title-simple {
     font-weight: bold;
     text-decoration: underline;
 }
 
-/* --- RESUME EDITOR INTERFACE STYLES --- */
 
-/* 1. Base Node Styling */
-.resume-node-view {
-  position: relative;
-  transition: all 0.2s ease;
-  border-radius: 4px;
-  box-sizing: border-box; 
-  /* Fix: Use inline decoration for underline to bridge gaps */
-  text-decoration-skip-ink: none; 
+/* --- STYLES FOR EDUCATION DEGREE NODES --- */
+
+/* Education/degree headers */
+.degree-header {
+  /* Using Flexbox is required for the 'margin-left: auto' on the GPA to work */
+  display: flex !important;
+  margin-bottom: 2px;
+  width: 100%;
+  flex-direction: row;
+  align-items: baseline;
 }
-
-/* 2. Hover Effects */
-.resume-node-view:hover {
-  outline: 2px dashed #94a3b8;
-  background-color: rgba(241, 245, 249, 0.3);
-  z-index: 10;
+.resume-degree-type {
+  font-weight: bold;
 }
-
-/* 3. Labels (MOVED TO ::after TO FIX ::before CONFLICTS) */
-.resume-node-view:hover::after {
-  content: attr(data-label);
-  position: absolute;
-  top: -12px;
-  right: 0;
-  background: #94a3b8;
-  color: white;
-  font-size: 9px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  text-transform: uppercase;
-  pointer-events: none;
-  font-family: sans-serif;
-  z-index: 20;
-  white-space: nowrap;
-  font-weight: normal;
-  font-style: normal;
+.resume-degree-type::after {
+  content: ": ";
+  font-weight: bold;
 }
-
-.resume-node-view[data-label="WORK ENTRY"]:hover::after,
-.resume-node-view[data-label="RESEARCH ENTRY"]:hover::after {
-  left: 0 !important;
-  right: unset !important;
+.resume-gpa {
+  margin-left: auto !important; /* Pushes to the far right */
+  margin-right: 0;
 }
-
-/* Tiptap wraps React views in a span with class "node-[nodeName]".
-   We must target THIS wrapper to make flex properties work.
-*/
-.entry-title-header > .node-date {
-    margin-left: auto; /* Pushes the date wrapper to the right */
+.resume-gpa::before {
+  content: "GPA: ";
+  font-weight: bold;
+  white-space: pre;
 }
-
-/* --- FIX: PROJECTS & LEADERSHIP LISTS --- */
-
-/* Target the Tiptap wrapper div for the project entries.
-   This forces the wrapper itself to behave like a bullet point.
-*/
-.node-projectEntry,
-.node-leadershipEntry {
-    display: list-item;
-    list-style-type: disc;
-    margin-left: 1rem;
-    line-height: 1.0;
-    text-indent: -0.15rem;
+.resume-gpa:hover::before {
+  /* When hovering GPA, stop the generic label from overwriting the text.
+   Force the ::before content to stay as "GPA: " and reset positioning. */
+  content: "   GPA: " !important;
+  position: static !important;
+  background: transparent !important;
+  color: inherit !important;
+  font-size: inherit !important;
+  padding: 0 !important;
+  border: none !important;
 }
-
-/* Ensure the inner content flows inline */
-.node-projectEntry p,
-.node-leadershipEntry p {
-    display: inline;
-    margin: 0;
-}
-
-/* --- SEMANTIC STYLING RESTORATION --- */
-.resume-institution { font-weight: bold; }
-.resume-location { font-style: italic; }
-.degree-header { margin-bottom: 2px; }
-.resume-degree-type { font-weight: bold; }
-.resume-degree-type::after { content: ": "; font-weight: bold; }
-.resume-gpa::before { content: "GPA: "; font-weight: bold; white-space: pre; }
-.entry-title-simple { font-weight: bold; text-decoration: underline; }
-
-/* Remove Bottom Margin from Project Entries */
-div[data-label="PROJECT ENTRY"],
-div[data-label="LEADERSHIP ENTRY"] {
-    margin-bottom: 0 !important;
+.node-gpa {
+    margin-left: auto; /* Pushes GPA to the right */
 }
 
 /* Education Degrees: Bullet Points & Layout */
@@ -534,66 +455,21 @@ div[data-label="DEGREE"] {
     margin-bottom: 0px !important;
 }
 
+/* Moves degree title closer to its bullet point */
 div[data-label="DEGREE"] .resume-node-content {
   margin-left: -.5em;
 }
 
-/* 4. Float GPA Right */
-.node-gpa {
-    margin-left: auto;
-}
 
-/* 5. Skills Entry: Font Size & Center */
+
+
+/* --- STYLES FOR SKILLS ENTRY NODES --- */
+
+/* Style the skills entry text */
 div[data-label="SKILLS ENTRY"] p {
-    font-size: 9pt;
-    text-align: center;
-    margin: 0;
-}
-
-/* Fix for Contact Links (Visual style for editable inputs) */
-.contact-editable {
-    color: inherit;
-    text-decoration: inherit;
-    background: transparent;
-    border: none;
-    outline: none;
-    cursor: text;
-    min-width: 10px;
-    font-family: inherit;
-    font-size: inherit;
-}
-.contact-editable:hover {
-    background-color: rgba(0,0,0,0.05); /* Subtle hover hint */
-}
-
-/* 1. Force the Degree Header to use Flexbox */
-/* This is required for the 'margin-left: auto' on the GPA to work */
-.degree-header {
-    display: flex !important;
-    width: 100%;
-    flex-direction: row;
-    align-items: baseline;
-}
-
-/* 2. Float the GPA Node */
-/* We target the wrapper class applied by InlineNodeView */
-.resume-gpa {
-    margin-left: auto !important; /* Pushes to the far right */
-    margin-right: 0;
-}
-
-/* 3. FIX THE DISAPPEARING PREFIX */
-
-/* Step A: When hovering GPA, stop the generic label from overwriting the text.
-   We force the ::before content to stay as "GPA: " and reset positioning. */
-.resume-gpa:hover::before {
-    content: "   GPA: " !important;
-    position: static !important;
-    background: transparent !important;
-    color: inherit !important;
-    font-size: inherit !important;
-    padding: 0 !important;
-    border: none !important;
+  font-size: 9pt;
+  text-align: center;
+  margin: 0;
 }
 
 /* Position Entry Styling */
@@ -623,10 +499,45 @@ div[data-label="SKILLS ENTRY"] p {
     margin-bottom: 2px;
 }
 
-/* Remove the " - " separator for any position title after the first one 
-   within the same Resume Entry container */
+/* Remove the " - " separator for any position title after the first one within the same Resume Entry container */
 div[data-label="RESEARCH ENTRY"] .resume-position-title::before {
     content: none;
+}
+
+/* Targets any entry (WORKENTRY or RESEARCHENTRY) and removes margin from the last position */
+div[data-label="RESEARCH ENTRY"] .position-ntry:last-child,
+div[data-label="WORK ENTRY"] .position-ntry:last-child {
+    margin-bottom: 0 !important;
+}
+
+
+
+
+/* ----- STYLES FOR PROJECT/RESEARCH ENTRY NODES */
+
+/* Forces the tiptap wrapper for project/leadership entries to behave like a bullet point. */
+.node-projectEntry, .node-leadershipEntry {
+  display: list-item;
+  list-style-type: disc;
+  margin-left: 1.05rem;
+  line-height: 1.0;
+  text-indent: -0.25rem;
+}
+
+/* Ensure the project/leadership title and description flows inline */
+.node-projectEntry p, .node-leadershipEntry p {
+  display: inline;
+  margin: 0;
+}
+
+/* Remove Bottom Margin from Project Entries */
+div[data-label="PROJECT ENTRY"], div[data-label="LEADERSHIP ENTRY"] {
+    margin-bottom: 0 !important;
+}
+
+div[data-label="PROJECT SKILLS"] {
+  font-size: 9pt;
+  margin-bottom: 2px;
 }
 
 /* Target the specific Tiptap bridge div inside project skills to force it inline */
@@ -641,177 +552,113 @@ div[data-label="RESEARCH ENTRY"] .resume-position-title::before {
     margin-left: .5rem !important; /* Indent more than the project title */
     line-height: 1.0;
     font-style: italic;
+    text-indent: -0.3rem; /* Move text closer to bullet point */
 }
 
-/* Clean up the project entry to ensure the paragraph and skills don't double-bullet */
-.node-projectEntry {
-    display: list-item;
-    list-style-type: disc;
+
+
+
+/* --- RESUME EDITOR INTERFACE STYLES --- */
+
+/* Display an outline and title around resume nodes on hover */
+.resume-node-view {
+  position: relative;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  box-sizing: border-box; 
+  text-decoration-skip-ink: none; 
+}
+.resume-node-view:hover {
+  outline: 2px dashed #94a3b8;
+  background-color: rgba(241, 245, 249, 0.3);
+  z-index: 10;
+}
+.resume-node-view:hover::after {
+  content: attr(data-label);
+  position: absolute;
+  top: -12px;
+  right: 0;
+  background: #94a3b8;
+  color: white;
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  pointer-events: none;
+  font-family: sans-serif;
+  z-index: 20;
+  white-space: nowrap;
+  font-weight: normal;
+  font-style: normal;
 }
 
-/* Ensure the paragraph inside the project doesn't add its own block spacing */
-.node-projectEntry p {
-    display: block;
-    margin: 0;
+/* Position the label on the left for WORK and RESEARCH entries */
+.resume-node-view[data-label="WORK ENTRY"]:hover::after,
+.resume-node-view[data-label="RESEARCH ENTRY"]:hover::after {
+  left: 0 !important;
+  right: unset !important;
 }
 
-/* Targets any entry (WORKENTRY or RESEARCHENTRY) and removes margin from the last position */
-div[data-label="RESEARCH ENTRY"] .position-ntry:last-child,
-div[data-label="WORK ENTRY"] .position-ntry:last-child {
-    margin-bottom: 0 !important;
-}
-
-/* Print styles */
 @media print {
-  /* Hide all non-editor elements */
+  /* 1. RESET BROWSER DEFAULTS */
+  /* This gets rid of browser default margin and things like the domain name and page numbers thaht Chrome adds */
+  @page {
+    margin: 0;
+    size: letter;
+  }
+
+  /* 2. HIDE UI - ONLY PRINT THE DOCUMENT CONTENT FROM THE EDITOR*/
   .toolbar,
   .panel-toolbar,
-  .page-overlay,
-  .right-panel-content,
   .resize-handle,
+  .right-panel-content,
+  .toast-container,
+  .rm-pagination-gap,
+  /* .breaker, */
   .main-split > .panel-container:last-child {
     display: none !important;
   }
 
-  /* Hide pagination system completely */
-  .rm-page-break,
-  .breaker,
-  .rm-pagination-gap,
-  .ProseMirror-widget,
-  [data-rm-pagination="true"] {
-    display: none !important;
-  }
-
-  /* CRITICAL: Reset margins/padding selectively */
-  body, html {
-    margin: 0 !important;
-    padding: 0 !important;
+  /* 3. RESET PROPERTIES FOR ALL THE CONTAINERS THAT HOLD THE DOCUMENT EDITOR */
+  body, html, #root, .app-container, .main-split, .panel-container, .resume-panel-wrapper, .editor-scroll-area {
+    display: block !important;
     background: white !important;
-    overflow: visible !important;
-    width: 100%;
-    height: auto;
-    border: none !important;
-  }
-
-  .app-container,
-  .main-split,
-  .main-split > .panel-container:first-child,
-  .resume-panel-wrapper,
-  .editor-scroll-area,
-  .zoom-frame {
+    height: auto !important;
+    width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
-    height: auto !important;
     overflow: visible !important;
-    width: 100% !important;
-    border: none !important;
   }
 
+  /* 4. CONFIGURE EDITOR FOR PRINT (disable zoom) */
   .zoom-frame {
     transform: none !important;
-    gap: 0 !important;
     display: block !important;
-  }
-
-  .editor-content {
-    width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
   }
 
-  .editor-content .ProseMirror {
-    box-shadow: none !important;
-    page-break-after: auto !important;
-    width: 8.5in !important;
-    margin: 0 auto !important;
-    padding: 0.25in !important;
-    min-height: auto !important;
-    border: none !important;
-    background: white !important;
-  }
-
-  /* PRESERVE FLEXBOX FOR HEADERS - CRITICAL */
-  .entry-title-header {
-    display: flex !important;
-    flex-direction: row !important;
-    width: 100% !important;
-    align-items: baseline !important;
-    margin-bottom: 0.15rem !important;
-    page-break-inside: avoid !important;
-  }
-
-  .entry-title-header .resume-date {
-    margin-left: auto !important;
-    text-align: right !important;
-    margin-right: 0 !important;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-  }
-
-  .degree-header {
-    display: flex !important;
-    flex-direction: row !important;
-    width: 100% !important;
-    align-items: baseline !important;
-    page-break-inside: avoid !important;
-    margin-bottom: 2px !important;
-  }
-
-  .degree-header .resume-gpa {
-    margin-left: auto !important;
-    margin-right: 0 !important;
-  }
-
-  .editor-content .ProseMirror h2 {
-    page-break-inside: avoid !important;
-    page-break-after: avoid !important;
-  }
-
-  /* PRESERVE LIST STYLING */
-  .editor-content .ProseMirror ul,
-  .editor-content .ProseMirror ol {
-    margin-left: 1.5em !important;
-    padding-left: 0 !important;
-  }
-
-  .editor-content .ProseMirror li {
-    display: list-item !important;
+  /* 5. FIX THE BULLET POINT SPACING */
+  
+  ul {
+    /* 1. Use 'outside' so the bullet sits to the left of the content box */
     list-style-position: outside !important;
-    page-break-inside: avoid !important;
+    padding-left: .95rem !important; 
+    text-indent: -.35rem !important;
     margin: 0 !important;
-    padding: 0 !important;
+  }
+  
+  li {
+    /* 3. Adjust this to move text closer/further from the bullet */
+    padding-left: 0.1rem !important; 
   }
 
-  /* PRESERVE PROJECT & LEADERSHIP BULLETS */
-  .node-projectEntry,
-  .node-leadershipEntry {
-    display: list-item !important;
-    list-style: disc !important;
-    list-style-position: outside !important;
-    margin-left: 1.5em !important;
-    margin-bottom: 4px !important;
-    page-break-inside: avoid !important;
-  }
-
-  .node-projectEntry p,
-  .node-leadershipEntry p {
-    display: inline !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  /* Ensure contact row displays properly */
-  div[data-type="contact-row"] {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-    gap: 8px !important;
-    page-break-inside: avoid !important;
-    margin: 5px 0 !important;
-  }
-
-  /* Hide react wrapper divs that add spacing */
-  .react-renderer {
-    display: contents !important;
-  }
+  /* TEMPORARY DEBUGGING CODE */
+  body { background-color: red !important; }
+  .app-container { background-color: orange !important; }
+  .editor-content { background-color: yellow !important; }
+  .ProseMirror { background-color: green !important; }
+  .ProseMirror > div { background-color: blue !important; }
+  .breaker { background-color: purple !important; }
+  .rm-pagination-gap { background-color: pink !important; }
 }

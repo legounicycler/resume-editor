@@ -144,7 +144,6 @@ export const ProjectSkillsView = ({ node }) => {
       as="div" // Keep as div to allow the list-item behavior (new line)
       className="resume-node-view project-skills-view" 
       data-label="PROJECT SKILLS"
-      style={{ fontSize: '9pt', marginTop: '2px' }}
     >
       <span contentEditable={false} style={{ fontWeight: 'bold', marginRight: '4px' }}>
         Skills: 
