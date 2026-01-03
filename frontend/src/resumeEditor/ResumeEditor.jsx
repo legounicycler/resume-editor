@@ -20,6 +20,7 @@ import { CustomTableCell } from '../extensions/CustomTableCell';
 import { LineHeight } from '../extensions/LineHeight';
 import { FontSize } from '../extensions/FontSize';
 import { ParagraphSpacing } from '../extensions/ParagraphSpacing';
+import { PaginationPlus, PAGE_SIZES } from 'tiptap-pagination-plus';
 
 // Resume nodes
 import { 
@@ -71,8 +72,8 @@ const AiHighlight = Highlight.extend({
 const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, icons}) => {
   const [currentLineHeight, setCurrentLineHeight] = useState('1.0');
   const [currentFontSize, setCurrentFontSize] = useState('10');
-  const [currentMarginBottom, setCurrentMarginBottom] = useState('0'); // New state for margin bottom
-  const [currentMarginTop, setCurrentMarginTop] = useState('0');     // New state for margin top
+  const [currentMarginBottom, setCurrentMarginBottom] = useState('0');
+  const [currentMarginTop, setCurrentMarginTop] = useState('0');
 
   const editor = useEditor({
     extensions: [
@@ -120,6 +121,17 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, icon
       LineHeight,
       FontSize,
       ParagraphSpacing,
+      PaginationPlus.configure({
+        ...PAGE_SIZES.LETTER,
+        pageGap: 20,
+        pageBreakBackground: '#525659',
+        contentMarginTop: 0,
+        contentMarginBottom: 0,
+        headerLeft: '',  // Remove header
+        headerRight: '', // Remove header
+        footerLeft: '',  // Remove footer
+        footerRight: '', // Remove footer
+      }),
     ],
     content: content,
     onUpdate: ({ editor }) => attachTooltips(),
@@ -133,16 +145,6 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, icon
       }
     });
   };
-
-  // useEffect(() => {
-  //   if (editor && content && content !== editor.getHTML()) {
-  //     // Normalize pasted/generated tables that use "min-width" (commonly from Word)
-  //     // into explicit "width" styles so the browser/tiptap honors column sizing.
-  //     const normalized = content.replace(/min-width\s*:\s*([^;"]+)(;)?/gi, 'width:$1');
-  //     editor.commands.setContent(normalized);
-  //     setTimeout(attachTooltips, 100);
-  //   }
-  // }, [content, editor]);
 
   // Handle line height edits
   useEffect(() => {
@@ -226,6 +228,22 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, icon
       editor.off('update', updateMarginSpacing); // Cleanup for margin spacing
     };
   }, [editor]);
+
+  // Handle page margin updates
+  useEffect(() => {
+    if (editor && editor.isEditable) {
+      // Convert inches to pixels at 96 DPI
+      const marginPx = parseFloat(pageMargin) * 96;
+
+      // Update PaginationPlus margins using the extension's command
+      editor.commands.updateMargins({
+        top: marginPx,
+        bottom: marginPx,
+        left: marginPx,
+        right: marginPx,
+      });
+    }
+  }, [pageMargin, editor]);
 
   // Handle Search Highlighting
   useEffect(() => {
@@ -348,6 +366,30 @@ const ResumeEditor = ({ content, hoveredMapping, zoom, setZoom, onLoadData, icon
             style={{width: '40px', padding: '2px', textAlign: 'center', background: 'white', color: 'black', border: '1px solid #ccc', borderRadius: '3px'}} // Light theme styles
           />
         </div>
+
+        <div className="separator"></div>
+
+        {/* Page Margins */}
+        <div className="control-group">
+          <label htmlFor="page-margin" style={{ fontSize: '0.8rem', marginRight: '5px' }}>Page Margin:</label>
+          <select
+            id="page-margin"
+            value={pageMargin}
+            onChange={e => setPageMargin(e.target.value)}
+            style={{ background: 'white', color: 'black', border: '1px solid #ccc', padding: '2px 5px', borderRadius: '3px' }}
+          >
+            <option value="0.25">0.25"</option>
+            <option value="0.5">0.5"</option>
+            <option value="0.75">0.75"</option>
+          </select>
+        </div>
+
+        <div className="separator"></div>
+
+        {/* Print Button */}
+        <button className="upload-label" onClick={() => window.print()}>
+          <span>🖨️ Print</span>
+        </button>
 
       </div> {/* End of panel-toolbar */}
 

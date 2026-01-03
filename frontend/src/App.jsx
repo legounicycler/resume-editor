@@ -84,7 +84,6 @@ function App() {
       
       // Pass JSON object directly (ResumeEditor handles it)
       setResumeHtml(tiptapJson); 
-      setToast({ message: 'Structured Data Loaded!', type: 'success' });
     } catch (err) {
       const serverMsg = err.response?.data?.error || err.message;
       setToast({ message: `Load Error: ${serverMsg}. Check your Flask server/JSON file.`, type: 'error', stack: err.stack });
